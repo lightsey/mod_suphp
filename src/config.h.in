@@ -1,28 +1,16 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if `lstat' has the bug that it succeeds when given the
-   zero-length file name argument. */
-#undef HAVE_LSTAT_EMPTY_STRING_BUG
-
-/* Define to 1 if your system has a GNU libc compatible `malloc' function, and
-   to 0 otherwise. */
-#undef HAVE_MALLOC
-
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
-
-/* Define to 1 if you have the `setenv' function. */
-#undef HAVE_SETENV
-
-/* Define to 1 if `stat' has the bug that it succeeds when given the
-   zero-length file name argument. */
-#undef HAVE_STAT_EMPTY_STRING_BUG
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -30,23 +18,11 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
-/* Define to 1 if you have the `strcasecmp' function. */
-#undef HAVE_STRCASECMP
-
-/* Define to 1 if you have the `strdup' function. */
-#undef HAVE_STRDUP
-
-/* Define to 1 if you have the `strftime' function. */
-#undef HAVE_STRFTIME
-
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
-
-/* Define to 1 if you have the `strrchr' function. */
-#undef HAVE_STRRCHR
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
@@ -56,10 +32,6 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
-
-/* Define to 1 if `lstat' dereferences a symlink specified with a trailing
-   slash. */
-#undef LSTAT_FOLLOWS_SLASHED_SYMLINK
 
 /* Defines the username of the Apache user */
 #undef OPT_APACHE_USER
@@ -77,17 +49,6 @@
 /* Defines the min UID allowed to run scripts */
 #undef OPT_MIN_UID
 
-/* Define if you want to proceed even if GID of the script is not listed in
-   /etc/group */
-#undef OPT_NO_GROUP
-
-/* Define if you want to proceed even if UID of the script is not listed in
-   /etc/passwd */
-#undef OPT_NO_PASSWD
-
-/* Defines path to PHP interpreter */
-#undef OPT_PATH_TO_PHP
-
 /* Define if you want to set UID/GID to the user/group specified in the Apache
    configuration */
 #undef OPT_USERGROUP_FORCE
@@ -99,6 +60,9 @@
    configuration AND check if these settings match the UID/GID of the script
    */
 #undef OPT_USERGROUP_PARANOID
+
+/* Name of package */
+#undef PACKAGE
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -118,17 +82,5 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* Define to 1 if your <sys/time.h> declares `struct tm'. */
-#undef TM_IN_SYS_TIME
-
-/* Define to empty if `const' does not conform to ANSI C. */
-#undef const
-
-/* Define to `int' if <sys/types.h> doesn't define. */
-#undef gid_t
-
-/* Define to rpl_malloc if the replacement function should be used. */
-#undef malloc
-
-/* Define to `int' if <sys/types.h> doesn't define. */
-#undef uid_t
+/* Version number of package */
+#undef VERSION
