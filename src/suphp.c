@@ -295,7 +295,7 @@ int main(int argc, char* argv[])
 #ifdef OPT_NO_PASSWD
   if ((numeric_envuser > -1) && !suphp_passwdcpy(&envuser, &emptyuser))
    error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct passwd", __FILE__, __LINE__);
-  else
+  else if (numeric_envuser > -1)
   {
    envuser.pw_uid = numeric_envuser;
    envuser.pw_name = "NOT AVAILABLE";
@@ -316,7 +316,7 @@ int main(int argc, char* argv[])
 #ifdef OPT_NO_PASSWD
   if ((numeric_envuser > -1) && !suphp_passwdcpy(&targetuser, &emptyuser))
    error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct passwd", __FILE__, __LINE__);
-  else
+  else if (numeric_envuser > -1)
   {
    targetuser.pw_uid = numeric_envuser;  
    targetuser.pw_name = "NOT AVAILABLE";
@@ -410,7 +410,7 @@ int main(int argc, char* argv[])
 #ifdef OPT_NO_GROUP
   if ((numeric_envgroup > -1) && !(suphp_groupcpy(&envgroup, &emptygroup)))
     error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct group", __FILE__, __LINE__);
-  else
+  else if (numeric_envgroup > -1)
   {
    envgroup.gr_gid = numeric_envgroup;
    envgroup.gr_name = "NOT AVAILABLE";
@@ -432,7 +432,7 @@ int main(int argc, char* argv[])
 #ifdef OPT_NO_GROUP
   if ((numeric_envgroup > -1) && !suphp_groupcpy(&targetgroup, &emptygroup))
    error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct group", __FILE__, __LINE__);
-  else
+  else if (numeric_envgroup > -1)
   {
    targetgroup.gr_gid = numeric_envgroup;
    targetgroup.gr_name = "NOT AVAILABLE";
