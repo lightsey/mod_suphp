@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT([suphp], [0.5.1], [sebastian.marsching@suphp.org])
+AC_INIT([suphp], [0.5.2], [sebastian.marsching@suphp.org])
 AC_CONFIG_SRCDIR([src/suphp.c])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADER([src/config.h])
@@ -41,7 +41,7 @@ if test -n "$APXS"; then
                     | cut -f2 -d"/" \
                     | cut -f1 -d" "`
     major_version=`echo $APACHE_VERSION|cut -f1,2 -d.`
-    if test $major_version = 2.0; then
+    if test "$major_version" = "2.0"; then
       APACHE_VERSION_2=true
       APACHE_VERSION_1_3=false
     else
@@ -71,7 +71,7 @@ AC_ARG_WITH(setid-mode,
             fi
             ])
 
-if test "$SETID_MODE" = ""; then
+if test -z "$SETID_MODE" ; then
   SETID_MODE="owner"
 fi
 
@@ -142,7 +142,7 @@ AC_ARG_WITH([min-uid],
                            [Minimum UID, which is allowed to run scripts
                             (default=100)]),
             [
-             if test $withval; then
+             if test "$withval" -a ! "$withval" = "yes" ; then
 	       AC_DEFINE_UNQUOTED(OPT_MIN_UID, $withval, [Defines the min UID
 	                 allowed to run scripts])
              fi
@@ -157,7 +157,7 @@ AC_ARG_WITH([min-gid],
                            [Minimum GID, which is allowed to run scripts
                             (default=100)]),
             [
-             if test $withval; then
+             if test "$withval" -a ! "$withval" = "yes" ; then
                AC_DEFINE_UNQUOTED(OPT_MIN_GID, $withval, [Defines the min GID
                          allowed to run scripts])
              fi
@@ -172,7 +172,7 @@ AC_ARG_WITH([apache-user],
                            [Name of the user Apache is running as
 (default is "wwwrun"]),
             [
-             if test $withval; then
+             if test "$withval" -a ! "$withval" = "yes" ; then
                AC_DEFINE_UNQUOTED(OPT_APACHE_USER, "$withval", [Defines the username of the Apache user])
              fi
             ],
@@ -184,7 +184,7 @@ AC_ARG_WITH([php],
             AC_HELP_STRING([--with-php=FILE],
                            [Path to PHP interpreter (default is "/usr/bin/php"]),
             [ 
-             if test $withval; then 
+             if test "$withval" -a ! "$withval" = "yes" ; then 
                AC_DEFINE_UNQUOTED(OPT_PATH_TO_PHP, "$withval", [Defines path to PHP interpreter])
              fi
             ],
@@ -196,7 +196,7 @@ AC_ARG_WITH([logfile],
             AC_HELP_STRING([--with-logfile=FILE],
                            [Path to suPHP logfile (default is "/var/log/httpd/suphp_log"]),
             [
-             if test $withval; then
+             if test "$withval" -a ! "$withval" = "yes" ; then
                AC_DEFINE_UNQUOTED(OPT_LOGFILE, "$withval", [Defines
 path to logfile])
              fi
@@ -237,7 +237,7 @@ if test -n "$OPT_APACHEMOD_USERGROUP_DEF" -a "$APACHE_VERSION_1_3" = "true"; the
   ])
 fi
 
-if test $APXS = "/notfound/"; then
+if test "$APXS" = "/notfound/"; then
   AC_MSG_WARN([
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!*** APXS was not found, so mod_suphp will not be built! ***!!
