@@ -57,6 +57,9 @@ void exec_script(char* scriptname)
  
  suphp_setenv("PATH", "/bin:/usr/bin", 1);
  
+ // Unset LD_PRELOAD for obvious reasons
+ suphp_unsetenv("LD_PRELOAD");
+ 
  // Check for PHP_CONFIG environment variable
  
  if (getenv("PHP_CONFIG"))
