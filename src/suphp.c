@@ -146,12 +146,21 @@ int main(int argc, char* argv[])
  struct passwd calluser;
  struct passwd targetuser;
  struct group targetgroup;
- struct passwd *ptruser;
- struct group *ptrgroup;
+ struct passwd *ptruser = NULL;
+ struct group *ptrgroup = NULL;
 
 #if (defined(OPT_USERGROUP_FORCE) || defined(OPT_USERGROUP_PARANOID))
  char *envusername = NULL;
  char *envgroupname = NULL;
+
+#if defined OPT_NO_PASSWD
+ int numeric_envuser = -1;
+#endif
+
+#if defined OPT_NO_GROUP
+ int numeric_envgroup = -1;
+#endif
+
 #endif
 
 #ifdef OPT_USERGROUP_PARANOID
@@ -247,12 +256,26 @@ int main(int argc, char* argv[])
   error_msg_exit(ERRCODE_WRONG_PERMISSIONS, "Inappropriate permissions set on script", __FILE__, __LINE__);
  
 #if (defined(OPT_USERGROUP_FORCE) || defined(OPT_USERGROUP_PARANOID))
- if (getenv("PHP_SU_USER") != NULL)
-  envusername = strdup(getenv("PHP_SU_USER"));
+ if ((envusername = getenv("PHP_SU_USER")) != NULL)
+ {
+#ifdef OPT_NO_PASSWD
+  if ((*envusername == '#') && (strspn(envusername+1, "0123456789") == strlen(envusername+1)))
+  {
+   envusername = strdup(envusername+1);
+   numeric_envuser = atoi(envusername);
+  }
+  else
+#endif
+   envusername = strdup(envusername);
+ }
  else
   error_msg_exit(ERRCODE_WRONG_ENVIRONMENT, "PHP_SU_USER is not set", __FILE__, __LINE__);
- 
+
+#ifdef OPT_NO_PASSWD 
+ if ((numeric_envuser <= -1) && ((ptruser = getpwnam(envusername)) == NULL))
+#else
  if ((ptruser = getpwnam(envusername)) == NULL)
+#endif
  {
   suphp_log_error("getpwnam() for user %s failed", envusername);
   error_msg_exit(ERRCODE_UNKNOWN, "getpwnam() failed", __FILE__, __LINE__);
@@ -260,17 +283,45 @@ int main(int argc, char* argv[])
  else
  {
 #ifdef OPT_USERGROUP_PARANOID
+#ifdef OPT_NO_PASSWD
+  if ((numeric_envuser <= -1) && (!suphp_passwdcpy(&envuser, ptruser)))
+#else
   if (!suphp_passwdcpy(&envuser, ptruser))
+#endif
   {
    error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct passwd", __FILE__, __LINE__);
   }
 
+#ifdef OPT_NO_PASSWD
+  if ((numeric_envuser > -1) && !suphp_passwdcpy(&envuser, &emptyuser))
+   error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct passwd", __FILE__, __LINE__);
+  else
+  {
+   envuser.pw_uid = numeric_envuser;
+   envuser.pw_name = "NOT AVAILABLE";
+  }
+#endif
+
 #endif
 #ifdef OPT_USERGROUP_FORCE
+#ifdef OPT_NO_PASSWD
+  if ((numeric_envuser > -1) && !suphp_passwdcpy(&targetuser, ptruser))
+#else
   if (!suphp_passwdcpy(&targetuser, ptruser))
+#endif
   {
    error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct passwd", __FILE__, __LINE__);
   }
+
+#ifdef OPT_NO_PASSWD
+  if ((numeric_envuser > -1) && !suphp_passwdcpy(&targetuser, &emptyuser))
+   error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct passwd", __FILE__, __LINE__);
+  else
+  {
+   targetuser.pw_uid = numeric_envuser;  
+   targetuser.pw_name = "NOT AVAILABLE";
+  }
+#endif
 
 #endif
   free(envusername);
@@ -322,12 +373,24 @@ int main(int argc, char* argv[])
 #endif
  
 #if (defined(OPT_USERGROUP_FORCE) || defined(OPT_USERGROUP_PARANOID))
- if (getenv("PHP_SU_GROUP") != NULL)
-  envgroupname = strdup(getenv("PHP_SU_GROUP"));
+ if ((envgroupname = getenv("PHP_SU_GROUP")) != NULL)
+#ifdef OPT_NO_GROUP
+  if ((*envgroupname = '#') && (strspn(envgroupname+1, "0123456789") == strlen(envgroupname+1)))
+  {
+   envgroupname = strdup(envgroupname+1);
+   numeric_envgroup = atoi(envgroupname);
+  }
+  else
+#endif
+   envgroupname = strdup(getenv("PHP_SU_GROUP"));
  else
   error_msg_exit(ERRCODE_WRONG_ENVIRONMENT, "PHP_SU_GROUP is not set", __FILE__, __LINE__);
  
+#ifdef OPT_NO_GROUP
+ if ((numeric_envgroup <= -1) && (ptrgroup = getgrnam(envgroupname)) == NULL)
+#else
  if ((ptrgroup = getgrnam(envgroupname)) == NULL)
+#endif
  {
   suphp_log_error("getgrnam() for group %s failed", envgroupname);
   error_msg_exit(ERRCODE_UNKNOWN, "getgrnam() failed", __FILE__, __LINE__);
@@ -335,24 +398,61 @@ int main(int argc, char* argv[])
  else
  {
 #ifdef OPT_USERGROUP_PARANOID
-  memcpy(&envgroup, ptrgroup, sizeof(struct group));
+#ifdef OPT_NO_GROUP
+  if ((numeric_envgroup <= -1) && !suphp_groupcpy(&envgroup, ptrgroup))
+#else
   if (!suphp_groupcpy(&envgroup, ptrgroup))
+#endif
   {
    error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct group", __FILE__, __LINE__);
+  }
+
+#ifdef OPT_NO_GROUP
+  if ((numeric_envgroup > -1) && !(suphp_groupcpy(&envgroup, &emptygroup)))
+    error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct group", __FILE__, __LINE__);
+  else
+  {
+   envgroup.gr_gid = numeric_envgroup;
+   envgroup.gr_name = "NOT AVAILABLE";
   }
 #endif
 
+#endif
+
 #ifdef OPT_USERGROUP_FORCE
-  memcpy(&targetgroup, ptrgroup, sizeof(struct group));
+#ifdef OPT_NO_GROUP
+  if ((numeric_envgroup <= -1) && !suphp_groupcpy(&targetgroup, ptrgroup))
+#else
   if (!suphp_groupcpy(&targetgroup, ptrgroup))
+#endif
   {
    error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct group", __FILE__, __LINE__);
   }
+
+#ifdef OPT_NO_GROUP
+  if ((numeric_envgroup > -1) && !suphp_groupcpy(&targetgroup, &emptygroup))
+   error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct group", __FILE__, __LINE__);
+  else
+  {
+   targetgroup.gr_gid = numeric_envgroup;
+   targetgroup.gr_name = "NOT AVAILABLE";
+  }
+#endif
 
 #endif
   free(envgroupname);
  }
 #endif  
+
+#if (defined(OPT_NO_PASSWD) && defined(OPT_USERGROUP_PARANOID))
+ if (numeric_envuser > -1)
+  envuser.pw_gid = envgroup.gr_gid;
+#endif
+
+#if (defined(OPT_NO_PASSWD) && defined(OPT_USERGROUP_FORCE))
+ if (numeric_envuser > -1)
+  targetuser.pw_gid = targetgroup.gr_gid;
+#endif
 
 #if (defined(OPT_USERGROUP_OWNER) || defined(OPT_USERGROUP_PARANOID))
  if ((ptrgroup = getgrgid(file_get_gid(path_translated)))==NULL)
@@ -360,7 +460,6 @@ int main(int argc, char* argv[])
 #ifdef OPT_NO_GROUP
   emptygroup.gr_gid = file_get_gid(path_translated);
   emptygroup.gr_name = "NOT AVAILABLE";
-  memcpy(&targetgroup,  &emptygroup, sizeof(struct group));
   if (!suphp_groupcpy(&targetgroup, &emptygroup))
   {
    error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not copy struct group", __FILE__, __LINE__);
