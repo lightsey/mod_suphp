@@ -51,7 +51,7 @@ void exec_script(char* scriptname)
  
  env = NULL;
  
- suphp_setenv("REDIRECT_STATUS", "200", 1); // PHP may need this
+ suphp_setenv("REDIRECT_STATUS", "200", 0); // PHP may need this
  
  // Set secure PATH
  
