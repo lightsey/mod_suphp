@@ -305,7 +305,7 @@ int main(int argc, char* argv[])
 #endif
 #ifdef OPT_USERGROUP_FORCE
 #ifdef OPT_NO_PASSWD
-  if ((numeric_envuser > -1) && !suphp_passwdcpy(&targetuser, ptruser))
+  if ((numeric_envuser <= -1) && !suphp_passwdcpy(&targetuser, ptruser))
 #else
   if (!suphp_passwdcpy(&targetuser, ptruser))
 #endif
@@ -375,7 +375,7 @@ int main(int argc, char* argv[])
 #if (defined(OPT_USERGROUP_FORCE) || defined(OPT_USERGROUP_PARANOID))
  if ((envgroupname = getenv("PHP_SU_GROUP")) != NULL)
 #ifdef OPT_NO_GROUP
-  if ((*envgroupname = '#') && (strspn(envgroupname+1, "0123456789") == strlen(envgroupname+1)))
+  if ((*envgroupname == '#') && (strspn(envgroupname+1, "0123456789") == strlen(envgroupname+1)))
   {
    envgroupname = strdup(envgroupname+1);
    numeric_envgroup = atoi(envgroupname);
