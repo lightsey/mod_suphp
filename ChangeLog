@@ -1,7 +1,12 @@
-* Current development version
+* Version 0.5.2
 - Added support for UIDs/GIDs not listed in system configuration when using
   "force" or "paranoid" mode
-
+- Fixed bug in configure script that caused autoconf to assume wrong values
+- Changed behaviour for setting "REDIRECT_STATUS": Now it is only set to 
+  "200" when it has not already been set by Apache
+- Fixed bug causing environment variables with values ending with a '='
+  sign to be unset
+	
 * Version 0.5.1 (24 February 2004)
 - Empty environment variables now are deleted from the environment instead
   of being set to "no value"
