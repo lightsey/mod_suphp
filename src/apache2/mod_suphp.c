@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2004 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
     
     This file is part of suPHP.
 
@@ -64,7 +64,7 @@ static int suphp_bucket_read(apr_bucket *b, char *buf, int len)
     src_end = bucket_data + bucket_data_len;
     while ((src < src_end) && (dst < dst_end))
     {
-     *dst = *src;
+	*dst = *src;
      dst++;
      src++;
      count++;
@@ -114,6 +114,7 @@ typedef struct {
     char *target_user;
     char *target_group;
 #endif
+    apr_table_t *handlers;
 } suphp_conf;
 
 
@@ -129,6 +130,10 @@ static void *suphp_create_dir_config(apr_pool_t *p, char *dir)
     cfg->target_user = NULL;
     cfg->target_group = NULL;
 #endif
+    
+    /* Create table with 0 initial elements */
+    /* This size may be increased for performance reasons */
+    cfg->handlers = apr_table_make(p, 0);
     
     return (void *) cfg;
 }
@@ -170,6 +175,8 @@ static void *suphp_merge_dir_config(apr_pool_t *p, void *base,
     else
         merged->target_group = NULL;
 #endif
+    
+    merged->handlers = apr_table_overlay(p, child->handlers, parent->handlers);
     
     return (void *) merged;  
 }
@@ -273,6 +280,29 @@ static const char *suphp_handle_cmd_user_group(cmd_parms *cmd, void *mconfig,
 #endif
 
 
+static const char *suphp_handle_cmd_add_handler(cmd_parms *cmd, void *mconfig,
+					     const char *arg)
+{
+    suphp_conf *cfg = (suphp_conf *) mconfig;
+    // Mark active handler with '1'
+    apr_table_set(cfg->handlers, arg, "1");
+
+    return NULL;
+}
+
+
+static const char *suphp_handle_cmd_remove_handler(cmd_parms *cmd, 
+						   void *mconfig, 
+						   const char *arg)
+{
+    suphp_conf *cfg = (suphp_conf *) mconfig;
+    // Mark deactivated handler with '0'
+    apr_table_set(cfg->handlers, arg, "0");
+
+    return NULL;
+}
+
+
 static const command_rec suphp_cmds[] =
 {
     AP_INIT_FLAG("suPHP_Engine", suphp_handle_cmd_engine, NULL, RSRC_CONF | ACCESS_CONF,
@@ -283,6 +313,8 @@ static const command_rec suphp_cmds[] =
     AP_INIT_TAKE2("suPHP_UserGroup", suphp_handle_cmd_user_group, NULL, RSRC_CONF | ACCESS_CONF,
                   "User and group scripts shall be run as"),
 #endif
+    AP_INIT_ITERATE("suPHP_AddHandler", suphp_handle_cmd_add_handler, NULL, ACCESS_CONF, "Tells mod_suphp to handle these MIME-types"),
+    AP_INIT_ITERATE("suPHP_RemoveHandler", suphp_handle_cmd_remove_handler, NULL, ACCESS_CONF, "Tells mod_suphp not to handle these MIME-types"),
     {NULL}
 };
 
@@ -328,12 +360,12 @@ static int suphp_handler(request_rec *r)
     dconf = ap_get_module_config(r->per_dir_config, &suphp_module);
     core_conf = (core_dir_config *) ap_get_module_config(r->per_dir_config, &core_module);
     
-    /* only handle request if x-httpd-php handler is asigned */
+    /* only handle request if mod_suphp is active for this handler */
+    /* check only first byte of value (second has to be \0) */
+    if ((apr_table_get(dconf->handlers, r->handler) == NULL)
+	|| (*(apr_table_get(dconf->handlers, r->handler)) == '0'))
+	return DECLINED;
     
-    if (strcmp(r->handler, "x-httpd-php") 
-        && strcmp(r->handler, "application/x-httpd-php"))
-        return DECLINED;
-        
     /* check if suPHP is enabled for this request */
     
     if (((sconf->engine != SUPHP_ENGINE_ON)
@@ -391,19 +423,21 @@ static int suphp_handler(request_rec *r)
     ap_add_common_vars(r);
     ap_add_cgi_vars(r);
     
-    apr_table_unset(r->subprocess_env, "PHP_CONFIG");
-    apr_table_unset(r->subprocess_env, "PHP_AUTH_USER");
-    apr_table_unset(r->subprocess_env, "PHP_AUTH_PW");
+    apr_table_unset(r->subprocess_env, "SUPHP_PHP_CONFIG");
+    apr_table_unset(r->subprocess_env, "SUPHP_AUTH_USER");
+    apr_table_unset(r->subprocess_env, "SUPHP_AUTH_PW");
     
 #ifdef SUPHP_USE_USERGROUP
-    apr_table_unset(r->subprocess_env, "PHP_SU_USER");
-    apr_table_unset(r->subprocess_env, "PHP_SU_GROUP");
+    apr_table_unset(r->subprocess_env, "SUPHP_USER");
+    apr_table_unset(r->subprocess_env, "SUPHP_GROUP");
 #endif
     
     if (dconf->php_config)
     {
-        apr_table_setn(r->subprocess_env, "PHP_CONFIG", apr_pstrdup(p, dconf->php_config));
+        apr_table_setn(r->subprocess_env, "SUPHP_PHP_CONFIG", apr_pstrdup(p, dconf->php_config));
     }
+    
+    apr_table_setn(r->subprocess_env, "SUPHP_HANDLER", r->handler);
     
     if (r->headers_in)
     {
@@ -429,30 +463,30 @@ static int suphp_handler(request_rec *r)
     
     if (auth_user && auth_pass)
     {
-        apr_table_setn(r->subprocess_env, "PHP_AUTH_USER", auth_user);
-        apr_table_setn(r->subprocess_env, "PHP_AUTH_PW", auth_pass);
+        apr_table_setn(r->subprocess_env, "SUPHP_AUTH_USER", auth_user);
+        apr_table_setn(r->subprocess_env, "SUPHP_AUTH_PW", auth_pass);
     }
 
 #ifdef SUPHP_USE_USERGROUP
     if (dconf->target_user)
     {
-        apr_table_setn(r->subprocess_env, "PHP_SU_USER",
+        apr_table_setn(r->subprocess_env, "SUPHP_USER",
                        apr_pstrdup(r->pool, dconf->target_user));
     }
     else
     {
-        apr_table_setn(r->subprocess_env, "PHP_SU_USER",
+        apr_table_setn(r->subprocess_env, "SUPHP_USER",
                        apr_pstrdup(r->pool, sconf->target_user));
     }
     
     if (dconf->target_group)
     {
-        apr_table_setn(r->subprocess_env, "PHP_SU_GROUP",
+        apr_table_setn(r->subprocess_env, "SUPHP_GROUP",
                        apr_pstrdup(r->pool, dconf->target_group));
     }
     else
     {
-        apr_table_setn(r->subprocess_env, "PHP_SU_GROUP",
+        apr_table_setn(r->subprocess_env, "SUPHP_GROUP",
                        apr_pstrdup(r->pool, sconf->target_group));
     }
 #endif
