@@ -193,7 +193,7 @@ int main(int argc, char* argv[])
  emptyuser.pw_shell = "/bin/false";
 #endif
 
-#ifdef OP_NO_GROUP
+#ifdef OPT_NO_GROUP
  // Initialize structure
  emptygroup.gr_name = "";
  emptygroup.gr_passwd = "";
