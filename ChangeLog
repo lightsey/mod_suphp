@@ -1,4 +1,4 @@
-* Version 0.5.2
+* Version 0.5.2 (13 July 2004)
 - Added support for UIDs/GIDs not listed in system configuration when using
   "force" or "paranoid" mode
 - Fixed bug in configure script that caused autoconf to assume wrong values
