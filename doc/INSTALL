@@ -1,0 +1,105 @@
+===========================
+== suPHP                 ==
+===========================
+
+Installation
+------------
+
+1. Introduction
+
+The suPHP Apache module together with suPHP itself provides an easy way to
+run PHP scripts with different users on the same server.
+
+It provides security, because the PHP scripts are not run with the rights of
+the webserver's user.
+In addition to that you probably won't have to use PHP's "safe mode", which
+applies many restrictions on the scripts.
+
+Please note that the suPHP binary has to be installed setuid-root to work,
+so a security bug in suPHP probably will allow atackers to run commands with
+root privileges. Although I currently don't know any bug in suPHP I can't
+guarantee that there aren't any.
+
+2. Installation
+
+Run ./configure with the appropriate paramters for your system.
+
+On most systems a
+ ./configure --prefix=/usr
+will suffice.
+
+The configure script can take the familar GNU autoconf arguments plus the
+following suPHP specific ones:
+
+--disable-checkpath: With this compile time option suPHP does not check,
+                     whether a script (or a symink to it)is inside the
+                     DOCUMENT_ROOT. You may want to activate this option
+                     if you are working with "Alias"-directives.
+
+--disable-checkuid:  You may specify this option to make suPHP work with
+                     scripts whose UIDs are not listed in /etc/passwd.
+
+--disable-checkgid:  You may specify this option to make suPHP work with 
+                     scripts whose GIDs are not listed in /etc/group.
+
+--with-apxs=FILE:    Path to "apxs" of your Apache installation. If not
+                     specified, configure will look for apxs in your PATH.
+                     Without apxs the Apache module mod_suphp will not be
+                     built. It will not be built either, if your Apache has
+                     been compiled without DSO support. Please make sure you
+                     specify the right path to apxs, because suPHP will use
+                     apxs to check whether to build mod_suphp for Apache 1
+                     or Apache 2.
+
+--with-min-uid=UID:  The minium UID that suPHP will allow PHP to run scripts 
+                     with (defaults to 100).
+
+--with-min-gid=GID:  The minium GID that suPHP will allow PHP to run scripts
+                     with (defaults to 100).
+
+--with-apache-user=USERNAME:
+                     Username (not UID) Apache is running as (defaults to
+                     wwwrun).
+
+--with-logfile=FILE  Path to the suPHP logfile (defaults to
+                     /var/log/httpd/suphp_log).
+                     
+--with-setid-mode=MODE:
+                     MODE has to be one of:
+                     "owner":    Run scripts with owner UID/GID
+                     "force":    Run scripts with UID/GID specified in Apache 
+                                 configuration (only supported when using Apache 2)
+                     "paranoid": Run scripts with owner UID/GID but also check
+                                 if they match the UID/GID specified in the
+                                 Apache configuration
+                     The default is "paranoid" mode.
+                     You should *NEVER* use "force" mode as it is very
+                     dangerous.
+                     While "owner" mode is not as dangerous as "force" mode
+                     its use is disadvised and "paranoid" mode should be
+                     preferred.
+
+Now compile suPHP using "make" and if no error occured install it using
+"make install". Be sure to be root, when you try to install it.
+
+If your Apache is running with DSO support and "apxs" was found during the
+build process, you are done. Otherwise you have to rebuilt your Apache
+server with "mod_suphp.c" included. If you used another prefix during the
+suPHP build than "/usr", you have to modify "mod_suphp.c" to set the path to
+the suPHP executable (which you can find in $exec_prefix/sbin/suphp).
+
+Details on how to compile your Apache webserver with mod_suphp can be found
+in apache/INSTALL.
+
+Now, you have to modify your "httpd.conf" to activate suPHP for specific 
+VHosts. See apache/CONFIG for details on this.
+
+Please note that in order to make suPHP work, you have to specify at least
+one handler in the suPHP configuration file. Read CONFIG for additonal
+information about how to configure suPHP.
+
+===================================
+(c)2002-2005 by Sebastian Marsching
+<sebastian@marsching.com>
+Please see LICENSE for
+additional information

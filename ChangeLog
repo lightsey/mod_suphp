@@ -1,3 +1,13 @@
+* Version 0.6.0 (27 February 2005)
+- Ported suPHP to C++
+- Ported build system to automake
+- Added runtime configuration support
+- Made writeable by group/others check optional
+- Rewrote Apache 1.3.x module completely, thus now supporting all
+  setid-modes with Apache 1.3 and Apache 2.0
+- Added support for multiple interpreters
+- Added support for runtime-configurable loglevel
+
 * Version 0.5.2 (13 July 2004)
 - Added support for UIDs/GIDs not listed in system configuration when using
   "force" or "paranoid" mode

@@ -1,0 +1,121 @@
+===========================
+== suPHP                 ==
+===========================
+
+Configuration
+-------------
+
+1. General notes
+
+The suPHP configuration file resides in $sysconfdir/suphp.conf (which will
+resolve e.g. to /etc/suphp.conf).
+
+It has the usual "INI-file" syntax.
+
+Section names are encapsulated in square brackets (e.g. [global]).
+Configuration options are key value pairs, separated by a "=" sign (e.g.
+umask=0077).
+
+Comment lines start with a ";".
+
+You can find a sample configuration in suphp.conf-example
+
+
+2. Global options
+
+This options have to be specified in the [global] section.
+All this options are facultative.
+
+logfile:
+  Specifies path to logfile. If not specified, the compile-time value is
+  used.
+
+loglevel:
+  One of "info", "warn", "error", "none".
+  Specifies messages of which classification should be logged.
+  Defaults to "info".
+
+webserver_user:
+  Username of UID webserver is running as. If not specified, the
+  compile-time value is used.
+
+docroot:
+  Path all scripts have to reside in. This is an additional security check,
+  especially when check_vhost_docroot is disabled. Defaults to / thus
+  allowing scripts in any location being run.
+
+allow_file_group_writeable:
+  Allow files to be group writeable. Is disabled by default.
+
+allow_directory_group_writeable:
+  Allow directories scripts are residing in to be group writeable.
+  Is disabled by default.
+
+allow_file_others_writeable:
+  Allow files to be writeable by world. Is disabled by default:
+  WARNING: Enabling this option is very dangerous and causes major
+  security issues, especially the danger of arbitrary code execution!
+
+allow_directoy_others_writeable:
+  Allow directories scripts are residing in to be writeable by world.
+  Is disabled by default:
+  WARNING: Enabling this option is dangerous!
+
+check_vhost_docroot:
+  Checks wheter the script is within DOCUMENT_ROOT specified by the 
+  webserver. This option is intended to avoid symbol links outside of the
+  webpage directory. You may want to disable it, when you are using
+  mod_vhost_alias or the Alias-directive.
+  This option is disabled by default, if at compile-time the
+  "--disable-check-docroot" option has been specified, otherwise it is
+  enabled by default.
+
+errors_to_browser:
+  Enable this option to sent information about minor problems during script
+  invocation to the browser. This option is disabled by default.
+
+env_path:
+  Content of the "PATH" environment variable. Set this to a secure value.
+  The default value is "/bin:/usr/bin".
+
+umask:
+  umask to set before script execution.
+  Has to be specified in octal notation (e.g. 0077).
+
+min_uid:
+  Minimum UID allowed to execute scripts.
+  Defaults to compile-time value.
+
+min_gid:
+  Minimum GID allowed to execute scripts.
+  Defaults to compile-time value.
+
+
+3. Handlers
+
+In the [handlers] section you specify a mapping between mime-types and
+interpreters to be used.
+
+Example:
+x-httpd-php=php:/usr/bin/php
+
+The "key" is the mime-type. The "value" consists of to parts seperated by a
+colon.
+
+The first part is the "mode". The second part is the path to the
+interpreter.
+
+At the moment two modes are supported:
+
+"php"-mode: Use this mode for PHP scripts. Specify the PHP-interpreter you
+  want to use.
+
+"execute"-mode: Must be specified as "execute:!self". Does not take any
+  interpreter as the script itself is executed. Use this option for
+  CGI-scripts.
+
+===================================
+(c)2002-2005 by Sebastian Marsching
+<sebastian@marsching.com>
+Please see LICENSE for
+additional information
