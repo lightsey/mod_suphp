@@ -1,12 +1,33 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT([suphp], [0.5.2], [sebastian.marsching@suphp.org])
-AC_CONFIG_SRCDIR([src/suphp.c])
-AC_CONFIG_AUX_DIR([config])
-AC_CONFIG_HEADER([src/config.h])
 
-# Checks for programs.
-AC_PROG_CC
+# Initialize
+AC_INIT([suPHP], [0.6.0-pre1], [sebastian.marsching@suphp.org], [suphp])
+
+# Auxiliary tools
+AC_CONFIG_AUX_DIR([config])
+
+AM_INIT_AUTOMAKE([suPHP], [0.6.0-pre1])
+# Check for right directory
+AC_CONFIG_SRCDIR([src/Application.cpp])
+# Config headers for automake
+AM_CONFIG_HEADER([src/config.h])
+
+# Build time sanity check
+AM_SANITY_CHECK
+
+# Look for install program
 AC_PROG_INSTALL
+
+# Look for compiler
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_LIBTOOL
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([fcntl.h stdlib.h string.h unistd.h])
+
+# Determine Apache version and find apxs
 
 AC_MSG_CHECKING([for dynamic Apache module support (via APXS)])
 AC_ARG_WITH(apxs, 
@@ -50,6 +71,18 @@ if test -n "$APXS"; then
     fi
     AC_SUBST(APACHE_VERSION_1_3)
     AC_SUBST(APACHE_VERSION_2)
+    
+    APXS_INCLUDEDIR=`$APXS -q INCLUDEDIR`
+    APXS_LIBEXECDIR=`$APXS -q LIBEXECDIR`
+    if test x"{$APACHE_VERSION_2}" = xtrue ; then \
+      APXS_EXTRA_CFLAGS=`$APXS -q EXTRA_CFLAGS`
+    fi
+    if test x"${APACHE_VERSION_1_3}" = xtrue; then \
+      APXS_EXTRA_CFLAGS=`$APXS -q CFLAGS`
+    fi
+    AC_SUBST([APXS_INCLUDEDIR])
+    AC_SUBST([APXS_LIBEXECDIR])
+    AC_SUBST([APXS_EXTRA_CFLAGS])
 
     AC_MSG_RESULT(found at $APXS (version $APACHE_VERSION))
 else
@@ -59,20 +92,23 @@ else
     AC_MSG_RESULT(no)
 fi
 
+
+# Get uid/gid mode
+
 AC_MSG_CHECKING([for set-UID/set-GID mode])
 AC_ARG_WITH(setid-mode, 
             AC_HELP_STRING([--with-setid-mode=MODE], 
-                           [Mode to use for setting UID/GID.  MODE can be on of "owner", "config" or "paranoid"; defaults to "owner".]),
+                           [Mode to use for setting UID/GID.  MODE can be on of "owner", "config" or "paranoid"; defaults to "paranoid".]),
             [
             if test "$withval" = "yes"; then
-              SETID_MODE="owner"
+              SETID_MODE="paranoid"
             else
               SETID_MODE="$withval"
             fi
             ])
 
 if test -z "$SETID_MODE" ; then
-  SETID_MODE="owner"
+  SETID_MODE="paranoid"
 fi
 
 if test -n "$SETID_MODE"; then
@@ -102,6 +138,9 @@ if test -n "$SETID_MODE"; then
     AC_MSG_RESULT([ok - using $SETID_MODE])
 fi
 
+
+# Checkpath (docroot) option
+
 checkpath=yes
 AC_ARG_ENABLE([checkpath], 
               AC_HELP_STRING([--enable-checkpath],
@@ -113,29 +152,8 @@ AC_ARG_ENABLE([checkpath],
 	      fi
 	      ])
 
-checkuid=yes
-AC_ARG_ENABLE([checkuid],
-              AC_HELP_STRING([--enable-checkuid],
-                             [Do not accept UIDs that are not listed in /etc/passwd (default is ENABLED)]),
-              [
-              if test "$enableval" = "no"; then
-                checkuid=no
-                AC_DEFINE(OPT_NO_PASSWD, 1, 
-                          [Define if you want to proceed even if UID of the script is not listed in /etc/passwd])
-              fi
-              ])
 
-checkgid=yes
-AC_ARG_ENABLE([checkgid],
-              AC_HELP_STRING([--enable-checkgid],
-                             [Do not accept GIDs that are not listed in /etc/group (default is ENABLED)]),
-              [
-              if test "$enableval" = "no"; then
-                checkgid=no
-                AC_DEFINE(OPT_NO_GROUP, 1, 
-                          [Define if you want to proceed even if GID of the script is not listed in /etc/group])
-              fi
-              ])
+# Minimum UID
 
 AC_ARG_WITH([min-uid], 
             AC_HELP_STRING([--with-min-uid=UID],
@@ -152,6 +170,8 @@ AC_ARG_WITH([min-uid],
 	                               allowed to run scripts])
             ])
 
+# Minimum GID
+
 AC_ARG_WITH([min-gid],
             AC_HELP_STRING([--with-min-gid=GID],
                            [Minimum GID, which is allowed to run scripts
@@ -167,6 +187,9 @@ AC_ARG_WITH([min-gid],
                                        allowed to run scripts])
             ])
 
+
+# Webserver user
+
 AC_ARG_WITH([apache-user],
             AC_HELP_STRING([--with-apache-user=USERNAME],
                            [Name of the user Apache is running as
@@ -180,17 +203,7 @@ AC_ARG_WITH([apache-user],
              AC_DEFINE_UNQUOTED(OPT_APACHE_USER, "wwwrun", [Defines the username of the Apache user])
             ])
 
-AC_ARG_WITH([php],
-            AC_HELP_STRING([--with-php=FILE],
-                           [Path to PHP interpreter (default is "/usr/bin/php"]),
-            [ 
-             if test "$withval" -a ! "$withval" = "yes" ; then 
-               AC_DEFINE_UNQUOTED(OPT_PATH_TO_PHP, "$withval", [Defines path to PHP interpreter])
-             fi
-            ],
-            [
-             AC_DEFINE_UNQUOTED(OPT_PATH_TO_PHP, "/usr/bin/php", [Defines path to PHP interpreter])
-            ])
+# Path to logfile
 
 AC_ARG_WITH([logfile],
             AC_HELP_STRING([--with-logfile=FILE],
@@ -206,36 +219,15 @@ path to logfile])
             ])
 
 
-# Checks for libraries.
+# Conditional building of Apache module
+AM_CONDITIONAL([COND_AP13], [test x"$APACHE_VERSION_1_3" = xtrue])
+AM_CONDITIONAL([COND_AP20], [test x"$APACHE_VERSION_2" = xtrue])
 
-# Checks for header files.
-AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h stdlib.h string.h unistd.h])
-
-# Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
-AC_TYPE_UID_T
-AC_STRUCT_TM
-
-# Checks for library functions.
-AC_FUNC_LSTAT
-AC_FUNC_MALLOC
-AC_FUNC_STAT
-AC_FUNC_STRFTIME
-AC_CHECK_FUNCS([setenv strcasecmp strdup strrchr])
+# Conditionally include UserGroup support
+AM_CONDITIONAL([COND_APUSERGROUP], [test \( x"$SETID_MODE" = xparanoid \) -o \( x"$SETID_MODE" = xforce \) ])
 
 AC_CONFIG_FILES([Makefile src/Makefile src/apache/Makefile src/apache2/Makefile])
 AC_OUTPUT
-
-if test -n "$OPT_APACHEMOD_USERGROUP_DEF" -a "$APACHE_VERSION_1_3" = "true"; then
-  AC_MSG_WARN([
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!*** The suPHP module for Apache 1.3 only works with     ***!!
-!!*** set-ID mode "owner", other modes are only supported ***!!
-!!*** by the Apache 2.x module                            ***!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  ])
-fi
 
 if test "$APXS" = "/notfound/"; then
   AC_MSG_WARN([
