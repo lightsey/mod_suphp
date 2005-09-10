@@ -37,8 +37,11 @@ int suPHP::CommandLine::count() const {
 
 std::string suPHP::CommandLine::getArgument(int pos) const
     throw (OutOfRangeException) {
+    if (pos >= this->arguments.size() || pos < 0) {
+	throw OutOfRangeException("Index out of range", __FILE__, __LINE__);
+    }
     try {
-	return this->arguments.at(pos);
+	return this->arguments[pos];
     } catch (std::out_of_range& e) {
 	throw OutOfRangeException("Index out of range", __FILE__, __LINE__);
     }
@@ -50,7 +53,7 @@ void suPHP::CommandLine::setArgument(int pos, std::string arg) {
 	    this->arguments.push_back(std::string(""));
 	}
     }
-    this->arguments.at(pos) = arg;
+    this->arguments[pos] = arg;
 }
 
 void suPHP::CommandLine::putArgument(std::string arg) {
@@ -59,8 +62,11 @@ void suPHP::CommandLine::putArgument(std::string arg) {
 
 std::string& suPHP::CommandLine::operator[](int index) 
     throw (OutOfRangeException) {
+    if (index >= this->arguments.size() || index < 0) {
+	throw OutOfRangeException("Index out of range", __FILE__, __LINE__);
+    }
     try {
-	return this->arguments.at(index);
+	return this->arguments[index];
     } catch (std::out_of_range& ex) {
 	throw OutOfRangeException("Index out of range", __FILE__, __LINE__);
     }

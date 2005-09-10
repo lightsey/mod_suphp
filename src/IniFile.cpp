@@ -20,7 +20,6 @@
 
 #include <string>
 #include <fstream>
-#include <streambuf>
 #include <sstream>
 
 #include "KeyNotFoundException.hpp"
