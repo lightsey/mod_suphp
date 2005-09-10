@@ -237,7 +237,7 @@ std::string suPHP::API_Linux::File_getRealPath(const File& file) const
     std::string resolvedpath = "";
     bool failed = true;
 
-    if (currentpath.at(0) != '/') {
+    if ((currentpath.size() == 0) || (currentpath.at(0) != '/')) {
 	currentpath = this->getCwd() + std::string("/") + currentpath;
     }
     
