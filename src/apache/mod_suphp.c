@@ -68,7 +68,7 @@ static void *suphp_create_dir_config(pool *p, char *dir) {
     cfg->engine = SUPHP_ENGINE_UNDEFINED;
     cfg->cmode = SUPHP_CONFIG_MODE_DIRECTORY;
     
-#ifdef SUPHP_USE_USERGRPUP
+#ifdef SUPHP_USE_USERGROUP
     cfg->target_user = NULL;
     cfg->target_group = NULL;
 #endif
@@ -127,7 +127,7 @@ static void *suphp_create_server_config(pool *p, server_rec *s) {
     cfg->engine = SUPHP_ENGINE_UNDEFINED;
     cfg->cmode = SUPHP_CONFIG_MODE_SERVER;
     
-#ifdef SUPHP_USE_USERGRPUP
+#ifdef SUPHP_USE_USERGROUP
     cfg->target_user = NULL;
     cfg->target_group = NULL;
 #endif
@@ -413,7 +413,7 @@ static int suphp_handler(request_rec *r) {
     ap_add_cgi_vars(r);
 
     ap_table_unset(r->subprocess_env, "SUPHP_PHP_CONFIG");
-    ap_table_unset(r->subprocess_env, "SUHP_AUTH_USER");
+    ap_table_unset(r->subprocess_env, "SUPHP_AUTH_USER");
     ap_table_unset(r->subprocess_env, "SUPHP_AUTH_PW");
     
 #ifdef SUPHP_USE_USERGROUP
