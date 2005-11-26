@@ -27,6 +27,10 @@ AC_PROG_LIBTOOL
 AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h stdlib.h string.h unistd.h])
 
+# Find apr-config
+
+APR_FIND_APR([], [], [1])
+
 # Determine Apache version and find apxs
 
 AC_MSG_CHECKING([for dynamic Apache module support (via APXS)])
@@ -74,7 +78,7 @@ if test -n "$APXS"; then
     
     APXS_INCLUDEDIR=`$APXS -q INCLUDEDIR`
     APXS_LIBEXECDIR=`$APXS -q LIBEXECDIR`
-    if test x"{$APACHE_VERSION_2}" = xtrue ; then \
+    if test x"${APACHE_VERSION_2}" = xtrue ; then \
       APXS_EXTRA_CFLAGS=`$APXS -q EXTRA_CFLAGS`
     fi
     if test x"${APACHE_VERSION_1_3}" = xtrue; then \
@@ -92,6 +96,15 @@ else
     AC_MSG_RESULT(no)
 fi
 
+if test x"${APACHE_VERSION_2}" = xtrue ; then \
+dnl For Apache 2.x APR is needed
+    if test x"${apr_found}" = xyes ; then \
+        APR_INCLUDEDIR=`${apr_config} --includedir`
+	AC_SUBST([APR_INCLUDEDIR])
+    else
+	AC_MSG_ERROR([APR is needed to build mod_suphp for Apache 2.x but was not found])
+    fi
+fi
 
 # Get uid/gid mode
 

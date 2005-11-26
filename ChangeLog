@@ -6,6 +6,8 @@
 - Fixed potential buffer overflow in function suphp_bucket_read() in
   src/apache2/mod_suphp.c
 - Fix problems with scripts sending "Last-Modified" headers
+- Extended autoconf script to look for an installation of APR
+  and to use its includedir when building mod_suphp for Apache 2
 	
 * Version 0.6.0 (27 May 2005)
 ++ The development of this version was sponsored by Techno-vi - Wanix. ++
