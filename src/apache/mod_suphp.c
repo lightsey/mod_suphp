@@ -511,7 +511,10 @@ static int suphp_handler(request_rec *r) {
 	char hbuffer[MAX_STRING_LEN];
 	char buffer[HUGE_STRING_LEN];
 	
-	if (rv = ap_scan_script_header_err_buff(r, script_out, hbuffer)) {
+	rv = ap_scan_script_header_err_buff(r, script_out, hbuffer);
+	if (rv == HTTP_NOT_MODIFIED) {
+	    return rv;
+	} else if (rv) {
 	    return HTTP_INTERNAL_SERVER_ERROR;
 	}
 	

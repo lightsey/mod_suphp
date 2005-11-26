@@ -43,7 +43,7 @@ module AP_MODULE_DECLARE_DATA suphp_module;
 
 static int suphp_bucket_read(apr_bucket *b, char *buf, int len)
 {
-    const char *dst_end = buf + len;
+    const char *dst_end = buf + len - 1;
     char * dst = buf;
     apr_status_t rv;
     const char *bucket_data;
@@ -612,7 +612,12 @@ static int suphp_handler(request_rec *r)
         int ret;
         const char *location;
         
-        if ((ret = ap_scan_script_header_err_brigade(r, bb, strbuf)) != APR_SUCCESS)
+	ret = ap_scan_script_header_err_brigade(r, bb, strbuf);
+	if (ret == HTTP_NOT_MODIFIED)
+	{
+	    return ret;
+	}
+        else if (ret != APR_SUCCESS)
         {
             suphp_log_script_err(r, proc->err);
             
