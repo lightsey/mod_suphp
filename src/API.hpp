@@ -180,6 +180,12 @@ namespace suPHP {
 	 * Sets umask
 	 */
 	virtual void setUmask(int umask) const throw (SystemException) =0;
+
+	/**
+         * Changes root directory for the current process
+	 */
+	virtual void chroot(const std::string& dir) const
+	    throw (SystemException) =0;
     };
 };
 

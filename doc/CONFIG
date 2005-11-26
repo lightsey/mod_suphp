@@ -44,6 +44,11 @@ docroot:
   especially when check_vhost_docroot is disabled. Defaults to / thus
   allowing scripts in any location being run.
 
+chroot:
+  Path to change the process's root directory to before executing the
+  script. Has to be specified without a trailing slash.
+  If not specified, no chroot() call is performed.
+
 allow_file_group_writeable:
   Allow files to be group writeable. Is disabled by default.
 

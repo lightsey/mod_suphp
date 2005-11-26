@@ -452,3 +452,11 @@ void suPHP::API_Linux::setCwd(const std::string& dir) const
 void suPHP::API_Linux::setUmask(int mode) const throw (SystemException) {
     ::umask(mode);
 }
+
+void suPHP::API_Linux::chroot(const std::string& dir) const
+    throw (SystemException) {
+    if (::chroot(dir.c_str())) {
+	throw SystemException(std::string("chroot() failed: ")
+			      + ::strerror(errno), __FILE__, __LINE__);
+    }
+}

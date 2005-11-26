@@ -89,6 +89,12 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
 
 	this->checkScriptFile(scriptFilename, config, env);
 
+	// Root privileges are needed for chroot()
+	// so do this before changing process permissions
+	if (config.getChrootPath().length() > 0) {
+	    api.chroot(config.getChrootPath());
+	}
+
 	this->changeProcessPermissions(scriptFilename, config, env);
 
 	interpreter = this->getInterpreter(env, config);

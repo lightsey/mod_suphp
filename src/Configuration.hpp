@@ -56,6 +56,7 @@ namespace suPHP {
 	int min_uid;
 	int min_gid;
 	int umask;
+	std::string chroot_path;
 
 	/**
 	 * Converts string to bool
@@ -159,6 +160,11 @@ namespace suPHP {
 	 * Returns umask to set
 	 */
 	int getUmask() const;
+
+	/**
+	 * Return chroot path
+	 */
+	std::string getChrootPath() const;
     };
 };
 

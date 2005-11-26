@@ -111,6 +111,7 @@ suPHP::Configuration::Configuration() {
     this->min_gid = 1;
 #endif
     this->umask = 0077;
+    this->chroot_path = "";
 }
 
 void suPHP::Configuration::readFromFile(File& file) 
@@ -154,6 +155,8 @@ void suPHP::Configuration::readFromFile(File& file)
 		this->min_gid = Util::strToInt(value);
 	    else if (key == "umask")
 		this->umask = Util::octalStrToInt(value);
+	    else if (key == "chroot")
+		this->chroot_path = value;
 	    else 
 		throw ParsingException("Unknown option \"" + key + 
 				       "\" in section [global]", 
@@ -242,4 +245,8 @@ int suPHP::Configuration::getMinGid() const {
 
 int suPHP::Configuration::getUmask() const {
     return this->umask;
+}
+
+std::string suPHP::Configuration::getChrootPath() const {
+    return this->chroot_path;
 }
