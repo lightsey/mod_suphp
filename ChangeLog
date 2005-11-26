@@ -1,4 +1,4 @@
-* Version ?.?.?
+* Version 0.6.1 (26 November 2005)
 - Changed usage of STL to gain better compatibility with old GCC versions
   (credits to Jeremy Chadwick for finding the relevant code)
 - Fixed typos in mod_suphp.c (Apache 1.3)
