@@ -103,6 +103,12 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
 	// Prepare environment for new process
 	newEnv = this->prepareEnvironment(env, config, targetMode);
 	
+	// Set PATH_TRANSLATED to SCRIPT_FILENAME, otherwise
+	// the PHP interpreter will not be able to find the script
+	if (targetMode == TARGETMODE_PHP && newEnv.hasVar("PATH_TRANSLATED")) {
+	    newEnv.setVar("PATH_TRANSLATED", scriptFilename);
+	}
+	
 	// Log attempt to execute script
 	logger.logInfo("Executing \"" + scriptFilename + "\" as UID "
 		       + Util::intToStr(api.getEffectiveProcessUser().getUid())

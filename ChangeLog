@@ -1,3 +1,6 @@
+* Version 0.6.2 (???)
+- Fixed problem with PATH_INFO and PHP scripts
+
 * Version 0.6.1 (26 November 2005)
 - Changed usage of STL to gain better compatibility with old GCC versions
   (credits to Jeremy Chadwick for finding the relevant code)
