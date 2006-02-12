@@ -23,11 +23,6 @@
 For help on installation see INSTALL in the "doc" directory.
 
 
-Please note, that files in the "src/apache"-directory are not covered by
-the GPL but by the Apache License. See file "README" in the "doc/apache" 
-directory for details.
-
-
 ===================================
 (c)2002-2005 by Sebastian Marsching
 <sebastian@marsching.com>
