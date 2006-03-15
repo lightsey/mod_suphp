@@ -93,7 +93,7 @@ suPHP::Configuration::Configuration() {
     this->allow_file_others_writeable = false;
     this->allow_directory_others_writeable = false;
 #ifdef OPT_DISABLE_CHECKPATH
-    this->check_vhos_docroot = false;
+    this->check_vhost_docroot = false;
 #else
     this->check_vhost_docroot = true;
 #endif
