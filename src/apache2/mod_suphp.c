@@ -33,6 +33,8 @@
 #include "util_script.h"
 #include "util_filter.h"
 
+/* needed for get_suexec_identity hook */
+#include "unixd.h"
 
 module AP_MODULE_DECLARE_DATA suphp_module;
 
@@ -349,6 +351,11 @@ static int suphp_handler(request_rec *r)
     int eos_reached = 0;
     char *auth_user = NULL;
     char *auth_pass = NULL;
+
+#ifdef SUPHP_USE_USERGROUP
+    char *ud_user = NULL;
+    char *ud_group = NULL;
+#endif
     
     apr_bucket_brigade *bb;
     apr_bucket *b;
@@ -406,9 +413,17 @@ static int suphp_handler(request_rec *r)
     if ((sconf->target_user == NULL || sconf->target_group == NULL)
         && (dconf->target_user == NULL || dconf->target_group == NULL))
     {
-        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, 
-                      "No user or group set - set suPHP_UserGroup");
-        return HTTP_INTERNAL_SERVER_ERROR;
+	/* Check for userdir request */
+	ap_unix_identity_t *userdir_id = NULL;
+	userdir_id = ap_run_get_suexec_identity(r);
+	if (userdir_id != NULL && userdir_id->userdir) {
+	    ud_user = apr_psprintf(r->pool, "#%ld", (long) userdir_id->uid);
+	    ud_group = apr_psprintf(r->pool, "#%ld", (long) userdir_id->gid);
+	} else {
+	    ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, 
+			  "No user or group set - set suPHP_UserGroup");
+	    return HTTP_INTERNAL_SERVER_ERROR;
+	}
     }
 #endif
         
@@ -473,10 +488,15 @@ static int suphp_handler(request_rec *r)
         apr_table_setn(r->subprocess_env, "SUPHP_USER",
                        apr_pstrdup(r->pool, dconf->target_user));
     }
-    else
+    else if (sconf->target_user)
     {
         apr_table_setn(r->subprocess_env, "SUPHP_USER",
                        apr_pstrdup(r->pool, sconf->target_user));
+    }
+    else
+    {
+	apr_table_setn(r->subprocess_env, "SUPHP_USER",
+		       apr_pstrdup(r->pool, ud_user));
     }
     
     if (dconf->target_group)
@@ -484,10 +504,15 @@ static int suphp_handler(request_rec *r)
         apr_table_setn(r->subprocess_env, "SUPHP_GROUP",
                        apr_pstrdup(r->pool, dconf->target_group));
     }
-    else
+    else if (sconf->target_group)
     {
         apr_table_setn(r->subprocess_env, "SUPHP_GROUP",
                        apr_pstrdup(r->pool, sconf->target_group));
+    }
+    else
+    {
+	apr_table_setn(r->subprocess_env, "SUPHP_GROUP",
+		       apr_pstrdup(r->pool, ud_group));
     }
 #endif
     

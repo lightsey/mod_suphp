@@ -347,6 +347,11 @@ int suphp_child(void *rp, child_info *cinfo) {
 static int suphp_handler(request_rec *r) {
     suphp_conf *sconf;
     suphp_conf *dconf;
+
+#ifdef SUPHP_USE_USERGROUP
+    char *ud_user = NULL;
+    char *ud_group = NULL;
+#endif
     
     struct stat finfo;
     
@@ -400,9 +405,51 @@ static int suphp_handler(request_rec *r) {
 #ifdef SUPHP_USE_USERGROUP
     if ((sconf->target_user == NULL || sconf->target_group == NULL)
 	&& (dconf->target_user == NULL || dconf->target_group == NULL)) {
-	ap_log_rerror(APLOG_MARK, APLOG_ERR, r, 
-		      "No user or group set - set suPHP_UserGroup");
-	return HTTP_INTERNAL_SERVER_ERROR;
+	
+	/* Identify mod_userdir request
+	   As Apache 1.3 does not yet provide a clean way to see
+	   whether a request was handled by mod_userdir, we assume
+           this is true for any request beginning with ~ */
+
+	int ud_success = 0; /* set to 1 on success */
+
+	if (!strncmp("/~", r->uri, 2)) {
+	    char *username = ap_pstrdup(r->pool, r->uri + 2);
+	    char *pos = strchr(username, '/');
+	    if (pos) {
+		*pos = 0;
+		if (strlen(username)) {
+		    struct passwd *pw;
+		    struct group *gr;
+		    gid_t gid;
+		    char *grpname;
+		    if ((pw = getpwnam(username)) != NULL) {
+			gid = pw->pw_gid;
+			
+			if ((gr = getgrgid(gid)) != NULL) {
+			    grpname = gr->gr_name;
+			} else {
+			    if ((grpname = ap_palloc(r->pool, 16)) == NULL) {
+				return HTTP_INTERNAL_SERVER_ERROR;
+			    }
+			    ap_snprintf(grpname, 16, "#%ld", (long) gid);
+			}
+			
+			ud_user = username;
+			ud_group = grpname;
+			ud_success = 1;
+		    }
+		}
+	    }	    
+	}
+	
+	if (!ud_success) {
+	    /* This is not a userdir request and user/group are not
+	       set, so log the error and return */
+	    ap_log_rerror(APLOG_MARK, APLOG_ERR, r, 
+			  "No user or group set - set suPHP_UserGroup");
+	    return HTTP_INTERNAL_SERVER_ERROR;
+	}
     }
 #endif /* SUPHP_USE_USERGROUP */
 
@@ -453,14 +500,18 @@ static int suphp_handler(request_rec *r) {
 #ifdef SUPHP_USE_USERGROUP
     if (dconf->target_user) {
 	ap_table_set(r->subprocess_env, "SUPHP_USER", dconf->target_user);
-    } else {
+    } else if (sconf->target_user) {
 	ap_table_set(r->subprocess_env, "SUPHP_USER", sconf->target_user);
+    } else {
+	ap_table_set(r->subprocess_env, "SUPHP_USER", ud_user);
     }
 
     if (dconf->target_group) {
 	ap_table_set(r->subprocess_env, "SUPHP_GROUP", dconf->target_group);
-    } else {
+    } else if (sconf->target_group) {
 	ap_table_set(r->subprocess_env, "SUPHP_GROUP", sconf->target_group);
+    } else {
+	ap_table_set(r->subprocess_env, "SUPHP_GROUP", ud_group);
     }
 #endif /* SUPHP_USE_USERGROUP */
     
