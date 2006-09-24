@@ -1,4 +1,6 @@
 * Version 0.6.2 (???)
+- Modified SmartPtr implementation (hopefully) fixing
+  double free problem
 - Fixed problem that caused the process to block
   when more than 4096 were written to stderr
 - Implemented userdir support

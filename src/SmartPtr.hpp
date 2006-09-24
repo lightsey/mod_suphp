@@ -37,7 +37,7 @@ namespace suPHP {
     template<class T>
     class SmartPtr {
     private:
-	static std::map<T*, int> counter;
+	static std::map<T*, int> *counter;
 	T* ptr;
 	
 	void increment(T* key_ptr);
@@ -106,23 +106,32 @@ namespace suPHP {
 	bool operator==(const SmartPtr<T>& ref);
 	
     };
-
+    
     template<class T>
-    std::map<T*, int> suPHP::SmartPtr<T>::counter;
+    std::map<T*, int> *suPHP::SmartPtr<T>::counter;
     
     template<class T>
     suPHP::SmartPtr<T>::SmartPtr() {
+	if (SmartPtr<T>::counter == NULL) {
+	    SmartPtr<T>::counter = new std::map<T*, int>;
+	}
 	this->ptr = NULL;
     }
     
     template<class T>
     suPHP::SmartPtr<T>::SmartPtr(T* obj_ptr) {
+	if (SmartPtr<T>::counter == NULL) {
+	    SmartPtr<T>::counter = new std::map<T*, int>;
+	}
 	this->ptr = obj_ptr;
 	this->increment(obj_ptr);
     }
     
     template<class T>
     suPHP::SmartPtr<T>::SmartPtr(const SmartPtr<T>& ref) {
+	if (SmartPtr<T>::counter == NULL) {
+	    SmartPtr<T>::counter = new std::map<T*, int>;
+	}
 	this->ptr = ref.ptr;
 	if (ref.ptr != NULL)
 	    this->increment(ref.ptr);
@@ -132,6 +141,10 @@ namespace suPHP {
     suPHP::SmartPtr<T>::~SmartPtr() {
 	if (this->ptr != NULL)
 	    this->decrement(this->ptr);
+	if (SmartPtr<T>::counter != NULL && SmartPtr<T>::counter->size() == 0) {
+	    delete SmartPtr<T>::counter;
+	    SmartPtr<T>::counter = NULL;
+	}
     }
     
     template<class T>
@@ -168,14 +181,14 @@ namespace suPHP {
 	if (obj_ptr == NULL)
 	    return NULL;
 
-	int& c = SmartPtr<T>::counter.find(obj_ptr)->second;
+	int& c = SmartPtr<T>::counter->find(obj_ptr)->second;
 	
 	if (c > 1) {
 	    throw PointerException(
 		"Cannot release object hold by more than one SmartPointer.", 
 		__FILE__, __LINE__);
 	} else {
-	    SmartPtr<T>::counter.erase(obj_ptr);
+	    SmartPtr<T>::counter->erase(obj_ptr);
 	}
 	this->ptr = NULL;
 	return obj_ptr;
@@ -195,14 +208,14 @@ namespace suPHP {
 	if (key_ptr == NULL)
 	    return;
 
-	if (SmartPtr<T>::counter.find(key_ptr) 
-	    != SmartPtr<T>::counter.end()) {
-	    (SmartPtr<T>::counter.find(key_ptr)->second)++;
+	if (SmartPtr<T>::counter->find(key_ptr) 
+	    != SmartPtr<T>::counter->end()) {
+	    (SmartPtr<T>::counter->find(key_ptr)->second)++;
 	} else {
 	    std::pair<T*, int> p;
 	    p.first = key_ptr;
 	    p.second = 1;
-	    SmartPtr<T>::counter.insert(p);
+	    SmartPtr<T>::counter->insert(p);
 	}
     }
 
@@ -211,11 +224,11 @@ namespace suPHP {
 	if (key_ptr == NULL)
 	    return;
 
-	int& c = SmartPtr<T>::counter.find(key_ptr)->second;
+	int& c = SmartPtr<T>::counter->find(key_ptr)->second;
 	c--;
 	if (c < 1) {
 	    delete key_ptr;
-	    SmartPtr<T>::counter.erase(key_ptr);
+	    SmartPtr<T>::counter->erase(key_ptr);
 	}
     }
     
