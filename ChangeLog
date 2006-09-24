@@ -1,4 +1,6 @@
 * Version 0.6.2 (???)
+- Fixed problem that caused the process to block
+  when more than 4096 were written to stderr
 - Implemented userdir support
 - Fixed problem with PATH_INFO and PHP scripts
 

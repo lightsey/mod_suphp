@@ -22,6 +22,7 @@
 #include "apr_strings.h"
 #include "apr_thread_proc.h"
 #include "apr_buckets.h"
+#include "apr_poll.h"
 
 #define CORE_PRIVATE
 
@@ -43,6 +44,7 @@ module AP_MODULE_DECLARE_DATA suphp_module;
   Auxiliary functions
  *********************/
 
+/*
 static int suphp_bucket_read(apr_bucket *b, char *buf, int len)
 {
     const char *dst_end = buf + len - 1;
@@ -74,15 +76,16 @@ static int suphp_bucket_read(apr_bucket *b, char *buf, int len)
     *dst = 0;
     return count;
 }
+*/
 
-
-static void suphp_log_script_err(request_rec *r, apr_file_t *script_err)
+static apr_status_t suphp_log_script_err(request_rec *r, apr_file_t *script_err)
 {
     char argsbuffer[HUGE_STRING_LEN];
     char *newline;
-
-    while (apr_file_gets(argsbuffer, HUGE_STRING_LEN,
-                         script_err) == APR_SUCCESS) {
+    apr_status_t rv;
+    
+    while ((rv = apr_file_gets(argsbuffer, HUGE_STRING_LEN,
+                         script_err)) == APR_SUCCESS) {
         newline = strchr(argsbuffer, '\n');
         if (newline) {
             *newline = '\0';
@@ -90,6 +93,8 @@ static void suphp_log_script_err(request_rec *r, apr_file_t *script_err)
         ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
                       "%s", argsbuffer);
     }
+    
+    return rv;
 }
 
 
@@ -320,6 +325,179 @@ static const command_rec suphp_cmds[] =
     {NULL}
 };
 
+/*****************************************
+  Code for reading script's stdout/stderr
+  based on mod_cgi's code
+ *****************************************/
+
+#if APR_FILES_AS_SOCKETS
+
+static const apr_bucket_type_t bucket_type_suphp;
+
+struct suphp_bucket_data {
+    apr_pollset_t *pollset;
+    request_rec *r;
+};
+
+static apr_bucket *suphp_bucket_create(request_rec *r, apr_file_t *out, apr_file_t *err, apr_bucket_alloc_t *list)
+{
+    apr_bucket *b = apr_bucket_alloc(sizeof(*b), list);
+    apr_status_t rv;
+    apr_pollfd_t fd;
+    struct suphp_bucket_data *data = apr_palloc(r->pool, sizeof(*data));
+    
+    APR_BUCKET_INIT(b);
+    b->free = apr_bucket_free;
+    b->list = list;
+    b->type = &bucket_type_suphp;
+    b->length = (apr_size_t) (-1);
+    b->start = (-1);
+    
+    /* Create the pollset */
+    rv = apr_pollset_create(&data->pollset, 2, r->pool, 0);
+    AP_DEBUG_ASSERT(rv == APR_SUCCESS);
+    
+    fd.desc_type = APR_POLL_FILE;
+    fd.reqevents = APR_POLLIN;
+    fd.p = r->pool;
+    fd.desc.f = out; /* script's stdout */
+    fd.client_data = (void *) 1;
+    rv = apr_pollset_add(data->pollset, &fd);
+    AP_DEBUG_ASSERT(rv == APR_SUCCESS);
+    
+    fd.desc.f = err; /* script's stderr */
+    fd.client_data = (void *) 2;
+    rv = apr_pollset_add(data->pollset, &fd);
+    AP_DEBUG_ASSERT(rv == APR_SUCCESS);
+    
+    data->r = r;
+    b->data = data;
+    return b;
+}
+
+static apr_bucket *suphp_bucket_dup(struct suphp_bucket_data *data, apr_bucket_alloc_t *list)
+{
+    apr_bucket *b = apr_bucket_alloc(sizeof(*b), list);
+    APR_BUCKET_INIT(b);
+    b->free = apr_bucket_free;
+    b->list = list;
+    b->type = &bucket_type_suphp;
+    b->length = (apr_size_t) (-1);
+    b->start = (-1);
+    b->data = data;
+    return b;
+}
+
+/* This utility method is needed, because APR's implementation for the
+   pipe bucket cannot handle or special bucket type                    */
+static apr_status_t suphp_read_fd(apr_bucket *b, apr_file_t *fd, const char **str, apr_size_t *len)
+{
+    char *buf;
+    apr_status_t rv;
+    
+    *str = NULL;
+    *len = APR_BUCKET_BUFF_SIZE;
+    buf = apr_bucket_alloc(*len, b->list);
+    
+    rv = apr_file_read(fd, buf, len);
+    
+    if (*len > 0) {
+        /* Got data */
+        struct suphp_bucket_data *data = b->data;
+        apr_bucket_heap *h;
+        
+        /* Change the current bucket to refer to what we read
+           and append the pipe bucket after it                */
+        b = apr_bucket_heap_make(b, buf, *len, apr_bucket_free);
+        /* Here, b->data is the new heap bucket data */
+        h = b->data;
+        h->alloc_len = APR_BUCKET_BUFF_SIZE; /* note the real buffer size */
+        *str = buf;
+        APR_BUCKET_INSERT_AFTER(b, suphp_bucket_dup(data, b->list));
+    } else {
+        /* Got no data */
+        apr_bucket_free(buf);
+        b = apr_bucket_immortal_make(b, "", 0);
+        /* Here, b->data is the reference to the empty string */
+        *str = b->data;
+    }
+    return rv;
+}
+
+/* Poll on stdout and stderr to make sure the process does not block
+   because of a full system (stderr) buffer                          */
+static apr_status_t suphp_bucket_read(apr_bucket *b, const char **str, apr_size_t *len, apr_read_type_e block) {
+  struct suphp_bucket_data *data = b->data;
+  apr_interval_time_t timeout;
+  apr_status_t rv;
+  int gotdata = 0;
+  
+  timeout = (block == APR_NONBLOCK_READ) ? 0 : data->r->server->timeout;
+  
+  do {
+      const apr_pollfd_t *results;
+      apr_int32_t num;
+      
+      rv = apr_pollset_poll(data->pollset, timeout, &num, &results);
+      if (APR_STATUS_IS_TIMEUP(rv)) {
+          return (timeout == 0) ? APR_EAGAIN : rv;
+      } else if (APR_STATUS_IS_EINTR(rv)) {
+          continue;
+      } else if (rv != APR_SUCCESS) {
+          ap_log_rerror(APLOG_MARK, APLOG_ERR, rv, data->r, "Poll failed waiting for suPHP child process");
+          return rv;
+      }
+      
+      while (num > 0) {
+        if (results[0].client_data == (void *) 1) {
+            /* handle stdout */
+            rv = suphp_read_fd(b, results[0].desc.f, str, len);
+            if (APR_STATUS_IS_EOF(rv)) {
+              rv = APR_SUCCESS;
+            }
+            gotdata = 1;
+        } else {
+            /* handle stderr */
+            apr_status_t rv2 = suphp_log_script_err(data->r, results[0].desc.f);
+            if (APR_STATUS_IS_EOF(rv2)) {
+                apr_pollset_remove(data->pollset, &results[0]);
+            }
+        }
+        num--;
+        results++;
+      }
+  } while (!gotdata);
+  
+  return rv;
+}
+
+static const apr_bucket_type_t bucket_type_suphp = {
+    "SUPHP", 5, APR_BUCKET_DATA,
+    apr_bucket_destroy_noop,
+    suphp_bucket_read,
+    apr_bucket_setaside_notimpl,
+    apr_bucket_split_notimpl,
+    apr_bucket_copy_notimpl
+};
+
+#endif
+
+static void suphp_discard_output(apr_bucket_brigade *bb) {
+  apr_bucket *b;
+  const char *buf;
+  apr_size_t len;
+  apr_status_t rv;
+  APR_BRIGADE_FOREACH(b, bb) {
+      if (APR_BUCKET_IS_EOS(b)) {
+          break;
+      }
+      rv = apr_bucket_read(b, &buf, &len, APR_BLOCK_READ);
+      if (rv != APR_SUCCESS) {
+          break;
+      }
+  }
+}
+
 
 /******************
   Hooks / handlers
@@ -347,6 +525,7 @@ static int suphp_handler(request_rec *r)
 #else
     char strbuf[MAX_STRING_LEN];
 #endif
+    char *tmpbuf;
     int nph = 0;
     int eos_reached = 0;
     char *auth_user = NULL;
@@ -617,26 +796,33 @@ static int suphp_handler(request_rec *r)
     
     /* get output from script and check if non-parsed headers are used */
     
+#if APR_FILES_AS_SOCKETS
+    apr_file_pipe_timeout_set(proc->out, 0);
+    apr_file_pipe_timeout_set(proc->err, 0);
+    b = suphp_bucket_create(r, proc->out, proc->err, r->connection->bucket_alloc);
+#else
     b = apr_bucket_pipe_create(proc->out, r->connection->bucket_alloc);
+#endif
+
     APR_BRIGADE_INSERT_TAIL(bb, b);
     
+    b = apr_bucket_eos_create(r->connection->bucket_alloc);
+    APR_BRIGADE_INSERT_TAIL(bb, b);
+
     len = 8;
-    if ((suphp_bucket_read(b, strbuf, len) == len)
-        && !(strcmp(strbuf, "HTTP/1.0") && strcmp(strbuf, "HTTP/1.1")))
+    if ((apr_bucket_read(b, &tmpbuf, (apr_size_t *) (&len), APR_BLOCK_READ) == 8)
+        && !(strcmp(tmpbuf, "HTTP/1.0") && strcmp(tmpbuf, "HTTP/1.1")))
     {
         nph = 1;
     }
     
-    b = apr_bucket_eos_create(r->connection->bucket_alloc);
-    APR_BRIGADE_INSERT_TAIL(bb, b);
-    
-    if (proc->out && !nph)
+    if (!nph)
     {
-        /* normal cgi headers, so we have to create the real headers by hand */
+        /* normal cgi headers, so we have to create the real headers ourselves */
         
         int ret;
         const char *location;
-        
+    
 	ret = ap_scan_script_header_err_brigade(r, bb, strbuf);
 	if (ret == HTTP_NOT_MODIFIED)
 	{
@@ -644,6 +830,8 @@ static int suphp_handler(request_rec *r)
 	}
         else if (ret != APR_SUCCESS)
         {
+            suphp_discard_output(bb);
+            apr_brigade_destroy(bb);
             suphp_log_script_err(r, proc->err);
             
             /* ap_scan_script_header_err_brigade does logging itself,
@@ -657,15 +845,7 @@ static int suphp_handler(request_rec *r)
         {
             /* empty brigade (script output) and modify headers */
             
-            const char *buf;
-            apr_size_t blen;
-            APR_BRIGADE_FOREACH(b, bb)
-            {
-                if (APR_BUCKET_IS_EOS(b))
-                    break;
-                if (apr_bucket_read(b, &buf, &blen, APR_BLOCK_READ) != APR_SUCCESS)
-                    break;
-            }
+            suphp_discard_output(bb);
             apr_brigade_destroy(bb);
             suphp_log_script_err(r, proc->err);
             r->method = apr_pstrdup(r->pool, "GET");
@@ -678,16 +858,9 @@ static int suphp_handler(request_rec *r)
         else if (location && r->status == 200)
         {
             /* empty brigade (script output) */
-            const char *buf;
-            apr_size_t blen;
-            APR_BRIGADE_FOREACH(b, bb)
-            {
-                if (APR_BUCKET_IS_EOS(b))
-                    break;
-                if (apr_bucket_read(b, &buf, &blen, APR_BLOCK_READ) != APR_SUCCESS)
-                    break;
-            }
+            suphp_discard_output(bb);
             apr_brigade_destroy(bb);
+            suphp_log_script_err(r, proc->err);
             return HTTP_MOVED_TEMPORARILY;
         }
         
