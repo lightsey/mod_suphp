@@ -336,7 +336,7 @@ bool suPHP::API_Linux::File_hasPermissionBit(const File& file, FileMode perm)
 	break;
 
     case FILEMODE_GROUP_EXEC:
-	if ((temp.st_mode & S_IWGRP) == S_IWGRP)
+	if ((temp.st_mode & S_IXGRP) == S_IXGRP)
 	    return true;
 	break;
 
