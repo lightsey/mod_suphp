@@ -44,40 +44,6 @@ module AP_MODULE_DECLARE_DATA suphp_module;
   Auxiliary functions
  *********************/
 
-/*
-static int suphp_bucket_read(apr_bucket *b, char *buf, int len)
-{
-    const char *dst_end = buf + len - 1;
-    char * dst = buf;
-    apr_status_t rv;
-    const char *bucket_data;
-    apr_size_t bucket_data_len;
-    const char *src;
-    const char *src_end;
-    int count = 0;
-    
-    if (APR_BUCKET_IS_EOS(b))
-        return -1;
-       
-    rv = apr_bucket_read(b, &bucket_data, &bucket_data_len, APR_BLOCK_READ);
-    if (!APR_STATUS_IS_SUCCESS(rv) || (bucket_data_len == 0))
-    {
-        return 0;
-    }
-    src = bucket_data;
-    src_end = bucket_data + bucket_data_len;
-    while ((src < src_end) && (dst < dst_end))
-    {
-	*dst = *src;
-     dst++;
-     src++;
-     count++;
-    }
-    *dst = 0;
-    return count;
-}
-*/
-
 static apr_status_t suphp_log_script_err(request_rec *r, apr_file_t *script_err)
 {
     char argsbuffer[HUGE_STRING_LEN];
@@ -95,7 +61,7 @@ static apr_status_t suphp_log_script_err(request_rec *r, apr_file_t *script_err)
     }
     
     return rv;
-}
+[5~}
 
 
 /**************************
@@ -809,9 +775,8 @@ static int suphp_handler(request_rec *r)
     b = apr_bucket_eos_create(r->connection->bucket_alloc);
     APR_BRIGADE_INSERT_TAIL(bb, b);
 
-    len = 8;
-    if ((apr_bucket_read(b, &tmpbuf, (apr_size_t *) (&len), APR_BLOCK_READ) == 8)
-        && !(strcmp(tmpbuf, "HTTP/1.0") && strcmp(tmpbuf, "HTTP/1.1")))
+    if ((apr_bucket_read(b, &tmpbuf, (apr_size_t *) (&len), APR_BLOCK_READ) == APR_SUCCESS)
+        && !(strncmp(tmpbuf, "HTTP/1.0", 8) && strncmp(tmpbuf, "HTTP/1.1", 8)))
     {
         nph = 1;
     }
