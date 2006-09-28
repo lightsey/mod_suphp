@@ -61,7 +61,42 @@ static apr_status_t suphp_log_script_err(request_rec *r, apr_file_t *script_err)
     }
     
     return rv;
-[5~}
+}
+
+char *suphp_brigade_read(apr_pool_t *p, apr_bucket_brigade *bb, int bytes)
+{
+    char *target_buf;
+    char *next_byte;
+    char *last_byte;
+    apr_bucket *b;
+    
+    if (bytes == 0) {
+        return NULL;
+    }
+    
+    target_buf = (char *) apr_palloc(p, bytes + 1);
+    next_byte = target_buf;
+    last_byte = target_buf + bytes;
+    
+    for (b = APR_BRIGADE_FIRST(bb); b != APR_BRIGADE_SENTINEL(bb); b = APR_BUCKET_NEXT(b)) {
+        char *buf;
+        apr_size_t size;
+        apr_size_t i;
+        while (apr_bucket_read(b, &buf, &size, APR_BLOCK_READ) == APR_SUCCESS) {
+            for (i = 0; i < size; i++) {
+                *next_byte = *buf;
+                next_byte++;
+                buf++;
+                if (next_byte == last_byte) {
+                    *next_byte = 0;
+                    return target_buf;
+                }
+            }
+        }
+    }
+    next_byte = 0;
+    return target_buf;
+}
 
 
 /**************************
@@ -775,8 +810,8 @@ static int suphp_handler(request_rec *r)
     b = apr_bucket_eos_create(r->connection->bucket_alloc);
     APR_BRIGADE_INSERT_TAIL(bb, b);
 
-    if ((apr_bucket_read(b, &tmpbuf, (apr_size_t *) (&len), APR_BLOCK_READ) == APR_SUCCESS)
-        && !(strncmp(tmpbuf, "HTTP/1.0", 8) && strncmp(tmpbuf, "HTTP/1.1", 8)))
+    tmpbuf = suphp_brigade_read(p, bb, 8);
+    if (strlen(tmpbuf) == 8 && !(strncmp(tmpbuf, "HTTP/1.0", 8) && strncmp(tmpbuf, "HTTP/1.1", 8)))
     {
         nph = 1;
     }
