@@ -82,7 +82,7 @@ char *suphp_brigade_read(apr_pool_t *p, apr_bucket_brigade *bb, int bytes)
         char *buf;
         apr_size_t size;
         apr_size_t i;
-        while (apr_bucket_read(b, &buf, &size, APR_BLOCK_READ) == APR_SUCCESS) {
+        if (apr_bucket_read(b, &buf, &size, APR_BLOCK_READ) == APR_SUCCESS) {
             for (i = 0; i < size; i++) {
                 *next_byte = *buf;
                 next_byte++;
