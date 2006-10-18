@@ -65,6 +65,12 @@ AC_DEFUN(APR_FIND_APR, [
     elif $TEST_X "$withval/apr-config"; then
       apr_found="yes"
       apr_config="$withval/apr-config"
+    elif $TEST_X "$withval/bin/apr-1-config"; then
+      apr_found="yes"
+      apr_config="$withval/bin/apr-1-config"
+    elif $TEST_X "$withval/apr-1-config"; then
+      apr_found="yes"
+      apr_config="$withval/apr-1-config"
     elif $TEST_X "$withval" && $withval --help > /dev/null 2>&1 ; then
       apr_found="yes"
       apr_config="$withval"

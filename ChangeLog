@@ -1,4 +1,5 @@
 * Version 0.6.2 (???)
+- Made mod_suphp compatible with Apache 2.2
 - Modified SmartPtr implementation (hopefully) fixing
   double free problem
 - Fixed problem that caused the process to block

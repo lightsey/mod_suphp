@@ -5,6 +5,8 @@ endif
 AM_CFLAGS=-I@APXS_INCLUDEDIR@ -I@APR_INCLUDEDIR@ @APXS_EXTRA_CFLAGS@
 AM_CFLAGS+=-DSUPHP_PATH_TO_SUPHP=\"${sbindir}/suphp\" $(DEFINE_USERGROUP)
 
+AM_CPPFLAGS=@APR_CPPFLAGS@
+
 noinst_LTLIBRARIES = mod_suphp.la
 mod_suphp_la_SOURCES = mod_suphp.c
 

@@ -488,7 +488,7 @@ static void suphp_discard_output(apr_bucket_brigade *bb) {
   const char *buf;
   apr_size_t len;
   apr_status_t rv;
-  APR_BRIGADE_FOREACH(b, bb) {
+  for (b = APR_BRIGADE_FIRST(bb); b != APR_BRIGADE_SENTINEL(bb); b = APR_BUCKET_NEXT(b)) {
       if (APR_BUCKET_IS_EOS(b)) {
           break;
       }
@@ -763,7 +763,7 @@ static int suphp_handler(request_rec *r)
             return rv;
         }
         
-        APR_BRIGADE_FOREACH(bucket, bb)
+        for (bucket = APR_BRIGADE_FIRST(bb); bucket != APR_BRIGADE_SENTINEL(bb); b = APR_BUCKET_NEXT(b))
         {
             const char *data;
             apr_size_t len;

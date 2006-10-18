@@ -66,7 +66,7 @@ if test -n "$APXS"; then
                     | cut -f2 -d"/" \
                     | cut -f1 -d" "`
     major_version=`echo $APACHE_VERSION|cut -f1,2 -d.`
-    if test "$major_version" = "2.0"; then
+    if test "$major_version" = "2.0" -o "$major_version" = "2.2"; then
       APACHE_VERSION_2=true
       APACHE_VERSION_1_3=false
     else
@@ -101,6 +101,8 @@ dnl For Apache 2.x APR is needed
     if test x"${apr_found}" = xyes ; then \
         APR_INCLUDEDIR=`${apr_config} --includedir`
 	AC_SUBST([APR_INCLUDEDIR])
+	APR_CPPFLAGS=`${apr_config} --cppflags`
+	AC_SUBST([APR_CPPFLAGS])
     else
 	AC_MSG_ERROR([APR is needed to build mod_suphp for Apache 2.x but was not found])
     fi
