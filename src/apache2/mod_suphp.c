@@ -763,7 +763,7 @@ static int suphp_handler(request_rec *r)
             return rv;
         }
         
-        for (bucket = APR_BRIGADE_FIRST(bb); bucket != APR_BRIGADE_SENTINEL(bb); b = APR_BUCKET_NEXT(b))
+        for (bucket = APR_BRIGADE_FIRST(bb); bucket != APR_BRIGADE_SENTINEL(bb); bucket = APR_BUCKET_NEXT(bucket))
         {
             const char *data;
             apr_size_t len;
