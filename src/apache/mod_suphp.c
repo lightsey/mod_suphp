@@ -363,6 +363,8 @@ static int suphp_handler(request_rec *r) {
     pool *p;
 
     BUFF *script_in, *script_out, *script_err;
+    
+    char *handler;
 
     sconf = ap_get_module_config(r->server->module_config, &suphp_module);
     dconf = ap_get_module_config(r->per_dir_config, &suphp_module);
@@ -371,8 +373,13 @@ static int suphp_handler(request_rec *r) {
 
     /* only handle request if mod_suphp is active for this handler */
     /* check only first byte of value (second has to be \0) */
-    if ((ap_table_get(dconf->handlers, r->handler) == NULL)
-	|| (*(ap_table_get(dconf->handlers, r->handler)) == '0'))
+    if (r->handler != NULL) {
+        handler = r->handler;
+    } else {
+        handler = r->content_type;
+    }
+    if ((ap_table_get(dconf->handlers, handler) == NULL)
+	|| (*(ap_table_get(dconf->handlers, handler)) == '0'))
 	return DECLINED;
 
     /* check if suPHP is enabled for this request */
@@ -472,7 +479,7 @@ static int suphp_handler(request_rec *r) {
 	ap_table_set(r->subprocess_env, "SUPHP_PHP_CONFIG", dconf->php_config);
     }
 
-    ap_table_set(r->subprocess_env, "SUPHP_HANDLER", r->handler);
+    ap_table_set(r->subprocess_env, "SUPHP_HANDLER", handler);
 
     if (r->headers_in) {
 	const char *auth;

@@ -1,3 +1,7 @@
+* Version ??? (???)
+- mod_suphp (Apache 1.3) checks explicitly for r->content_type
+  thus allowing to use AddType instead of AddHandler
+
 * Version 0.6.2 (19 November 2006)
 - Made mod_suphp compatible with Apache 2.2
 - Modified SmartPtr implementation (hopefully) fixing
