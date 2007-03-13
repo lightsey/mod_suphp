@@ -37,7 +37,7 @@ suPHP::API_Linux_Logger::API_Linux_Logger() {
 }
 
 void suPHP::API_Linux_Logger::log(const std::string& classification, 
-				  const std::string& message) {
+                                  const std::string& message) {
     ::time_t ts;
     struct ::tm *now;
     char timestr[64] = {0};
@@ -52,17 +52,17 @@ void suPHP::API_Linux_Logger::log(const std::string& classification,
 
     // Construct logline
     logline = std::string(timestr) + " [" + classification + "] " 
-	+ message + "\n";
+        + message + "\n";
 
     // Check wheter we have an uninitialized logfile 
     // or write to the logfile failed
     if (!this->isInitialized() 
-	|| (write(this->logFd, logline.c_str(), logline.size()) == -1)) {
-	// Print message to stderr
-	std::cerr << "Could not write to logfile:" << std::endl
+        || (write(this->logFd, logline.c_str(), logline.size()) == -1)) {
+        // Print message to stderr
+        std::cerr << "Could not write to logfile:" << std::endl
 //		  << ::strerror(::errno) << std::endl
-		  << "Printing message to stderr:" << std::endl
-		  << logline << std::endl;
+                  << "Printing message to stderr:" << std::endl
+                  << logline << std::endl;
     }
 }
 
@@ -70,21 +70,21 @@ void suPHP::API_Linux_Logger::init(const Configuration& config)
     throw (IOException) {
     // Open logfile in append mode, create if not existing.
     this->logFd = ::open(config.getLogfile().c_str(), 
-			 O_WRONLY|O_CREAT|O_APPEND|O_NOCTTY, 
-			 S_IRUSR|S_IWUSR);
+                         O_WRONLY|O_CREAT|O_APPEND|O_NOCTTY, 
+                         S_IRUSR|S_IWUSR);
     
     // Check wheter something failed
     if (this->logFd == -1) {
-	throw IOException("Could not open logfile " + config.getLogfile(),
-			  __FILE__, __LINE__);
+        throw IOException("Could not open logfile " + config.getLogfile(),
+                          __FILE__, __LINE__);
     }
     
     // Set close-on-exec flag, because we do not want
     // the user to write to our logfile
     if (::fcntl(this->logFd, F_SETFD, FD_CLOEXEC)) {
-	// Ooops, something went wrong
-	throw IOException("Could not set close-on-exec flag on logfile",
-			  __FILE__, __LINE__);
+        // Ooops, something went wrong
+        throw IOException("Could not set close-on-exec flag on logfile",
+                          __FILE__, __LINE__);
     }
     
     // Get log level from configuration

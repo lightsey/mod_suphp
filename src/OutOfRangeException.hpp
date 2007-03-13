@@ -37,28 +37,28 @@ namespace suPHP {
      */
     class OutOfRangeException : public Exception {
     private:
-	std::string getName() const;
+        std::string getName() const;
     public:
-	/**
-	 * Constructor without message.
-	 */
-	OutOfRangeException(std::string file, int line);
+        /**
+         * Constructor without message.
+         */
+        OutOfRangeException(std::string file, int line);
 
-	/**
-	 * Constructor with message.
-	 */
-	OutOfRangeException(std::string message, std::string file, int line);
-	
-	/**
-	 * Constructor without message but with cause.
-	 */
-	OutOfRangeException(Exception& cause, std::string file, int line);
-	
-	/**
-	 * Constructor with message and cause.
-	 */
-	OutOfRangeException(std::string message, Exception& cause, std::string file, int line);
-	
+        /**
+         * Constructor with message.
+         */
+        OutOfRangeException(std::string message, std::string file, int line);
+        
+        /**
+         * Constructor without message but with cause.
+         */
+        OutOfRangeException(Exception& cause, std::string file, int line);
+        
+        /**
+         * Constructor with message and cause.
+         */
+        OutOfRangeException(std::string message, Exception& cause, std::string file, int line);
+        
     };
 };
 

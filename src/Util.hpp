@@ -33,11 +33,11 @@ namespace suPHP {
      * Class containing useful utility functions
      */
     class Util {
-	
+        
     public:
-	static std::string intToStr(const int i);
-	static int strToInt(const std::string istr);
-	static int octalStrToInt(const std::string istr);
+        static std::string intToStr(const int i);
+        static int strToInt(const std::string istr);
+        static int octalStrToInt(const std::string istr);
     };
 };
 

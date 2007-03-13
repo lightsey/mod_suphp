@@ -59,10 +59,10 @@ std::string suPHP::Exception::getMessage() {
 std::string suPHP::Exception::toString() const {
     std::ostringstream ostr;
     ostr << std::string(this->getName()) << " in " << this->file 
-	 << ":" << this->line << ": "
-	 << this->message << "\n";
+         << ":" << this->line << ": "
+         << this->message << "\n";
     if (this->backtrace.length() > 0) {
-	ostr << "Caused by " << this->backtrace;
+        ostr << "Caused by " << this->backtrace;
     }
     return ostr.str();
 }

@@ -32,18 +32,18 @@ void suPHP::Logger::setLogLevel(LogLevel level) {
 
 void suPHP::Logger::logInfo(const std::string& message) {
     if (this->getLogLevel() == LOGLEVEL_INFO)
-	this->log("info", message);
+        this->log("info", message);
 }
 
 void suPHP::Logger::logWarning(const std::string& message) {
     if (this->getLogLevel() == LOGLEVEL_WARN 
-	|| this->getLogLevel() == LOGLEVEL_INFO)
-	this->log("warn", message);
+        || this->getLogLevel() == LOGLEVEL_INFO)
+        this->log("warn", message);
 }
 
 void suPHP::Logger::logError(const std::string& message) {
     if (this->getLogLevel() == LOGLEVEL_ERROR
-	|| this->getLogLevel() == LOGLEVEL_WARN
-	|| this->getLogLevel() == LOGLEVEL_INFO)
-	this->log("error", message);
+        || this->getLogLevel() == LOGLEVEL_WARN
+        || this->getLogLevel() == LOGLEVEL_INFO)
+        this->log("error", message);
 }

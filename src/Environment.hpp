@@ -37,46 +37,46 @@ namespace suPHP {
      */
     class Environment {
     private:
-	std::map<std::string, std::string> vars;
-	
+        std::map<std::string, std::string> vars;
+        
     public:
-	/**
-	 * Returns (copy of) variable content
-	 */
-	std::string getVar(const std::string& name) const 
-	    throw (KeyNotFoundException);
+        /**
+         * Returns (copy of) variable content
+         */
+        std::string getVar(const std::string& name) const 
+            throw (KeyNotFoundException);
 
-	/**
-	 * Sets variable content
-	 */
-	void setVar(const std::string name, const std::string content) 
-	    throw (KeyNotFoundException);
+        /**
+         * Sets variable content
+         */
+        void setVar(const std::string name, const std::string content) 
+            throw (KeyNotFoundException);
 
-	/**
-	 * Adds variable to environment
-	 */
-	void putVar(const std::string name, const std::string content);
-	
-	/**
-	 * Deletes variable from environment
-	 */
-	void deleteVar(const std::string& name) throw (KeyNotFoundException);
-	
-	/**
-	 * Checks whether a variable is set
-	 */
-	bool hasVar(const std::string& name) const;
-	
-	/**
-	 * Returns reference to variable with name
-	 */
-	std::string& operator[](const std::string& name) 
-	    throw (KeyNotFoundException);
+        /**
+         * Adds variable to environment
+         */
+        void putVar(const std::string name, const std::string content);
+        
+        /**
+         * Deletes variable from environment
+         */
+        void deleteVar(const std::string& name) throw (KeyNotFoundException);
+        
+        /**
+         * Checks whether a variable is set
+         */
+        bool hasVar(const std::string& name) const;
+        
+        /**
+         * Returns reference to variable with name
+         */
+        std::string& operator[](const std::string& name) 
+            throw (KeyNotFoundException);
 
-	/**
-	 * Returns const reference to the map which stores the variables
-	 */
-	const std::map<std::string, std::string>& getBackendMap() const;
+        /**
+         * Returns const reference to the map which stores the variables
+         */
+        const std::map<std::string, std::string>& getBackendMap() const;
     };
 };
 

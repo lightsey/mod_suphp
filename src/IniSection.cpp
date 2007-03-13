@@ -37,13 +37,13 @@ std::vector<std::string> suPHP::IniSection::getValues(std::string key)
     throw (KeyNotFoundException) {
     std::vector<std::string> values;
     for (std::multimap<std::string, std::string>::iterator pos = 
-	     this->entries.find(key); 
-	 pos != this->entries.end(); pos++) {
-	values.push_back(pos->second);
+             this->entries.find(key); 
+         pos != this->entries.end(); pos++) {
+        values.push_back(pos->second);
     }
     if (values.size() == 0) {
-	throw KeyNotFoundException("No value for key " + key + " found", 
-				   __FILE__, __LINE__);
+        throw KeyNotFoundException("No value for key " + key + " found", 
+                                   __FILE__, __LINE__);
     }
     return values;
 }
@@ -52,10 +52,10 @@ std::string suPHP::IniSection::getValue(std::string key)
     throw (KeyNotFoundException) {
     std::vector<std::string> values;
     if (this->entries.find(key) != this->entries.end()) {
-	return this->entries.find(key)->second;
+        return this->entries.find(key)->second;
     } else {
-	throw KeyNotFoundException("No value for key " + key + " found", 
-				   __FILE__, __LINE__);
+        throw KeyNotFoundException("No value for key " + key + " found", 
+                                   __FILE__, __LINE__);
     }
     
 }
@@ -63,18 +63,18 @@ std::string suPHP::IniSection::getValue(std::string key)
 std::vector<std::string> suPHP::IniSection::getKeys() {
     std::vector<std::string> keys;
     for (std::multimap<std::string, std::string>::iterator pos =
-	     this->entries.begin();
-	 pos != this->entries.end(); pos++) {
-	keys.push_back(pos->first);
+             this->entries.begin();
+         pos != this->entries.end(); pos++) {
+        keys.push_back(pos->first);
     }
     return keys;
 }
 
 bool suPHP::IniSection::hasKey(std::string key) {
     if (this->entries.find(key) != this->entries.end()) {
-	return true;
+        return true;
     } else {
-	return false;
+        return false;
     }
     
 }

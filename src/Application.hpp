@@ -47,77 +47,77 @@ namespace suPHP {
      */
     class Application {
     private:
-	/**
-	 * Print message containing version information
-	 */
-	void printAboutMessage();
-	
-	/**
-	 * Checks wheter process has root privileges
-	 * and calling user is webserver user
-	 */
-	void checkProcessPermissions(Configuration& config) 
-	    throw (SecurityException, LookupException);
-	/**
-	 * Checks scriptfile.
-	 * Includes check for path, symbollink and permissions
-	 */
-	void checkScriptFile(const std::string& scriptFilename, 
-			     const Configuration& config, 
-			     const Environment& environment) const
-	    throw (SystemException, SoftException);
-	
-	/**
-	 * Changes process permission (user and group).
-	 * Uses preprocessor macros to distinguish between modes
-	 */
-	void changeProcessPermissions(const std::string& scriptFilename,
-				      const Configuration& config,
-				      const Environment& environment) const
-	    throw (SystemException, SoftException, SecurityException);
+        /**
+         * Print message containing version information
+         */
+        void printAboutMessage();
+        
+        /**
+         * Checks wheter process has root privileges
+         * and calling user is webserver user
+         */
+        void checkProcessPermissions(Configuration& config) 
+            throw (SecurityException, LookupException);
+        /**
+         * Checks scriptfile.
+         * Includes check for path, symbollink and permissions
+         */
+        void checkScriptFile(const std::string& scriptFilename, 
+                             const Configuration& config, 
+                             const Environment& environment) const
+            throw (SystemException, SoftException);
+        
+        /**
+         * Changes process permission (user and group).
+         * Uses preprocessor macros to distinguish between modes
+         */
+        void changeProcessPermissions(const std::string& scriptFilename,
+                                      const Configuration& config,
+                                      const Environment& environment) const
+            throw (SystemException, SoftException, SecurityException);
 
-	/**
-	 * Prepares the environment before invoking the script
-	 */
-	Environment prepareEnvironment(const Environment& sourceEnv,
-				       const Configuration& config,
-				       TargetMode mode)
-	    throw (KeyNotFoundException);
+        /**
+         * Prepares the environment before invoking the script
+         */
+        Environment prepareEnvironment(const Environment& sourceEnv,
+                                       const Configuration& config,
+                                       TargetMode mode)
+            throw (KeyNotFoundException);
 
-	/**
-	 * Returns interpreter for script being executed
-	 */
-	std::string getInterpreter(const Environment& env,
-				   const Configuration& config)
-	    throw (SecurityException);
-	
-	/**
-	 * Returns mode interpreter is using
-	 */
-	TargetMode getTargetMode(const std::string& interpreter)
-	    throw (SecurityException);
+        /**
+         * Returns interpreter for script being executed
+         */
+        std::string getInterpreter(const Environment& env,
+                                   const Configuration& config)
+            throw (SecurityException);
+        
+        /**
+         * Returns mode interpreter is using
+         */
+        TargetMode getTargetMode(const std::string& interpreter)
+            throw (SecurityException);
 
-	/**
-	 * Runs script
-	 */
-	void executeScript(const std::string& scriptFilename,
-			   const std::string& interpreter,
-			   TargetMode mode,
-			   const Environment& env,
-			   const Configuration& config) const
-	    throw (SoftException);
+        /**
+         * Runs script
+         */
+        void executeScript(const std::string& scriptFilename,
+                           const std::string& interpreter,
+                           TargetMode mode,
+                           const Environment& env,
+                           const Configuration& config) const
+            throw (SoftException);
 
 
     public:
-	/**
-	 * Constructer
-	 */
-	Application();
-	
-	/**
-	 * Function called by the main() function
-	 */
-	int run(CommandLine& cmdline, Environment& env);
+        /**
+         * Constructer
+         */
+        Application();
+        
+        /**
+         * Function called by the main() function
+         */
+        int run(CommandLine& cmdline, Environment& env);
     };
 };
 

@@ -37,28 +37,28 @@ namespace suPHP {
      */
     class IOException : public Exception {
     private:
-	std::string getName() const;
+        std::string getName() const;
     public:
-	/**
-	 * Constructor without message.
-	 */
-	IOException(std::string file, int line);
+        /**
+         * Constructor without message.
+         */
+        IOException(std::string file, int line);
 
-	/**
-	 * Constructor with message.
-	 */
-	IOException(std::string message, std::string file, int line);
-	
-	/**
-	 * Constructor without message but with cause.
-	 */
-	IOException(Exception& cause, std::string file, int line);
-	
-	/**
-	 * Constructor with message and cause.
-	 */
-	IOException(std::string message, Exception& cause, std::string file, int line);
-	
+        /**
+         * Constructor with message.
+         */
+        IOException(std::string message, std::string file, int line);
+        
+        /**
+         * Constructor without message but with cause.
+         */
+        IOException(Exception& cause, std::string file, int line);
+        
+        /**
+         * Constructor with message and cause.
+         */
+        IOException(std::string message, Exception& cause, std::string file, int line);
+        
     };
 };
 

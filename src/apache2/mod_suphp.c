@@ -297,7 +297,7 @@ static const char *suphp_handle_cmd_user_group(cmd_parms *cmd, void *mconfig,
 
 
 static const char *suphp_handle_cmd_add_handler(cmd_parms *cmd, void *mconfig,
-					     const char *arg)
+                                             const char *arg)
 {
     suphp_conf *cfg = (suphp_conf *) mconfig;
     // Mark active handler with '1'
@@ -308,8 +308,8 @@ static const char *suphp_handle_cmd_add_handler(cmd_parms *cmd, void *mconfig,
 
 
 static const char *suphp_handle_cmd_remove_handler(cmd_parms *cmd, 
-						   void *mconfig, 
-						   const char *arg)
+                                                   void *mconfig, 
+                                                   const char *arg)
 {
     suphp_conf *cfg = (suphp_conf *) mconfig;
     // Mark deactivated handler with '0'
@@ -775,25 +775,25 @@ static int suphp_script_handler(request_rec *r)
     
     if (!(r->finfo.protection & APR_UREAD))
     {
-    	ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Insufficient permissions: %s", r->filename);
-    	return HTTP_FORBIDDEN;
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Insufficient permissions: %s", r->filename);
+        return HTTP_FORBIDDEN;
     }
     
 #ifdef SUPHP_USE_USERGROUP
     if ((sconf->target_user == NULL || sconf->target_group == NULL)
         && (dconf->target_user == NULL || dconf->target_group == NULL))
     {
-	/* Check for userdir request */
-	ap_unix_identity_t *userdir_id = NULL;
-	userdir_id = ap_run_get_suexec_identity(r);
-	if (userdir_id != NULL && userdir_id->userdir) {
-	    ud_user = apr_psprintf(r->pool, "#%ld", (long) userdir_id->uid);
-	    ud_group = apr_psprintf(r->pool, "#%ld", (long) userdir_id->gid);
-	} else {
-	    ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, 
-			  "No user or group set - set suPHP_UserGroup");
-	    return HTTP_INTERNAL_SERVER_ERROR;
-	}
+        /* Check for userdir request */
+        ap_unix_identity_t *userdir_id = NULL;
+        userdir_id = ap_run_get_suexec_identity(r);
+        if (userdir_id != NULL && userdir_id->userdir) {
+            ud_user = apr_psprintf(r->pool, "#%ld", (long) userdir_id->uid);
+            ud_group = apr_psprintf(r->pool, "#%ld", (long) userdir_id->gid);
+        } else {
+            ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, 
+                          "No user or group set - set suPHP_UserGroup");
+            return HTTP_INTERNAL_SERVER_ERROR;
+        }
     }
 #endif
         
@@ -865,8 +865,8 @@ static int suphp_script_handler(request_rec *r)
     }
     else
     {
-	apr_table_setn(r->subprocess_env, "SUPHP_USER",
-		       apr_pstrdup(r->pool, ud_user));
+        apr_table_setn(r->subprocess_env, "SUPHP_USER",
+                       apr_pstrdup(r->pool, ud_user));
     }
     
     if (dconf->target_group)
@@ -881,8 +881,8 @@ static int suphp_script_handler(request_rec *r)
     }
     else
     {
-	apr_table_setn(r->subprocess_env, "SUPHP_GROUP",
-		       apr_pstrdup(r->pool, ud_group));
+        apr_table_setn(r->subprocess_env, "SUPHP_GROUP",
+                       apr_pstrdup(r->pool, ud_group));
     }
 #endif
     
@@ -1013,11 +1013,11 @@ static int suphp_script_handler(request_rec *r)
         int ret;
         const char *location;
     
-	ret = ap_scan_script_header_err_brigade(r, bb, strbuf);
-	if (ret == HTTP_NOT_MODIFIED)
-	{
-	    return ret;
-	}
+        ret = ap_scan_script_header_err_brigade(r, bb, strbuf);
+        if (ret == HTTP_NOT_MODIFIED)
+        {
+            return ret;
+        }
         else if (ret != APR_SUCCESS)
         {
             suphp_discard_output(bb);

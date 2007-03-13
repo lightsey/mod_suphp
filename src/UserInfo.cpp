@@ -64,9 +64,9 @@ bool suPHP::UserInfo::isSuperUser() {
 
 bool suPHP::UserInfo::operator==(const UserInfo& uinfo) const {
     if (this->getUid() == uinfo.getUid())
-	return true;
+        return true;
     else
-	return false;
+        return false;
 }
 
 bool suPHP::UserInfo::operator!=(const UserInfo& uinfo) const {

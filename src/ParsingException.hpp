@@ -37,28 +37,28 @@ namespace suPHP {
      */
     class ParsingException : public Exception {
     private:
-	std::string getName() const;
+        std::string getName() const;
     public:
-	/**
-	 * Constructor without message.
-	 */
-	ParsingException(std::string file, int line);
+        /**
+         * Constructor without message.
+         */
+        ParsingException(std::string file, int line);
 
-	/**
-	 * Constructor with message.
-	 */
-	ParsingException(std::string message, std::string file, int line);
-	
-	/**
-	 * Constructor without message but with cause.
-	 */
-	ParsingException(Exception& cause, std::string file, int line);
-	
-	/**
-	 * Constructor with message and cause.
-	 */
-	ParsingException(std::string message, Exception& cause, std::string file, int line);
-	
+        /**
+         * Constructor with message.
+         */
+        ParsingException(std::string message, std::string file, int line);
+        
+        /**
+         * Constructor without message but with cause.
+         */
+        ParsingException(Exception& cause, std::string file, int line);
+        
+        /**
+         * Constructor with message and cause.
+         */
+        ParsingException(std::string message, Exception& cause, std::string file, int line);
+        
     };
 };
 

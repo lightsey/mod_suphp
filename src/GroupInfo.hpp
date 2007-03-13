@@ -37,39 +37,39 @@ namespace suPHP {
      */
     class GroupInfo {
     private:
-	int gid;
+        int gid;
 
     public:
-	/**
-	 * Constructor without arguments.
-	 * Does not create a "valid" object, since it has no well defined GID
-	 */
-	GroupInfo();
+        /**
+         * Constructor without arguments.
+         * Does not create a "valid" object, since it has no well defined GID
+         */
+        GroupInfo();
 
-	/**
-	 * Contructor (creates group object from GID)
-	 */
-	GroupInfo(int gid);
+        /**
+         * Contructor (creates group object from GID)
+         */
+        GroupInfo(int gid);
 
-	/**
-	 * Returns groupname
-	 */
-	std::string getGroupname() const throw (LookupException);
-	
-	/**
-	 * Returns GID
-	 */
-	int getGid() const;
+        /**
+         * Returns groupname
+         */
+        std::string getGroupname() const throw (LookupException);
+        
+        /**
+         * Returns GID
+         */
+        int getGid() const;
 
-	/**
-	 * Compares to GroupInfo objects for equality
-	 */
-	bool operator==(const GroupInfo& ginfo) const;
-	
-	/**
-	 * Overloaded operator !=
-	 */
-	bool operator!=(const GroupInfo& ginfo) const; 
+        /**
+         * Compares to GroupInfo objects for equality
+         */
+        bool operator==(const GroupInfo& ginfo) const;
+        
+        /**
+         * Overloaded operator !=
+         */
+        bool operator!=(const GroupInfo& ginfo) const; 
     };
 };
 

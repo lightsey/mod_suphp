@@ -37,28 +37,28 @@ namespace suPHP {
      */
     class SystemException : public Exception {
     private:
-	std::string getName() const;
+        std::string getName() const;
     public:
-	/**
-	 * Constructor without message.
-	 */
-	SystemException(std::string file, int line);
+        /**
+         * Constructor without message.
+         */
+        SystemException(std::string file, int line);
 
-	/**
-	 * Constructor with message.
-	 */
-	SystemException(std::string message, std::string file, int line);
-	
-	/**
-	 * Constructor without message but with cause.
-	 */
-	SystemException(Exception& cause, std::string file, int line);
-	
-	/**
-	 * Constructor with message and cause.
-	 */
-	SystemException(std::string message, Exception& cause, std::string file, int line);
-	
+        /**
+         * Constructor with message.
+         */
+        SystemException(std::string message, std::string file, int line);
+        
+        /**
+         * Constructor without message but with cause.
+         */
+        SystemException(Exception& cause, std::string file, int line);
+        
+        /**
+         * Constructor with message and cause.
+         */
+        SystemException(std::string message, Exception& cause, std::string file, int line);
+        
     };
 };
 

@@ -38,28 +38,28 @@ namespace suPHP {
      */
     class LookupException : public Exception {
     private:
-	std::string getName() const;
+        std::string getName() const;
     public:
-	/**
-	 * Constructor without message.
-	 */
-	LookupException(std::string file, int line);
+        /**
+         * Constructor without message.
+         */
+        LookupException(std::string file, int line);
 
-	/**
-	 * Constructor with message.
-	 */
-	LookupException(std::string message, std::string file, int line);
-	
-	/**
-	 * Constructor without message but with cause.
-	 */
-	LookupException(Exception& cause, std::string file, int line);
-	
-	/**
-	 * Constructor with message and cause.
-	 */
-	LookupException(std::string message, Exception& cause, std::string file, int line);
-	
+        /**
+         * Constructor with message.
+         */
+        LookupException(std::string message, std::string file, int line);
+        
+        /**
+         * Constructor without message but with cause.
+         */
+        LookupException(Exception& cause, std::string file, int line);
+        
+        /**
+         * Constructor with message and cause.
+         */
+        LookupException(std::string message, Exception& cause, std::string file, int line);
+        
     };
 };
 

@@ -38,49 +38,49 @@ namespace suPHP {
      */
     class UserInfo {
     private:
-	int uid;
+        int uid;
     public:
-	/**
-	 * Constructor without arguments.
-	 * Does not create a "valid" object, since it has no well defined UID
-	 */
-	UserInfo();
-	
-	/**
-	 * Constructor (takes UID)
-	 */
-	UserInfo(int uid);
-	
-	/**
-	 * Returns username
-	 */
-	std::string getUsername() const throw (LookupException);
-	
-	/**
-	 * Returns UID
-	 */
-	int getUid() const;
+        /**
+         * Constructor without arguments.
+         * Does not create a "valid" object, since it has no well defined UID
+         */
+        UserInfo();
+        
+        /**
+         * Constructor (takes UID)
+         */
+        UserInfo(int uid);
+        
+        /**
+         * Returns username
+         */
+        std::string getUsername() const throw (LookupException);
+        
+        /**
+         * Returns UID
+         */
+        int getUid() const;
 
-	/**
-	 * Returns primary group
-	 */
-	GroupInfo getGroupInfo() const throw (LookupException);
-	
-	/**
-	 * Checks wheter user is super-user
-	 */
-	bool isSuperUser();
-	
-	/**
-	 * Compares to UserInfo objects for equality (same UID)
-	 */
-	bool operator==(const UserInfo& uinfo) const;
+        /**
+         * Returns primary group
+         */
+        GroupInfo getGroupInfo() const throw (LookupException);
+        
+        /**
+         * Checks wheter user is super-user
+         */
+        bool isSuperUser();
+        
+        /**
+         * Compares to UserInfo objects for equality (same UID)
+         */
+        bool operator==(const UserInfo& uinfo) const;
 
-	/**
-	 * Overloaded operator
-	 */
-	bool operator!=(const UserInfo& uinfo) const;
-	
+        /**
+         * Overloaded operator
+         */
+        bool operator!=(const UserInfo& uinfo) const;
+        
     };
 };
 

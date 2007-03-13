@@ -37,28 +37,28 @@ namespace suPHP {
      */
     class SecurityException : public Exception {
     private:
-	std::string getName() const;
+        std::string getName() const;
     public:
-	/**
-	 * Constructor without message.
-	 */
-	SecurityException(std::string file, int line);
+        /**
+         * Constructor without message.
+         */
+        SecurityException(std::string file, int line);
 
-	/**
-	 * Constructor with message.
-	 */
-	SecurityException(std::string message, std::string file, int line);
-	
-	/**
-	 * Constructor without message but with cause.
-	 */
-	SecurityException(Exception& cause, std::string file, int line);
-	
-	/**
-	 * Constructor with message and cause.
-	 */
-	SecurityException(std::string message, Exception& cause, std::string file, int line);
-	
+        /**
+         * Constructor with message.
+         */
+        SecurityException(std::string message, std::string file, int line);
+        
+        /**
+         * Constructor without message but with cause.
+         */
+        SecurityException(Exception& cause, std::string file, int line);
+        
+        /**
+         * Constructor with message and cause.
+         */
+        SecurityException(std::string message, Exception& cause, std::string file, int line);
+        
     };
 };
 

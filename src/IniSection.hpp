@@ -40,37 +40,37 @@ namespace suPHP {
      */
     class IniSection {
     private:
-	std::multimap<std::string, std::string> entries;
-	void putValue(std::string key, std::string value);
+        std::multimap<std::string, std::string> entries;
+        void putValue(std::string key, std::string value);
 
     public:
-	/**
-	 * Returns values corresponding to key
-	 */
-	std::vector<std::string> getValues(std::string key) 
-	    throw (KeyNotFoundException);
+        /**
+         * Returns values corresponding to key
+         */
+        std::vector<std::string> getValues(std::string key) 
+            throw (KeyNotFoundException);
 
-	/**
-	 * Returns first value corresponding to a key
-	 */
-	std::string getValue(std::string key) throw (KeyNotFoundException);
+        /**
+         * Returns first value corresponding to a key
+         */
+        std::string getValue(std::string key) throw (KeyNotFoundException);
 
-	/**
-	 * Returns keys appearing in this section
-	 */
-	std::vector<std::string> getKeys();
-	/**
-	 * Overloaded index operator, calls getValues()
-	 */
-	std::vector<std::string> operator[](std::string key)
-	    throw (KeyNotFoundException);
+        /**
+         * Returns keys appearing in this section
+         */
+        std::vector<std::string> getKeys();
+        /**
+         * Overloaded index operator, calls getValues()
+         */
+        std::vector<std::string> operator[](std::string key)
+            throw (KeyNotFoundException);
 
-	friend class IniFile;
-	
-	/**
-	 * Check wheter key is existing within section
-	 */
-	bool hasKey(std::string name);
+        friend class IniFile;
+        
+        /**
+         * Check wheter key is existing within section
+         */
+        bool hasKey(std::string name);
     };
 };
 

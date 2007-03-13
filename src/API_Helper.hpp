@@ -35,13 +35,13 @@ namespace suPHP {
      */
     class API_Helper {
     private:
-	static API_Linux api;
-	
+        static API_Linux api;
+        
     public:
-	/**
-	 * Get system API
-	 */
-	static API& getSystemAPI();
+        /**
+         * Get system API
+         */
+        static API& getSystemAPI();
     };
 };
 

@@ -52,9 +52,9 @@ int suPHP::GroupInfo::getGid() const {
 
 bool suPHP::GroupInfo::operator==(const GroupInfo& ginfo) const {
     if (this->getGid() == ginfo.getGid())
-	return true;
+        return true;
     else
-	return false;
+        return false;
 }
 
 bool suPHP::GroupInfo::operator!=(const GroupInfo& ginfo) const {

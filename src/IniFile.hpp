@@ -41,33 +41,33 @@ namespace suPHP {
      */
     class IniFile {
     private:
-	std::map<std::string, IniSection> sections;
+        std::map<std::string, IniSection> sections;
 
     public:
-	/**
-	 * Reads values from INI file
-	 */
-	void parse(File file) throw (IOException, ParsingException);
+        /**
+         * Reads values from INI file
+         */
+        void parse(File file) throw (IOException, ParsingException);
 
-	/**
-	 * Returns section
-	 */
-	IniSection& getSection(std::string name) throw (KeyNotFoundException);
-	
-	/**
-	 * Index operator
-	 */
-	IniSection& operator[](std::string name) throw (KeyNotFoundException);
+        /**
+         * Returns section
+         */
+        IniSection& getSection(std::string name) throw (KeyNotFoundException);
+        
+        /**
+         * Index operator
+         */
+        IniSection& operator[](std::string name) throw (KeyNotFoundException);
 
-	/**
-	 * Returns vector containing names of all sections
-	 */
-	std::vector<std::string> getSections();
+        /**
+         * Returns vector containing names of all sections
+         */
+        std::vector<std::string> getSections();
 
-	/**
-	 * Checks wheter a section is existing
-	 */
-	bool hasSection(std::string name);
+        /**
+         * Checks wheter a section is existing
+         */
+        bool hasSection(std::string name);
     };
 };
 

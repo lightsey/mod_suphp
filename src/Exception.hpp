@@ -36,42 +36,42 @@ namespace suPHP {
      */
     class Exception {
     private:
-	std::string message;
-	std::string backtrace;
-	int line;
-	std::string file;
-	virtual std::string getName() const =0;
-	
+        std::string message;
+        std::string backtrace;
+        int line;
+        std::string file;
+        virtual std::string getName() const =0;
+        
     public:
-	/**
-	 * Constructor without message.
-	 */
-	Exception(std::string file, int line);
+        /**
+         * Constructor without message.
+         */
+        Exception(std::string file, int line);
 
-	/**
-	 * Constructor with message.
-	 */
-	Exception(std::string message, std::string file, int line);
-	
-	/**
-	 * Constructor without message but with cause.
-	 */
-	Exception(Exception& cause, std::string file, int line);
-	
-	/**
-	 * Constructor with message and cause.
-	 */
-	Exception(std::string message, Exception& cause, std::string file, int line);
-	
-	/**
-	 * Get the message
-	 */
-	std::string getMessage();
+        /**
+         * Constructor with message.
+         */
+        Exception(std::string message, std::string file, int line);
+        
+        /**
+         * Constructor without message but with cause.
+         */
+        Exception(Exception& cause, std::string file, int line);
+        
+        /**
+         * Constructor with message and cause.
+         */
+        Exception(std::string message, Exception& cause, std::string file, int line);
+        
+        /**
+         * Get the message
+         */
+        std::string getMessage();
 
-	/**
-	 * Get string representing the exception
-	 */
-	std::string toString() const;
+        /**
+         * Get string representing the exception
+         */
+        std::string toString() const;
     };
 
 std::ostream& operator<<(std::ostream& os, const Exception& e);

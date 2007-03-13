@@ -40,8 +40,8 @@ SmartPtr<std::ifstream> suPHP::File::getInputStream() throw (IOException) {
     std::ifstream* infile = new std::ifstream();
     infile->open(this->path.c_str());
     if (infile->bad() || infile->fail()) {
-	throw IOException("Could not open file " + 
-			  this->path + " for reading", __FILE__, __LINE__);
+        throw IOException("Could not open file " + 
+                          this->path + " for reading", __FILE__, __LINE__);
     }
     return SmartPtr<std::ifstream>(infile);
 }

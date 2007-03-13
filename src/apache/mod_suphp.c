@@ -591,7 +591,7 @@ static int suphp_handler(request_rec *r) {
                         ud_success = 1;
                     }
                 }
-            }	    
+            }       
         }
         
         if (!ud_success) {

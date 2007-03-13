@@ -41,130 +41,130 @@ namespace suPHP {
      */
     class Configuration {
     private:
-	std::string logfile;
-	std::string webserver_user;
-	std::string docroot;
-	bool allow_file_group_writeable;
-	bool allow_directory_group_writeable;
-	bool allow_file_others_writeable;
-	bool allow_directory_others_writeable;
-	bool check_vhost_docroot;
-	bool errors_to_browser;
-	std::string env_path;
-	std::map<std::string, std::string> handlers;
-	LogLevel loglevel;
-	int min_uid;
-	int min_gid;
-	int umask;
-	std::string chroot_path;
+        std::string logfile;
+        std::string webserver_user;
+        std::string docroot;
+        bool allow_file_group_writeable;
+        bool allow_directory_group_writeable;
+        bool allow_file_others_writeable;
+        bool allow_directory_others_writeable;
+        bool check_vhost_docroot;
+        bool errors_to_browser;
+        std::string env_path;
+        std::map<std::string, std::string> handlers;
+        LogLevel loglevel;
+        int min_uid;
+        int min_gid;
+        int umask;
+        std::string chroot_path;
 
-	/**
-	 * Converts string to bool
-	 */
-	bool strToBool(const std::string& str) const throw (ParsingException);
+        /**
+         * Converts string to bool
+         */
+        bool strToBool(const std::string& str) const throw (ParsingException);
 
-	/**
-	 * Converts string to LogLevel
-	 */
+        /**
+         * Converts string to LogLevel
+         */
         LogLevel strToLogLevel(const std::string& str) const
-	    throw (ParsingException);
+            throw (ParsingException);
 
     public:
-	/**
-	 * Constructor, initializes configuration with default values.
-	 */
-	Configuration();
-	
-	/**
-	 * Reads values from INI file
-	 */
-	void readFromFile(File& file) throw (IOException, ParsingException);
-	
-	/**
-	 * Return path to logfile;
-	 */
-	std::string getLogfile() const;
+        /**
+         * Constructor, initializes configuration with default values.
+         */
+        Configuration();
+        
+        /**
+         * Reads values from INI file
+         */
+        void readFromFile(File& file) throw (IOException, ParsingException);
+        
+        /**
+         * Return path to logfile;
+         */
+        std::string getLogfile() const;
 
-	/**
-	   Return log level
-	*/
-	LogLevel getLogLevel() const;
+        /**
+           Return log level
+        */
+        LogLevel getLogLevel() const;
 
-	/**
-	 * Return username of user the webserver is running as
-	 */
-	std::string getWebserverUser() const;
+        /**
+         * Return username of user the webserver is running as
+         */
+        std::string getWebserverUser() const;
 
-	/**
-	 * Return document root (directory, all script have to be in)
-	 */
-	std::string getDocroot() const;
+        /**
+         * Return document root (directory, all script have to be in)
+         */
+        std::string getDocroot() const;
 
-	/**
-	 * Returns wheter suPHP should check if scripts in within the 
-	 * document root of the VHost
-	 */
-	bool getCheckVHostDocroot() const;
-	
-	/**
-	 * Returns wheter suPHP should ignore the group write bit of
-	 * the script file
-	 */
-	bool getAllowFileGroupWriteable() const;
+        /**
+         * Returns wheter suPHP should check if scripts in within the 
+         * document root of the VHost
+         */
+        bool getCheckVHostDocroot() const;
+        
+        /**
+         * Returns wheter suPHP should ignore the group write bit of
+         * the script file
+         */
+        bool getAllowFileGroupWriteable() const;
 
-	/**
-	 * Returns wheter suPHP should ignore the group write bit of
-	 * the directory the is script in
-	 */
-	bool getAllowDirectoryGroupWriteable() const;
-	
-	/**
-	 * Returns wheter suPHP should ignore the others write bit of the
-	 * script file
-	 */
-	bool getAllowFileOthersWriteable() const;
+        /**
+         * Returns wheter suPHP should ignore the group write bit of
+         * the directory the is script in
+         */
+        bool getAllowDirectoryGroupWriteable() const;
+        
+        /**
+         * Returns wheter suPHP should ignore the others write bit of the
+         * script file
+         */
+        bool getAllowFileOthersWriteable() const;
 
-	/**
-	 * Returns wheter suPHP should ignore the others write bit of
-	 * the directory the is script in
-	 */
-	bool getAllowDirectoryOthersWriteable() const;
+        /**
+         * Returns wheter suPHP should ignore the others write bit of
+         * the directory the is script in
+         */
+        bool getAllowDirectoryOthersWriteable() const;
 
-	/**
-	 * Returns whether (minor) error message should be sent to browser
-	 */
-	bool getErrorsToBrowser() const;
-	
-	/**
-	 * Returns the content for the PATH environment variable
-	 */
-	std::string getEnvPath() const;
+        /**
+         * Returns whether (minor) error message should be sent to browser
+         */
+        bool getErrorsToBrowser() const;
+        
+        /**
+         * Returns the content for the PATH environment variable
+         */
+        std::string getEnvPath() const;
 
-	/**
-	 * Returns interpreter string for specified handler
-	 */
-	std::string getInterpreter(std::string handler) const
-	    throw (KeyNotFoundException);
+        /**
+         * Returns interpreter string for specified handler
+         */
+        std::string getInterpreter(std::string handler) const
+            throw (KeyNotFoundException);
 
-	/**
-	 * Returns minimum UID allowed for scripts
-	 */
-	int getMinUid() const;
-	
-	/**
-	 * Returns minimum GID allowed for scripts
-	 */
-	int getMinGid() const;
+        /**
+         * Returns minimum UID allowed for scripts
+         */
+        int getMinUid() const;
+        
+        /**
+         * Returns minimum GID allowed for scripts
+         */
+        int getMinGid() const;
 
-	/**
-	 * Returns umask to set
-	 */
-	int getUmask() const;
+        /**
+         * Returns umask to set
+         */
+        int getUmask() const;
 
-	/**
-	 * Return chroot path
-	 */
-	std::string getChrootPath() const;
+        /**
+         * Return chroot path
+         */
+        std::string getChrootPath() const;
     };
 };
 

@@ -37,28 +37,28 @@ namespace suPHP {
      */
     class KeyNotFoundException : public Exception {
     private:
-	std::string getName() const;
+        std::string getName() const;
     public:
-	/**
-	 * Constructor without message.
-	 */
-	KeyNotFoundException(std::string file, int line);
+        /**
+         * Constructor without message.
+         */
+        KeyNotFoundException(std::string file, int line);
 
-	/**
-	 * Constructor with message.
-	 */
-	KeyNotFoundException(std::string message, std::string file, int line);
-	
-	/**
-	 * Constructor without message but with cause.
-	 */
-	KeyNotFoundException(Exception& cause, std::string file, int line);
-	
-	/**
-	 * Constructor with message and cause.
-	 */
-	KeyNotFoundException(std::string message, Exception& cause, std::string file, int line);
-	
+        /**
+         * Constructor with message.
+         */
+        KeyNotFoundException(std::string message, std::string file, int line);
+        
+        /**
+         * Constructor without message but with cause.
+         */
+        KeyNotFoundException(Exception& cause, std::string file, int line);
+        
+        /**
+         * Constructor with message and cause.
+         */
+        KeyNotFoundException(std::string message, Exception& cause, std::string file, int line);
+        
     };
 };
 

@@ -38,28 +38,28 @@ namespace suPHP {
      */
     class SoftException : public Exception {
     private:
-	std::string getName() const;
+        std::string getName() const;
     public:
-	/**
-	 * Constructor without message.
-	 */
-	SoftException(std::string file, int line);
+        /**
+         * Constructor without message.
+         */
+        SoftException(std::string file, int line);
 
-	/**
-	 * Constructor with message.
-	 */
-	SoftException(std::string message, std::string file, int line);
-	
-	/**
-	 * Constructor without message but with cause.
-	 */
-	SoftException(Exception& cause, std::string file, int line);
-	
-	/**
-	 * Constructor with message and cause.
-	 */
-	SoftException(std::string message, Exception& cause, std::string file, int line);
-	
+        /**
+         * Constructor with message.
+         */
+        SoftException(std::string message, std::string file, int line);
+        
+        /**
+         * Constructor without message but with cause.
+         */
+        SoftException(Exception& cause, std::string file, int line);
+        
+        /**
+         * Constructor with message and cause.
+         */
+        SoftException(std::string message, Exception& cause, std::string file, int line);
+        
     };
 };
 

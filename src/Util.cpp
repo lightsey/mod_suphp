@@ -41,38 +41,38 @@ int suPHP::Util::strToInt(const std::string str) {
 int suPHP::Util::octalStrToInt(const std::string str) {
     int result = 0;
     for (int i=0; i<str.length(); i++) {
-	int d;
-	result *= 8;
-	switch (str[i]) {
-	case '0':
-	    d = 0;
-	    break;
-	case '1':
-	    d = 1;
-	    break;
-	case '2':
-	    d = 2;
-	    break;
-	case '3':
-	    d = 3;
-	    break;
-	case '4':
-	    d = 4;
-	    break;
-	case '5':
-	    d = 5;
-	    break;
-	case '6':
-	    d = 6;
-	    break;
-	case '7':
-	    d = 7;
-	    break;
-	default:
-	    // Should not happen
-	    continue;
-	}
-	result += d; 
+        int d;
+        result *= 8;
+        switch (str[i]) {
+        case '0':
+            d = 0;
+            break;
+        case '1':
+            d = 1;
+            break;
+        case '2':
+            d = 2;
+            break;
+        case '3':
+            d = 3;
+            break;
+        case '4':
+            d = 4;
+            break;
+        case '5':
+            d = 5;
+            break;
+        case '6':
+            d = 6;
+            break;
+        case '7':
+            d = 7;
+            break;
+        default:
+            // Should not happen
+            continue;
+        }
+        result += d; 
     }
     return result;
 }

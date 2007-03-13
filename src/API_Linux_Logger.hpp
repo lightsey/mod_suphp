@@ -35,29 +35,29 @@ namespace suPHP {
      */
     class API_Linux_Logger : public Logger {
     private:
-	int logFd;
-	bool ready;
+        int logFd;
+        bool ready;
 
-	/**
-	 * Internal log function - implementation
-	 */
-	virtual void log(const std::string& classification, 
-			 const std::string& message);
+        /**
+         * Internal log function - implementation
+         */
+        virtual void log(const std::string& classification, 
+                         const std::string& message);
 
     public:
-	/**
-	 * Constructor
-	 */
-	API_Linux_Logger();
-	
-	/**
-	 * Initialize (open logfile) - implementation
-	 */
-	virtual void init(const Configuration& config) throw (IOException);
-	/**
-	 * Is Logger initialized?
-	 */
-	virtual bool isInitialized();
+        /**
+         * Constructor
+         */
+        API_Linux_Logger();
+        
+        /**
+         * Initialize (open logfile) - implementation
+         */
+        virtual void init(const Configuration& config) throw (IOException);
+        /**
+         * Is Logger initialized?
+         */
+        virtual bool isInitialized();
     };
 };
 

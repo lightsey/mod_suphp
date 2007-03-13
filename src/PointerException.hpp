@@ -38,28 +38,28 @@ namespace suPHP {
      */
     class PointerException : public Exception {
     private:
-	std::string getName() const;
+        std::string getName() const;
     public:
-	/**
-	 * Constructor without message.
-	 */
-	PointerException(std::string file, int line);
+        /**
+         * Constructor without message.
+         */
+        PointerException(std::string file, int line);
 
-	/**
-	 * Constructor with message.
-	 */
-	PointerException(std::string message, std::string file, int line);
-	
-	/**
-	 * Constructor without message but with cause.
-	 */
-	PointerException(Exception& cause, std::string file, int line);
-	
-	/**
-	 * Constructor with message and cause.
-	 */
-	PointerException(std::string message, Exception& cause, std::string file, int line);
-	
+        /**
+         * Constructor with message.
+         */
+        PointerException(std::string message, std::string file, int line);
+        
+        /**
+         * Constructor without message but with cause.
+         */
+        PointerException(Exception& cause, std::string file, int line);
+        
+        /**
+         * Constructor with message and cause.
+         */
+        PointerException(std::string message, Exception& cause, std::string file, int line);
+        
     };
 };
 

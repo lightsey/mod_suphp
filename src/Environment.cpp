@@ -30,33 +30,33 @@ using namespace suPHP;
 std::string suPHP::Environment::getVar(const std::string& name) const
     throw (KeyNotFoundException) {
     if (this->vars.find(name) != this->vars.end()) {
-	return this->vars.find(name)->second;
+        return this->vars.find(name)->second;
     } else {
-	throw KeyNotFoundException("Key " + name + " not found", 
-				   __FILE__, __LINE__);
+        throw KeyNotFoundException("Key " + name + " not found", 
+                                   __FILE__, __LINE__);
     }
 }
 
 void suPHP::Environment::setVar(const std::string name, 
-				const std::string content) 
+                                const std::string content) 
     throw (KeyNotFoundException) {
     if (this->vars.find(name) != this->vars.end()) {
-	this->vars.find(name)->second = content;
+        this->vars.find(name)->second = content;
     } else {
-	throw KeyNotFoundException("Key " + name + " not found", 
-				   __FILE__, __LINE__);
+        throw KeyNotFoundException("Key " + name + " not found", 
+                                   __FILE__, __LINE__);
     }
 }
 
 void suPHP::Environment::putVar(const std::string name, 
-				const std::string content) {
+                                const std::string content) {
     if (this->vars.find(name) != this->vars.end()) {
-	this->vars.find(name)->second = content;
+        this->vars.find(name)->second = content;
     } else {
-	std::pair<std::string, std::string> p;
-	p.first = name;
-	p.second = content;
-	this->vars.insert(p);
+        std::pair<std::string, std::string> p;
+        p.first = name;
+        p.second = content;
+        this->vars.insert(p);
     }
     
 }
@@ -64,18 +64,18 @@ void suPHP::Environment::putVar(const std::string name,
 void suPHP::Environment::deleteVar(const std::string& name) 
     throw (KeyNotFoundException) {
     if (this->vars.find(name) != this->vars.end()) {
-	this->vars.erase(name);
+        this->vars.erase(name);
     } else {
-	throw KeyNotFoundException("Key " + name + " not found",
+        throw KeyNotFoundException("Key " + name + " not found",
                                    __FILE__, __LINE__);
     }
 }
  
 bool suPHP::Environment::hasVar(const std::string& name) const {
     if (this->vars.find(name) != this->vars.end()) {
-	return true;
+        return true;
     } else {
-	return false;
+        return false;
     }
     
 }
@@ -83,10 +83,10 @@ bool suPHP::Environment::hasVar(const std::string& name) const {
 std::string& suPHP::Environment::operator[](const std::string& name) 
     throw (KeyNotFoundException) {
     if (this->vars.find(name) != this->vars.end()) {
-	return this->vars.find(name)->second;
+        return this->vars.find(name)->second;
     } else {
-	throw KeyNotFoundException("Key " + name + " not found", 
-				   __FILE__, __LINE__);
+        throw KeyNotFoundException("Key " + name + " not found", 
+                                   __FILE__, __LINE__);
     }
 }
 
