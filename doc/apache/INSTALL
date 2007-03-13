@@ -86,10 +86,9 @@ Now you can "make" Apache and install it using "make install".
 
 Please note that suPHP will probably not work if you also compile in mod_php.
 
-To use suPHP to parse PHP-Files the only thing you have to is to add a line
-like
+To use suPHP to parse PHP-Files add a line like
 
-AddHandler x-httpd-php .php
+AddType application/x-httpd-php .php
 
 to your Apache configuration and to activate mod_suphp for the appropriate
 VHosts.
@@ -104,26 +103,27 @@ This will activate mod_suphp for all VirtualHosts.
 Please note that you have to specify at least one suPHP_AddHandler
 directive, because mod_suphp by default handles no mime-type.
 
+suPHP_AddHandler has to be used within a <Directory> or <Location> context
+so an example configuration could look like:
+
+<Directory />
+  suPHP_AddHandler application/x-httpd-php
+</Directory>
+
 Information about additional options can be found in the "CONFIG"-Readme.
 
 4. Additional information
 
-Please note, that mod_suphp in most cases will *NOT* work, when mod_php is 
-installed and used in your Apache server because both use the same mime type
-"x-httpd-php". I have heard of users concurrently running both, but it is
-probably trivial to do so. Therefore I will not answer any questions on how
-to run both mod_php and mod_suphp concurrently.
-
-Running mod_suphp and mod_php concurrently can be *VERY DANGEROUS* and
-should be avoided. The same applies to CGI scripts which are run with
-webserver privileges.
+Please note, that running mod_suphp and mod_php concurrently can be 
+*VERY DANGEROUS* and should be avoided. The same applies to CGI 
+scripts which are run with webserver privileges.
 
 suPHP should only be used if you are using no CGI scripts or if all CGI
 scripts are run using suExec.
 
 
 ===================================
-(c)2002-2005 by Sebastian Marsching
+(c)2002-2007 by Sebastian Marsching
 <sebastian@marsching.com>
 Please see LICENSE for
 additional information

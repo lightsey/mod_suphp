@@ -47,8 +47,16 @@ suPHP_RemoveHandler <mime-type>
 
 Tells mod_suphp NOT to handle requests with the type <mime-type>.
 
+
+suPHP_PHPPath (expects a path name)
+
+Sets the path to the PHP binary that is used to render files with the
+"x-httpd-php" or "application/x-httpd-php" type. This setting does
+*NOT* affect the PHP binary used for serving script requests, which is
+still configured in suphp.conf.
+
 ===================================
-(c)2002-2005 by Sebastian Marsching
+(c)2002-2007 by Sebastian Marsching
 <sebastian@marsching.com>
 Please see LICENSE for
 additional information

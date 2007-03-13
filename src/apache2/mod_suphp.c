@@ -123,6 +123,7 @@ typedef struct {
     char *target_group;
 #endif
     apr_table_t *handlers;
+    char *php_path;
 } suphp_conf;
 
 
@@ -132,6 +133,7 @@ static void *suphp_create_dir_config(apr_pool_t *p, char *dir)
     
     cfg->php_config = NULL;
     cfg->engine = SUPHP_ENGINE_UNDEFINED;
+    cfg->php_path = NULL;
     cfg->cmode = SUPHP_CONFIG_MODE_DIRECTORY;
 
 #ifdef SUPHP_USE_USERGROUP
@@ -195,6 +197,7 @@ static void *suphp_create_server_config(apr_pool_t *p, server_rec *s)
     suphp_conf *cfg = (suphp_conf *) apr_pcalloc(p, sizeof(suphp_conf));
     
     cfg->engine = SUPHP_ENGINE_UNDEFINED;
+    cfg->php_path = NULL;
     cfg->cmode = SUPHP_CONFIG_MODE_SERVER;
     
     return (void *) cfg;
@@ -212,7 +215,12 @@ static void *suphp_merge_server_config(apr_pool_t *p, void *base,
         merged->engine = child->engine;
     else
         merged->engine = parent->engine;
-
+    
+    if (child->php_path != NULL)
+        merged->php_path = apr_pstrdup(p, child->php_path);
+    else
+        merged->php_path = apr_pstrdup(p, parent->php_path);
+    
 #ifdef SUPHP_USE_USERGROUP
     if (child->target_user)
         merged->target_user = apr_pstrdup(p, child->target_user);
@@ -311,6 +319,19 @@ static const char *suphp_handle_cmd_remove_handler(cmd_parms *cmd,
 }
 
 
+static const char *suphp_handle_cmd_phppath(cmd_parms *cmd, void* mconfig, const char *arg)
+{
+    server_rec *s = cmd->server;
+    suphp_conf *cfg;
+    
+    cfg = (suphp_conf *) ap_get_module_config(s->module_config, &suphp_module);
+    
+    cfg->php_path = apr_pstrdup(cmd->pool, arg);
+    
+    return NULL;
+}
+
+
 static const command_rec suphp_cmds[] =
 {
     AP_INIT_FLAG("suPHP_Engine", suphp_handle_cmd_engine, NULL, RSRC_CONF | ACCESS_CONF,
@@ -323,6 +344,7 @@ static const command_rec suphp_cmds[] =
 #endif
     AP_INIT_ITERATE("suPHP_AddHandler", suphp_handle_cmd_add_handler, NULL, ACCESS_CONF, "Tells mod_suphp to handle these MIME-types"),
     AP_INIT_ITERATE("suPHP_RemoveHandler", suphp_handle_cmd_remove_handler, NULL, ACCESS_CONF, "Tells mod_suphp not to handle these MIME-types"),
+    AP_INIT_TAKE1("suPHP_PHPPath", suphp_handle_cmd_phppath, NULL, RSRC_CONF, "Path to the PHP binary used to render source view"),
     {NULL}
 };
 
@@ -504,7 +526,181 @@ static void suphp_discard_output(apr_bucket_brigade *bb) {
   Hooks / handlers
  ******************/
 
+static int suphp_script_handler(request_rec *r);
+static int suphp_source_handler(request_rec *r);
+
 static int suphp_handler(request_rec *r)
+{
+    suphp_conf *sconf, *dconf;
+    
+    sconf = ap_get_module_config(r->server->module_config, &suphp_module);
+    dconf = ap_get_module_config(r->per_dir_config, &suphp_module);
+    
+    /* only handle request if mod_suphp is active for this handler */
+    /* check only first byte of value (second has to be \0) */
+    if ((apr_table_get(dconf->handlers, r->handler) != NULL)
+    && (*(apr_table_get(dconf->handlers, r->handler)) != '0'))
+    {
+        return suphp_script_handler(r);
+    }
+    
+    if (!strcmp(r->handler, "x-httpd-php-source") 
+    || !strcmp(r->handler, "application/x-httpd-php-source"))
+    {
+        return suphp_source_handler(r);
+    }
+    
+    return DECLINED;
+}
+
+static int suphp_source_handler(request_rec *r)
+{
+    suphp_conf *conf;
+    apr_status_t rv;
+    apr_pool_t *p;
+    apr_file_t *file;
+    apr_proc_t *proc;
+    apr_procattr_t *procattr;
+    char **argv;
+    char **env;
+    apr_bucket_brigade *bb;
+    apr_bucket *b;
+    char *phpexec;
+    
+    p = r->main ? r->main->pool : r->pool;
+    
+    if (strcmp(r->method, "GET"))
+    {
+        return DECLINED;
+    }
+    
+    conf = ap_get_module_config(r->server->module_config, &suphp_module);
+    phpexec = apr_pstrdup(p, conf->php_path);
+    if (phpexec == NULL)
+    {
+        return DECLINED;
+    }
+    
+    // Try to open file for reading to see whether is is accessible
+    rv = apr_file_open(&file, apr_pstrdup(p, r->filename), APR_READ, APR_OS_DEFAULT, p);
+    if (rv == APR_SUCCESS)
+    {
+        apr_file_close(file);
+        file = NULL;
+    }
+    else if (rv == EACCES)
+    {
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, rv, r, "access to %s denied", r->filename);
+        return HTTP_FORBIDDEN;
+    }
+    else if (rv == ENOENT)
+    {
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "File does not exist: %s", r->filename);
+        return HTTP_NOT_FOUND;
+    }
+    else
+    {
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, rv, r, "Could not open file: %s", r->filename);
+        return HTTP_INTERNAL_SERVER_ERROR;
+    }
+    
+        env = ap_create_environment(p, r->subprocess_env);
+        
+    /* set attributes for new process */
+    
+    if (((rv = apr_procattr_create(&procattr, p)) != APR_SUCCESS)
+        || ((rv = apr_procattr_io_set(procattr, APR_CHILD_BLOCK, APR_CHILD_BLOCK, APR_CHILD_BLOCK)) != APR_SUCCESS)
+        || ((rv = apr_procattr_dir_set(procattr, ap_make_dirstr_parent(r->pool, r->filename))) != APR_SUCCESS)
+        || ((apr_procattr_cmdtype_set(procattr, APR_PROGRAM)) != APR_SUCCESS)
+        || ((apr_procattr_error_check_set(procattr, 1)) != APR_SUCCESS)
+        || ((apr_procattr_detach_set(procattr, 0)) != APR_SUCCESS))
+    {
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, rv, r,
+                      "couldn't set child process attributes: %s", r->filename);
+        return HTTP_INTERNAL_SERVER_ERROR;
+    }
+
+    
+    /* create new process */
+    
+    argv = apr_palloc(p, 4 * sizeof(char *));
+    argv[0] = phpexec;
+    argv[1] = "-s";
+    argv[2] = apr_pstrdup(p, r->filename);
+    argv[3] = NULL;
+    
+    env = ap_create_environment(p, r->subprocess_env);
+    
+    proc = apr_pcalloc(p, sizeof(*proc));
+    rv = apr_proc_create(proc, phpexec, (const char *const *)argv, (const char *const *)env, procattr, p);
+    if (rv != APR_SUCCESS)
+    {
+       ap_log_rerror(APLOG_MARK, APLOG_ERR, rv, r,
+                     "couldn't create child process: %s for %s", phpexec, r->filename);
+       return HTTP_INTERNAL_SERVER_ERROR;
+    }
+    apr_pool_note_subprocess(p, proc, APR_KILL_AFTER_TIMEOUT);
+
+    if (!proc->out)
+        return APR_EBADF;
+    apr_file_pipe_timeout_set(proc->out, r->server->timeout);
+    
+    if (!proc->in)
+        return APR_EBADF;
+    apr_file_pipe_timeout_set(proc->in, r->server->timeout);
+    
+    if (!proc->err)
+        return APR_EBADF;
+    apr_file_pipe_timeout_set(proc->err, r->server->timeout);
+    
+    /* discard input */
+        
+    bb = apr_brigade_create(r->pool, r->connection->bucket_alloc);
+    
+    apr_file_flush(proc->in);
+    apr_file_close(proc->in);
+    
+    rv = ap_get_brigade(r->input_filters, bb, AP_MODE_READBYTES, APR_BLOCK_READ, HUGE_STRING_LEN);
+    if (rv != APR_SUCCESS)
+    {
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, rv, r,
+                     "couldn't get input from filters: %s", r->filename);
+        return HTTP_INTERNAL_SERVER_ERROR;
+    }
+    suphp_discard_output(bb);
+    apr_brigade_cleanup(bb);
+    
+    /* get output from script */
+    
+#if APR_FILES_AS_SOCKETS
+    apr_file_pipe_timeout_set(proc->out, 0);
+    apr_file_pipe_timeout_set(proc->err, 0);
+    b = suphp_bucket_create(r, proc->out, proc->err, r->connection->bucket_alloc);
+#else
+    b = apr_bucket_pipe_create(proc->out, r->connection->bucket_alloc);
+#endif
+    APR_BRIGADE_INSERT_TAIL(bb, b);
+    
+    b = apr_bucket_eos_create(r->connection->bucket_alloc);
+    APR_BRIGADE_INSERT_TAIL(bb, b);
+
+    /* send output to browser (through filters) */
+    
+    r->content_type = "text/html";
+    rv = ap_pass_brigade(r->output_filters, bb);
+    
+    /* write errors to logfile */
+    
+    if (rv == APR_SUCCESS && !r->connection->aborted)
+    {
+        suphp_log_script_err(r, proc->err);
+        apr_file_close(proc->err);
+    }
+    
+    return OK;
+}
+
+static int suphp_script_handler(request_rec *r)
 {
     apr_pool_t *p;
     suphp_conf *sconf;
@@ -546,12 +742,6 @@ static int suphp_handler(request_rec *r)
     sconf = ap_get_module_config(r->server->module_config, &suphp_module);
     dconf = ap_get_module_config(r->per_dir_config, &suphp_module);
     core_conf = (core_dir_config *) ap_get_module_config(r->per_dir_config, &core_module);
-    
-    /* only handle request if mod_suphp is active for this handler */
-    /* check only first byte of value (second has to be \0) */
-    if ((apr_table_get(dconf->handlers, r->handler) == NULL)
-	|| (*(apr_table_get(dconf->handlers, r->handler)) == '0'))
-	return DECLINED;
     
     /* check if suPHP is enabled for this request */
     
