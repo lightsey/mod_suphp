@@ -103,12 +103,12 @@ This will activate mod_suphp for all VirtualHosts.
 Please note that you have to specify at least one suPHP_AddHandler
 directive, because mod_suphp by default handles no mime-type.
 
-suPHP_AddHandler has to be used within a <Directory> or <Location> context
-so an example configuration could look like:
+Example:
 
-<Directory />
-  suPHP_AddHandler application/x-httpd-php
-</Directory>
+suPHP_AddHandler application/x-httpd-php
+
+If you are using "paranoid" or "force" mode, you have to specify
+at least one suPHP_UserGroup directive.
 
 Information about additional options can be found in the "CONFIG"-Readme.
 

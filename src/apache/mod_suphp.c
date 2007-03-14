@@ -133,6 +133,10 @@ static void *suphp_create_server_config(pool *p, server_rec *s) {
     cfg->target_user = NULL;
     cfg->target_group = NULL;
 #endif
+    
+    /* Create table with 0 initial elements */
+    /* This size may be increased for performance reasons */
+    cfg->handlers = ap_make_table(p, 0);
 
     return (void *) cfg;
 }
@@ -168,6 +172,8 @@ static void *suphp_merge_server_config(pool *p, void *base, void *overrides) {
     else
         merged->target_group = NULL;
 #endif
+    
+     merged->handlers = ap_overlay_tables(p, child->handlers, parent->handlers);
 
     return (void *) merged;
 }
@@ -225,7 +231,11 @@ static const char *suphp_handle_cmd_user_group(cmd_parms *cmd, void *mconfig,
 
 static const char *suphp_handle_cmd_add_handler(cmd_parms *cmd, void *mconfig,
                                                 const char *arg) {
-    suphp_conf *cfg = (suphp_conf *) mconfig;
+    suphp_conf *cfg;
+    if (mconfig)
+        cfg = (suphp_conf *) mconfig;
+    else
+        cfg = ap_get_module_config(cmd->server->module_config, &suphp_module);
 
     // Mark active handlers with '1'
     ap_table_set(cfg->handlers, arg, "1");
@@ -236,7 +246,11 @@ static const char *suphp_handle_cmd_add_handler(cmd_parms *cmd, void *mconfig,
 static const char *suphp_handle_cmd_remove_handler(cmd_parms *cmd, 
                                                    void *mconfig, 
                                                    const char *arg) {
-    suphp_conf *cfg = (suphp_conf *) mconfig;
+    suphp_conf *cfg;
+    if (mconfig)
+        cfg = (suphp_conf *) mconfig;
+    else
+        cfg = ap_get_module_config(cmd->server->module_config, &suphp_module);
     
     // Mark deactivated handlers with '0'
     ap_table_set(cfg->handlers, arg, "0");
@@ -268,9 +282,9 @@ static const command_rec suphp_cmds[] = {
     {"suPHP_UserGroup", suphp_handle_cmd_user_group, NULL, 
      RSRC_CONF|ACCESS_CONF, TAKE2, "User and group scripts shall be run as"},
 #endif 
-    {"suPHP_AddHandler", suphp_handle_cmd_add_handler, NULL, ACCESS_CONF,
+    {"suPHP_AddHandler", suphp_handle_cmd_add_handler, NULL, RSRC_CONF | ACCESS_CONF,
      ITERATE, "Tells mod_suphp to handle these MIME-types"},
-    {"suphp_RemoveHandler", suphp_handle_cmd_remove_handler, NULL, ACCESS_CONF,
+    {"suphp_RemoveHandler", suphp_handle_cmd_remove_handler, NULL, RSRC_CONF | ACCESS_CONF,
      ITERATE, "Tells mod_suphp not to handle these MIME-types"},
     {"suPHP_PHPPath", suphp_handle_cmd_phppath, NULL, RSRC_CONF, TAKE1, "Path to the PHP binary used to render source view"},
     {NULL}
@@ -522,9 +536,14 @@ static int suphp_handler(request_rec *r) {
     } else {
         handler = r->content_type;
     }
-    if ((ap_table_get(dconf->handlers, handler) == NULL)
-        || (*(ap_table_get(dconf->handlers, handler)) == '0'))
+    if ((ap_table_get(dconf->handlers, handler) == NULL)) {
+        if ((ap_table_get(sconf->handlers, handler) == NULL)
+            || (*(ap_table_get(sconf->handlers, handler)) == '0')) {
+            return DECLINED;
+        }
+    } else if (*(ap_table_get(dconf->handlers, handler)) == '0') {
         return DECLINED;
+    }
 
     /* check if suPHP is enabled for this request */
 

@@ -4,6 +4,8 @@
 - Added support for application/x-httpd-php-source:
   The PHP binary used to parse render the code can be set using the
   suPHP_PHPPath directive.
+- Made suPHP_AddHandler and suPHP_RemoveHandler directives
+  available on server level.
 
 * Version 0.6.2 (19 November 2006)
 - Made mod_suphp compatible with Apache 2.2
