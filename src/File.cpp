@@ -57,6 +57,9 @@ std::string suPHP::File::getRealPath() const throw (SystemException) {
 File suPHP::File::getParentDirectory() const {
     std::string path = this->getPath();
     path = path.substr(0, path.rfind('/'));
+    if (path.length() == 0) {
+        path = "/";
+    }
     return File(path);
 }
 

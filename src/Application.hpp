@@ -131,6 +131,14 @@ namespace suPHP {
                            const Environment& env,
                            const Configuration& config) const
             throw (SoftException);
+        
+        /**
+         * Checks ownership and permissions for parent directories
+         */
+        void checkParentDirectories(const File& file,
+                                    const UserInfo& owner,
+                                    const Configuration& config) const
+            throw (SoftException);
 
 
     public:

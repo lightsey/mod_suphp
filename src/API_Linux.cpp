@@ -237,7 +237,7 @@ std::string suPHP::API_Linux::GroupInfo_getGroupname(const GroupInfo& ginfo)
 
 bool suPHP::API_Linux::File_exists(const File& file) const {
     struct stat dummy;
-    if (::stat(file.getPath().c_str(), &dummy) == 0)
+    if (::lstat(file.getPath().c_str(), &dummy) == 0)
         return true;
     else
         return false;
@@ -316,7 +316,7 @@ std::string suPHP::API_Linux::File_getRealPath(const File& file) const
 bool suPHP::API_Linux::File_hasPermissionBit(const File& file, FileMode perm) 
     const throw (SystemException) {
     struct stat temp;
-    if (stat(file.getPath().c_str(), &temp) == -1) {
+    if (lstat(file.getPath().c_str(), &temp) == -1) {
         throw SystemException(std::string("Could not stat \"")
                               + file.getPath() + "\": "
                               + ::strerror(errno), __FILE__, __LINE__);
@@ -374,7 +374,7 @@ bool suPHP::API_Linux::File_hasPermissionBit(const File& file, FileMode perm)
 UserInfo suPHP::API_Linux::File_getUser(const File& file) const
     throw (SystemException) {
     struct stat temp;
-    if (stat(file.getPath().c_str(), &temp) == -1) {
+    if (lstat(file.getPath().c_str(), &temp) == -1) {
         throw SystemException(std::string("Could not stat \"")
                               + file.getPath() + "\": "
                               + ::strerror(errno), __FILE__, __LINE__);
@@ -385,7 +385,7 @@ UserInfo suPHP::API_Linux::File_getUser(const File& file) const
 GroupInfo suPHP::API_Linux::File_getGroup(const File& file) const
     throw (SystemException) {
     struct stat temp;
-    if (stat(file.getPath().c_str(), &temp) == -1) {
+    if (lstat(file.getPath().c_str(), &temp) == -1) {
         throw SystemException(std::string("Could not stat \"")
                               + file.getPath() + "\": "
                               + ::strerror(errno), __FILE__, __LINE__);

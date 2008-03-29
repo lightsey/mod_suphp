@@ -9,6 +9,9 @@
   available on server level.
 - Added support for multiple docroots (using patterns).
 - Added support for variable substitution in chroot path.
+- Fixed a possible race condition concerning the check for the 
+  right symlink owner. 
+- Added checks for the owner of the parent directories were added.
 
 * Version 0.6.2 (19 November 2006)
 - Made mod_suphp compatible with Apache 2.2
