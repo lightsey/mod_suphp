@@ -1,5 +1,5 @@
-#/*
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+/*
+    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
@@ -40,29 +40,30 @@ namespace suPHP {
      */
     class IniSection {
     private:
-        std::multimap<std::string, std::string> entries;
-        void putValue(std::string key, std::string value);
+        std::multimap<const std::string, const std::string> entries;
+        void putValue(const std::string key, const std::string value);
+        void removeValues(const std::string& key);
 
     public:
         /**
          * Returns values corresponding to key
          */
-        std::vector<std::string> getValues(std::string key) 
+        const std::vector<std::string> getValues(const std::string& key) const
             throw (KeyNotFoundException);
 
         /**
          * Returns first value corresponding to a key
          */
-        std::string getValue(std::string key) throw (KeyNotFoundException);
+        std::string getValue(const std::string& key) const throw (KeyNotFoundException);
 
         /**
          * Returns keys appearing in this section
          */
-        std::vector<std::string> getKeys();
+        const std::vector<std::string> getKeys() const;
         /**
          * Overloaded index operator, calls getValues()
          */
-        std::vector<std::string> operator[](std::string key)
+        const std::vector<std::string> operator[](const std::string& key) const
             throw (KeyNotFoundException);
 
         friend class IniFile;
@@ -70,7 +71,7 @@ namespace suPHP {
         /**
          * Check wheter key is existing within section
          */
-        bool hasKey(std::string name);
+        bool hasKey(const std::string& name) const;
     };
 };
 

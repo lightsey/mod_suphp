@@ -40,7 +40,7 @@ dnl If apr_found is "yes" or "reconfig", then the caller should use the
 dnl value of apr_config to fetch any necessary build/link information.
 dnl
 
-AC_DEFUN(APR_FIND_APR, [
+AC_DEFUN([APR_FIND_APR], [
   apr_found="no"
 
   if test "$ac_cv_emxos2" = "yes"; then

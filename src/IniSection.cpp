@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
@@ -26,19 +26,19 @@
 
 using namespace suPHP;
 
-void suPHP::IniSection::putValue(std::string key, std::string value) {
+void suPHP::IniSection::putValue(const std::string key, const std::string value) {
     std::pair<std::string, std::string> p;
     p.first = key;
     p.second = value;
     this->entries.insert(p);
 }
 
-std::vector<std::string> suPHP::IniSection::getValues(std::string key)
+const std::vector<std::string> suPHP::IniSection::getValues(const std::string& key) const
     throw (KeyNotFoundException) {
     std::vector<std::string> values;
-    for (std::multimap<std::string, std::string>::iterator pos = 
-             this->entries.find(key); 
-         pos != this->entries.end(); pos++) {
+    std::pair<std::multimap<const std::string, const std::string>::const_iterator, std::multimap<const std::string, const std::string>::const_iterator> range = this->entries.equal_range(key);
+    for (std::multimap<const std::string, const std::string>::const_iterator pos = 
+        range.first; pos != range.second; pos++) {
         values.push_back(pos->second);
     }
     if (values.size() == 0) {
@@ -48,7 +48,7 @@ std::vector<std::string> suPHP::IniSection::getValues(std::string key)
     return values;
 }
 
-std::string suPHP::IniSection::getValue(std::string key)
+std::string suPHP::IniSection::getValue(const std::string& key) const
     throw (KeyNotFoundException) {
     std::vector<std::string> values;
     if (this->entries.find(key) != this->entries.end()) {
@@ -60,9 +60,9 @@ std::string suPHP::IniSection::getValue(std::string key)
     
 }
 
-std::vector<std::string> suPHP::IniSection::getKeys() {
+const std::vector<std::string> suPHP::IniSection::getKeys() const {
     std::vector<std::string> keys;
-    for (std::multimap<std::string, std::string>::iterator pos =
+    for (std::multimap<const std::string, const std::string>::const_iterator pos =
              this->entries.begin();
          pos != this->entries.end(); pos++) {
         keys.push_back(pos->first);
@@ -70,7 +70,7 @@ std::vector<std::string> suPHP::IniSection::getKeys() {
     return keys;
 }
 
-bool suPHP::IniSection::hasKey(std::string key) {
+bool suPHP::IniSection::hasKey(const std::string& key) const {
     if (this->entries.find(key) != this->entries.end()) {
         return true;
     } else {
@@ -79,7 +79,11 @@ bool suPHP::IniSection::hasKey(std::string key) {
     
 }
 
-std::vector<std::string> suPHP::IniSection::operator[](std::string key) 
+const std::vector<std::string> suPHP::IniSection::operator[](const std::string& key) const
     throw (KeyNotFoundException) {
     return this->getValues(key);
+}
+
+void suPHP::IniSection::removeValues(const std::string& key) {
+    this->entries.erase(key);
 }

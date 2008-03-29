@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
@@ -203,6 +203,18 @@ GroupInfo suPHP::API_Linux::UserInfo_getGroupInfo(const UserInfo& uinfo) const
                               __FILE__, __LINE__);
     }
     return GroupInfo(tmpuser->pw_gid);
+}
+
+std::string suPHP::API_Linux::UserInfo_getHomeDirectory(const UserInfo& uinfo) const
+    throw (LookupException) {
+    struct passwd *tmpuser = NULL;
+    tmpuser = getpwuid(uinfo.getUid());
+    if (tmpuser == NULL) {
+        throw LookupException(std::string("Could not lookup UID ") 
+                              + Util::intToStr(uinfo.getUid()), 
+                              __FILE__, __LINE__);
+    }
+    return tmpuser->pw_dir;
 }
 
 bool suPHP::API_Linux::UserInfo_isSuperUser(const UserInfo& uinfo) const {

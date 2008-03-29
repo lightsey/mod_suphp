@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
@@ -36,7 +36,7 @@ std::string suPHP::File::getPath() const{
     return this->path;
 }
 
-SmartPtr<std::ifstream> suPHP::File::getInputStream() throw (IOException) {
+SmartPtr<std::ifstream> suPHP::File::getInputStream() const throw (IOException) {
     std::ifstream* infile = new std::ifstream();
     infile->open(this->path.c_str());
     if (infile->bad() || infile->fail()) {

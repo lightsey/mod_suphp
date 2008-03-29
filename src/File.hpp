@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
@@ -72,7 +72,7 @@ namespace suPHP {
         /**
          * Returns input stream to read from file
          */
-        SmartPtr<std::ifstream> getInputStream() throw (IOException);
+        SmartPtr<std::ifstream> getInputStream() const throw (IOException);
         
         /**
          * Does file exists?

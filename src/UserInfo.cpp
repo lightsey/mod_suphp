@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
@@ -56,6 +56,12 @@ GroupInfo suPHP::UserInfo::getGroupInfo() const
     throw (LookupException) {
     API& api = API_Helper::getSystemAPI();
     return api.UserInfo_getGroupInfo(*this);
+}
+
+std::string suPHP::UserInfo::getHomeDirectory() const
+    throw (LookupException) {
+    API& api = API_Helper::getSystemAPI();
+        return api.UserInfo_getHomeDirectory(*this);
 }
 
 bool suPHP::UserInfo::isSuperUser() {

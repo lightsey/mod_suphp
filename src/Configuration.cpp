@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
@@ -87,7 +87,7 @@ suPHP::Configuration::Configuration() {
 #else
     this->webserver_user = "wwwrun";
 #endif
-    this->docroot = "/";
+    this->docroots.push_back("/");
     this->allow_file_group_writeable = false;
     this->allow_directory_group_writeable = false;
     this->allow_file_others_writeable = false;
@@ -119,9 +119,9 @@ void suPHP::Configuration::readFromFile(File& file)
     IniFile ini;
     ini.parse(file);
     if (ini.hasSection("global")) {
-        IniSection& sect = ini.getSection("global");
-        std::vector<std::string> keys = sect.getKeys();
-        std::vector<std::string>::iterator i;
+        const IniSection& sect = ini.getSection("global");
+        const std::vector<std::string> keys = sect.getKeys();
+        std::vector<std::string>::const_iterator i;
         for (i = keys.begin(); i < keys.end(); i++) {
             std::string key = *i;
             std::string value = sect.getValue(key);
@@ -130,9 +130,9 @@ void suPHP::Configuration::readFromFile(File& file)
                 this->logfile = value;
             else if (key == "webserver_user")
                 this->webserver_user = value;
-            else if (key == "docroot")
-                this->docroot = value;
-            else if (key == "allow_file_group_writeable")
+            else if (key == "docroot") {
+                this->docroots = sect.getValues(key);
+            } else if (key == "allow_file_group_writeable")
                 this->allow_file_group_writeable = this->strToBool(value);
             else if (key == "allow_directory_group_writeable")
                 this->allow_directory_group_writeable = this->strToBool(value);
@@ -167,8 +167,8 @@ void suPHP::Configuration::readFromFile(File& file)
     // Get handlers / interpreters
     if (ini.hasSection("handlers")) {
         IniSection sect = ini.getSection("handlers");
-        std::vector<std::string> keys = sect.getKeys();
-        std::vector<std::string>::iterator i;
+        const std::vector<std::string> keys = sect.getKeys();
+        std::vector<std::string>::const_iterator i;
         for (i = keys.begin(); i < keys.end(); i++) {
             std::string key = *i;
             std::string value = sect.getValue(key);
@@ -193,8 +193,8 @@ std::string suPHP::Configuration::getWebserverUser() const {
     return this->webserver_user;
 }
 
-std::string suPHP::Configuration::getDocroot() const {
-    return this->docroot;
+const std::vector<std::string>& suPHP::Configuration::getDocroots() const {
+    return this->docroots;
 }
 
 bool suPHP::Configuration::getCheckVHostDocroot() const {

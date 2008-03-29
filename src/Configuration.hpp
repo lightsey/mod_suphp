@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
@@ -28,6 +28,7 @@ namespace suPHP {
 
 #include <string>
 #include <map>
+#include <vector>
 
 #include "ParsingException.hpp"
 #include "IOException.hpp"
@@ -43,7 +44,7 @@ namespace suPHP {
     private:
         std::string logfile;
         std::string webserver_user;
-        std::string docroot;
+        std::vector<std::string> docroots;
         bool allow_file_group_writeable;
         bool allow_directory_group_writeable;
         bool allow_file_others_writeable;
@@ -96,9 +97,9 @@ namespace suPHP {
         std::string getWebserverUser() const;
 
         /**
-         * Return document root (directory, all script have to be in)
+         * Return document root (list of directories, scripts may be within)
          */
-        std::string getDocroot() const;
+        const std::vector<std::string>& getDocroots() const;
 
         /**
          * Returns wheter suPHP should check if scripts in within the 

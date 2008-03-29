@@ -18,59 +18,47 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef SUPHP_INIFILE_H
+#ifndef SUPHP_PATHMATCHER_H
 
 namespace suPHP {
-    class IniFile;
+    class PathMatcher;
 };
 
-#define SUPHP_INIFILE_H
+#define SUPHP_PATHMATCHER_H
 
 #include <string>
-#include <vector>
-#include <map>
 
+#include "UserInfo.hpp"
+#include "GroupInfo.hpp"
 #include "KeyNotFoundException.hpp"
 #include "ParsingException.hpp"
-#include "IOException.hpp"
-#include "IniSection.hpp"
 
 namespace suPHP {
-    /**
-     * Class providing access to configuration in a INI file.
-     */
-    class IniFile {
+    class PathMatcher {
     private:
-        std::map<std::string, IniSection> sections;
+        UserInfo user;
+        GroupInfo group;
+        std::string lookupVariable(std::string str)
+            throw (KeyNotFoundException);
         
-        std::string parseValue(const std::string& value) const throw (ParsingException);
-
     public:
         /**
-         * Reads values from INI file
+         * Contructor
          */
-        void parse(const File& file) throw (IOException, ParsingException);
-
-        /**
-         * Returns section
-         */
-        const IniSection& getSection(const std::string& name) const throw (KeyNotFoundException);
+        PathMatcher(const UserInfo& user, const GroupInfo& group);
         
         /**
-         * Index operator
+         * Checks wheter a path matches a pattern
          */
-        const IniSection& operator[](const std::string& name) const throw (KeyNotFoundException);
-
+        bool matches(std::string pattern, std::string path) 
+            throw (KeyNotFoundException, ParsingException);
+        
         /**
-         * Returns vector containing names of all sections
+         * Resolves variables in a string
          */
-        const std::vector<const std::string> getSections();
-
-        /**
-         * Checks wheter a section is existing
-         */
-        bool hasSection(const std::string& name) const;
+        std::string resolveVariables(std::string str)
+            throw (KeyNotFoundException, ParsingException);
     };
 };
 
-#endif // SUPHP_INIFILE_H
+#endif // SUPHP_PATHMATCHER_H

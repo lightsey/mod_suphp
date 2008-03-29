@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
@@ -115,6 +115,12 @@ namespace suPHP {
          * Returns group from UserInfo
          */
         virtual GroupInfo UserInfo_getGroupInfo(const UserInfo& uinfo) const
+            throw (LookupException) =0;
+        
+        /**
+         * Returns home directory from UserInfo
+         */
+        virtual std::string UserInfo_getHomeDirectory(const UserInfo& uinfo) const
             throw (LookupException) =0;
         
         /**

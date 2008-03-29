@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
@@ -39,6 +39,8 @@ enum TargetMode {
 #include "SystemException.hpp"
 #include "SoftException.hpp"
 #include "SecurityException.hpp"
+#include "UserInfo.hpp"
+#include "GroupInfo.hpp"
 
 namespace suPHP {
     /**
@@ -58,22 +60,45 @@ namespace suPHP {
          */
         void checkProcessPermissions(Configuration& config) 
             throw (SecurityException, LookupException);
+        
         /**
-         * Checks scriptfile.
-         * Includes check for path, symbollink and permissions
+         * Checks scriptfile (first stage).
+         * Includes check for VHost docroot, symbollink and permissions.
          */
-        void checkScriptFile(const std::string& scriptFilename, 
+        void checkScriptFileStage1(const std::string& scriptFilename, 
                              const Configuration& config, 
                              const Environment& environment) const
             throw (SystemException, SoftException);
         
         /**
+         * Checks scriptfile.
+         * Includes check for paths which might be user specific
+         */
+        void checkScriptFileStage2(const std::string& scriptFilename, 
+                             const Configuration& config, 
+                             const Environment& environment,
+                             const UserInfo& targetUser,
+                             const GroupInfo& targetGroup) const
+            throw (SystemException, SoftException);
+        
+        /**
+         * Determines target user and group that is to be used for script execution.
+         * Uses preprocessor macros to distinguish between modes
+         */
+        void checkProcessPermissions(const std::string& scriptFilename,
+                                      const Configuration& config,
+                                      const Environment& environment,
+                                      UserInfo& targetUser,
+                                      GroupInfo& targetGroup) const
+            throw (SystemException, SoftException, SecurityException);
+        
+        /**
          * Changes process permission (user and group).
          * Uses preprocessor macros to distinguish between modes
          */
-        void changeProcessPermissions(const std::string& scriptFilename,
-                                      const Configuration& config,
-                                      const Environment& environment) const
+        void changeProcessPermissions(const Configuration& config,
+                                      const UserInfo& targetUser,
+                                      const GroupInfo& targetGroup) const
             throw (SystemException, SoftException, SecurityException);
 
         /**

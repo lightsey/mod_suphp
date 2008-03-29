@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
@@ -21,6 +21,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 #include "KeyNotFoundException.hpp"
 
@@ -28,7 +29,7 @@
 
 using namespace suPHP;
 
-IniSection& suPHP::IniFile::getSection(std::string name)
+const IniSection& suPHP::IniFile::getSection(const std::string& name) const
     throw (KeyNotFoundException) {
     if (this->sections.find(name) != this->sections.end()) {
         return this->sections.find(name)->second;
@@ -38,7 +39,7 @@ IniSection& suPHP::IniFile::getSection(std::string name)
     }
 }
 
-bool suPHP::IniFile::hasSection(std::string name) {
+bool suPHP::IniFile::hasSection(const std::string& name) const {
     if (this->sections.find(name) != this->sections.end()) {
         return true;
     } else {
@@ -47,13 +48,13 @@ bool suPHP::IniFile::hasSection(std::string name) {
     
 }
 
-IniSection& suPHP::IniFile::operator[](std::string name) 
+const IniSection& suPHP::IniFile::operator[](const std::string& name) const
     throw (KeyNotFoundException) {
     return this->getSection(name);
 }
 
 
-void suPHP::IniFile::parse(File file) throw (IOException, ParsingException) {
+void suPHP::IniFile::parse(const File& file) throw (IOException, ParsingException) {
     SmartPtr<std::ifstream> is = file.getInputStream();
     IniSection *current_section = NULL;
     while (!is->eof() && !is->bad() && !is->fail()) {
@@ -98,12 +99,14 @@ void suPHP::IniFile::parse(File file) throw (IOException, ParsingException) {
                 this->sections.insert(p);
             }
             // Set current section
-            current_section = &(this->getSection(name));
+            current_section = &(this->sections.find(name)->second);
             
         // Is the line a key-value pair?
         } else if (tstr.find_first_of('=') != std::string::npos) {
             std::string name;
-            std::string value;
+            std::vector<std::string> values;
+            bool append_mode = false;
+            
             int eqpos = 0;
             
             // Check wheter we already have a section
@@ -115,20 +118,138 @@ void suPHP::IniFile::parse(File file) throw (IOException, ParsingException) {
             
             // Extract name
             eqpos = tstr.find_first_of('=');
-            name = tstr.substr(0, eqpos);
-            value = tstr.substr(eqpos + 1, tstr.size() - eqpos + 1);
+            if (eqpos == std::string::npos || eqpos < 1 || eqpos == tstr.length()-1) {
+                throw ParsingException("Malformed line: " + tstr, __FILE__, __LINE__);
+            }
+            if (tstr[eqpos-1] == '+') {
+                append_mode = true;
+                name = tstr.substr(0, eqpos-1);
+            } else {
+                name = tstr.substr(0, eqpos);
+            }
+            
+            int temppos;
+            temppos = name.find_first_not_of(" \t");
+            if (temppos == std::string::npos) {
+                throw ParsingException("Malformed line: " + tstr, __FILE__, __LINE__);
+            }
             name = name.substr(0, name.find_last_not_of(" \t") + 1);
-            value = value.substr(value.find_first_not_of(" \t"));
-            if (value[0] == '"')
-                value = value.substr(1);
-            if (value[value.size()-1] == '"')
-                value = value.substr(0, value.size()-1);
-            current_section->putValue(name, value);
+            
+            bool in_quotes = false;
+            bool last_was_backslash = false;
+            int token_start = eqpos + 1;
+            
+            for (int i=eqpos+1; i<tstr.length(); i++) {
+                bool current_is_backslash = false;
+                if (tstr[i] == '"') {
+                    if (!last_was_backslash) {
+                        in_quotes = !in_quotes;
+                    }
+                } else if (tstr[i] == '\\') {
+                    if (!last_was_backslash) {
+                        current_is_backslash = true;
+                    }
+                } else if (tstr[i] == ':') {
+                    if (!in_quotes && !last_was_backslash) {
+                        // Save token and begin new one
+                        std::string token = tstr.substr(token_start, i - token_start);
+                        try {
+                            token = parseValue(token);
+                        } catch (ParsingException e) {
+                            throw ParsingException("Malformed line: " + tstr, __FILE__, __LINE__);
+                        }
+                        if (token.length() == 0) {
+                            throw ParsingException("Malformed line: " + tstr, __FILE__, __LINE__);
+                        }
+                        values.push_back(token);
+                        token_start = i + 1;
+                    }
+                }
+                if (i == tstr.length() - 1) {
+                    if (in_quotes) {
+                        throw ParsingException("Unended quotes in line: " + tstr, __FILE__, __LINE__);
+                    } else if (last_was_backslash) {
+                        throw ParsingException("Multiline values are not supported in line: " + tstr, __FILE__, __LINE__);
+                    }
+                    std::string token = tstr.substr(token_start, i + 1 - token_start);
+                    try {
+                        token = parseValue(token);
+                    } catch (ParsingException e) {
+                        throw ParsingException("Malformed line: " + tstr, __FILE__, __LINE__);
+                    }
+                    if (token.length() == 0) {
+                        throw ParsingException("Malformed line: " + tstr, __FILE__, __LINE__);
+                    }
+                    values.push_back(token);
+                }
+                last_was_backslash = current_is_backslash;
+            }
+
+            if (!append_mode) {
+                current_section->removeValues(name);
+            }
+            for (std::vector<std::string>::iterator i = values.begin(); i != values.end(); i++) {
+                current_section->putValue(name, *i);
+            }
+            
         // Line is something we do not know
         } else {
-            throw ParsingException("Illegal line \"" + tstr + "\"", 
+            throw ParsingException("Malformed line \"" + tstr + "\"", 
                                    __FILE__, __LINE__);
         }
     }
     is->close();
+}
+
+std::string suPHP::IniFile::parseValue(const std::string& value) const throw (ParsingException) {
+    bool in_quotes = false;
+    bool last_was_backslash = false;
+    std::string tempvalue;
+    std::string output;
+    
+    int startpos = value.find_first_not_of(" \t");
+    int endpos = value.find_last_not_of(" \t");
+    if (startpos == std::string::npos) {
+        return "";
+    }
+    if (endpos == std::string::npos) {
+        tempvalue = value;
+    } else {
+        tempvalue = value.substr(startpos, endpos - startpos + 1);
+    }
+    
+    for (int i=0; i<value.length(); i++) {
+        bool current_is_backslash = false;
+        
+        if (tempvalue[i] == '"') {
+            if (last_was_backslash) {
+                output.append("\"");
+            } else {
+                if (!in_quotes && i != 0) {
+                    throw ParsingException("Content preceding quoted content", __FILE__, __LINE__);
+                }
+                if (in_quotes && i != tempvalue.length() - 1) {
+                    throw ParsingException("Content following quoted content", __FILE__, __LINE__);
+                }
+                in_quotes = !in_quotes;
+            }
+        } else if (tempvalue[i] == '\\') {
+            if (last_was_backslash) {
+                output.append("\\");
+            } else {
+                current_is_backslash = true;
+            }
+        } else if (tempvalue[i] == ':') {
+            output.append(":");
+        } else {
+            if (last_was_backslash) {
+                throw ParsingException("Illegal character after backslash", __FILE__, __LINE__);
+            }
+            output.append(tempvalue.substr(i, 1));
+        }
+        
+        last_was_backslash = current_is_backslash;
+    }
+    
+    return output;
 }

@@ -21,7 +21,36 @@ Comment lines start with a ";".
 You can find a sample configuration in suphp.conf-example
 
 
-2. Global options
+2. Multiple values and escaping
+
+For a setting that allows multiple values, you can either seperate the
+values using the colon (":") character or you can use multiple lines.
+If you use multiple lines any line following the first has to use the "+="
+assignment, otherwise preceding values will be discarded.
+
+If you want to use the ":" character in a value, you have to escape it
+using a backslash ("\"). The backslash itself is escaped by prepending
+another backslash.
+
+For patterns the asterisk ("*") has to be escaped, too.
+
+
+3. Variables
+
+Certain configuration values may contain variables. Valid variables are:
+
+${USERNAME}  - is replaced by the name of the target user
+${UID}       - is replaced by the numerical UID of the target user
+${GROUPNAME} - is replaced by the name of the target group
+${GID}       - is replaced by the numerical GID of the target group
+${HOME}      - is replaced by the path to the home directory of the target user
+
+Dollar ("$") characters that are not meant to represent variables, have to
+be escape using a backslash ("\"), if used in a value that allows 
+variables.
+
+
+4. Global options
 
 This options have to be specified in the [global] section.
 All this options are facultative.
@@ -40,14 +69,17 @@ webserver_user:
   compile-time value is used.
 
 docroot:
-  Path all scripts have to reside in. This is an additional security check,
-  especially when check_vhost_docroot is disabled. Defaults to / thus
-  allowing scripts in any location being run.
+  Patterns matching all allowed script paths. This is an additional security check,
+  especially when check_vhost_docroot is disabled. Defaults to "/*" thus
+  allowing scripts in any location being run. May contain the "*" character
+  which matches zero to n characters excluding the "/" character. Multiple values
+  are allowed for this setting. May contain variables as described above.
 
 chroot:
   Path to change the process's root directory to before executing the
   script. Has to be specified without a trailing slash.
-  If not specified, no chroot() call is performed.
+  If not specified, no chroot() call is performed. May contain variables
+  as described above.
 
 allow_file_group_writeable:
   Allow files to be group writeable. Is disabled by default.
@@ -96,7 +128,7 @@ min_gid:
   Defaults to compile-time value.
 
 
-3. Handlers
+5. Handlers
 
 In the [handlers] section you specify a mapping between mime-types and
 interpreters to be used.
@@ -120,7 +152,7 @@ At the moment two modes are supported:
   CGI-scripts.
 
 ===================================
-(c)2002-2005 by Sebastian Marsching
+(c)2002-2008 by Sebastian Marsching
 <sebastian@marsching.com>
 Please see LICENSE for
 additional information

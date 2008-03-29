@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
@@ -33,6 +33,7 @@
 #include "UserInfo.hpp"
 #include "GroupInfo.hpp"
 #include "Util.hpp"
+#include "PathMatcher.hpp"
 
 #include "Application.hpp"
 
@@ -63,6 +64,8 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
     // initialization
     try {
         std::string scriptFilename;
+        UserInfo targetUser;
+        GroupInfo targetGroup;
         
         // If caller is super-user, print info message and exit
         if (api.getRealProcessUser().isSuperUser()) {
@@ -87,15 +90,25 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
             return 1;
         }
 
-        this->checkScriptFile(scriptFilename, config, env);
+
+        // Do checks that do not need target user info
+        this->checkScriptFileStage1(scriptFilename, config, env);
+        
+        // Find out target user
+        this->checkProcessPermissions(scriptFilename, config, env, targetUser, targetGroup);
+        
+        // Now do checks that might require user info
+        this->checkScriptFileStage2(scriptFilename, config, env, targetUser, targetGroup);
 
         // Root privileges are needed for chroot()
         // so do this before changing process permissions
         if (config.getChrootPath().length() > 0) {
-            api.chroot(config.getChrootPath());
+            PathMatcher pathMatcher = PathMatcher(targetUser, targetGroup);
+            std::string chrootPath = pathMatcher.resolveVariables(config.getChrootPath());
+            api.chroot(chrootPath);
         }
 
-        this->changeProcessPermissions(scriptFilename, config, env);
+        this->changeProcessPermissions(config, targetUser, targetGroup);
 
         interpreter = this->getInterpreter(env, config);
         targetMode = this->getTargetMode(interpreter);
@@ -147,7 +160,7 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
 
 void suPHP::Application::printAboutMessage() {
     std::cerr << "suPHP version " << PACKAGE_VERSION << "\n";
-    std::cerr << "(c) 2002-2005 Sebastian Marsching\n";
+    std::cerr << "(c) 2002-2007 Sebastian Marsching\n";
     std::cerr << std::endl;
     std::cerr << "suPHP has to be called by mod_suphp to work." << std::endl;
 }
@@ -170,7 +183,7 @@ void suPHP::Application::checkProcessPermissions(Configuration& config)
 }
 
 
-void suPHP::Application::checkScriptFile(
+void suPHP::Application::checkScriptFileStage1(
     const std::string& scriptFilename, 
     const Configuration& config,
     const Environment& environment) const
@@ -190,15 +203,6 @@ void suPHP::Application::checkScriptFile(
     File realScriptFile = File(scriptFile.getRealPath());
     File directory = realScriptFile.getParentDirectory();
     
-    // Check wheter script is in docroot
-    if (realScriptFile.getPath().find(config.getDocroot()) != 0) {
-        std::string error = "Script \"" + scriptFile.getPath() 
-            + "\" resolving to \"" + realScriptFile.getPath() 
-            + "\" not within configured docroot";
-        logger.logWarning(error);
-        throw SoftException(error, __FILE__, __LINE__);
-    }
-
     // If enabled, check whether script is in the vhost's docroot
     if (!environment.hasVar("DOCUMENT_ROOT"))
         throw SoftException("Environment variable DOCUMENT_ROOT not set",
@@ -265,14 +269,48 @@ void suPHP::Application::checkScriptFile(
     }
 }
 
-
-void suPHP::Application::changeProcessPermissions(
+void suPHP::Application::checkScriptFileStage2(
     const std::string& scriptFilename, 
     const Configuration& config,
-    const Environment& environment) const
+    const Environment& environment,
+    const UserInfo& targetUser,
+    const GroupInfo& targetGroup) const
+    throw (SystemException, SoftException) {
+    Logger& logger = API_Helper::getSystemAPI().getSystemLogger();
+    File scriptFile = File(scriptFilename);
+    PathMatcher pathMatcher = PathMatcher(targetUser, targetGroup);
+
+    // Get full path to script file
+
+    File realScriptFile = File(scriptFile.getRealPath());
+    File directory = realScriptFile.getParentDirectory();
+    
+    // Check wheter script is in one of the defined docroots
+    bool file_in_docroot = false;
+    const std::vector<std::string> docroots = config.getDocroots();
+    for (std::vector<std::string>::const_iterator i = docroots.begin(); i != docroots.end(); i++) {
+        std::string docroot = *i;
+        if (pathMatcher.matches(docroot, realScriptFile.getPath())) {
+            file_in_docroot = true;
+            break;
+        }
+    }
+    if (!file_in_docroot) {
+        std::string error = "Script \"" + scriptFile.getPath() 
+            + "\" resolving to \"" + realScriptFile.getPath() 
+            + "\" not within configured docroot";
+        logger.logWarning(error);
+        throw SoftException(error, __FILE__, __LINE__);
+    }
+}
+
+void suPHP::Application::checkProcessPermissions(
+    const std::string& scriptFilename, 
+    const Configuration& config,
+    const Environment& environment, 
+    UserInfo& targetUser,
+    GroupInfo& targetGroup) const
     throw (SystemException, SoftException, SecurityException) {
-    UserInfo targetUser;
-    GroupInfo targetGroup;
 
     File scriptFile = File(File(scriptFilename).getRealPath());
     API& api = API_Helper::getSystemAPI();
@@ -360,9 +398,15 @@ void suPHP::Application::changeProcessPermissions(
         throw SoftException(error, __FILE__, __LINE__);
     }
 #endif // OPT_USERGROUP_PARANOID    
+}
 
-    // Common code used for all modes
-
+void suPHP::Application::changeProcessPermissions(
+    const Configuration& config,
+    const UserInfo& targetUser,
+    const GroupInfo& targetGroup) const
+    throw (SystemException, SoftException, SecurityException) {
+    API& api = API_Helper::getSystemAPI();
+    
     // Set new group first, because we still need super-user privileges
     // for this
     api.setProcessGroup(targetGroup);
