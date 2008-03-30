@@ -164,6 +164,12 @@ namespace suPHP {
             throw (SystemException) =0;
         
         /**
+         * Checks whether a file is a symlink
+         */
+        virtual bool File_isSymlink(const File& file) const 
+            throw (SystemException) =0;
+        
+        /**
          * Runs another program (replaces current process)
          */
         virtual void execute(std::string program, const CommandLine& cline, 

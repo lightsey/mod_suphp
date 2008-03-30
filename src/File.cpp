@@ -107,3 +107,8 @@ UserInfo suPHP::File::getUser() const throw (SystemException) {
 GroupInfo suPHP::File::getGroup() const throw (SystemException) {
     return API_Helper::getSystemAPI().File_getGroup(*this);
 }
+
+
+bool suPHP::File::isSymlink() const throw (SystemException) {
+    return API_Helper::getSystemAPI().File_isSymlink(*this);
+}

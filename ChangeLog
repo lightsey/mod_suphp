@@ -9,6 +9,8 @@
   available on server level.
 - Added support for multiple docroots (using patterns).
 - Added support for variable substitution in chroot path.
+
+* Version 0.6.3 (30 March 2008)
 - Fixed a possible race condition concerning the check for the 
   right symlink owner. 
 - Added checks for the owner of the parent directories were added.

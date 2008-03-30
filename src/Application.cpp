@@ -206,10 +206,6 @@ void suPHP::Application::checkScriptFileStage1(
         throw SoftException(error, __FILE__, __LINE__);
     }
     
-    File directory = realScriptFile.getParentDirectory();
-    // Also check the directory of the directly named file
-    File linkDirectory = scriptFile.getParentDirectory();
-    
     // If enabled, check whether script is in the vhost's docroot
     if (!environment.hasVar("DOCUMENT_ROOT"))
         throw SoftException("Environment variable DOCUMENT_ROOT not set",
@@ -559,7 +555,8 @@ void suPHP::Application::checkParentDirectories(const File& file,
             throw SoftException(error, __FILE__, __LINE__);
         }
         
-        if (!config.getAllowDirectoryGroupWriteable() 
+        if (!directory.isSymlink()
+            && !config.getAllowDirectoryGroupWriteable() 
             && directory.hasGroupWriteBit()) {
             std::string error = "Directory \"" + directory.getPath()
                 + "\" is writeable by group";
@@ -567,7 +564,8 @@ void suPHP::Application::checkParentDirectories(const File& file,
             throw SoftException(error, __FILE__, __LINE__);
         }
         
-        if (!config.getAllowDirectoryOthersWriteable()
+        if (directory.isSymlink()
+            && !config.getAllowDirectoryOthersWriteable()
             && directory.hasOthersWriteBit()) {
             std::string error = "Directory \"" + directory.getPath()
                 + "\" is writeable by others";

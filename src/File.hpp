@@ -144,6 +144,10 @@ namespace suPHP {
          */
         GroupInfo getGroup() const throw (SystemException);
         
+        /**
+         * Checks whether this file is a symlink
+         */
+        bool isSymlink() const throw (SystemException);
     };
 };
 

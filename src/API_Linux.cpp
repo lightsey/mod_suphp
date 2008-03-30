@@ -394,6 +394,11 @@ GroupInfo suPHP::API_Linux::File_getGroup(const File& file) const
 }
 
 
+bool suPHP::API_Linux::File_isSymlink(const File& file) const throw (SystemException) {
+    return this->isSymlink(file.getPath());
+}
+
+
 void suPHP::API_Linux::execute(std::string program, const CommandLine& cline,
                                const Environment& env) const
     throw (SystemException) {
