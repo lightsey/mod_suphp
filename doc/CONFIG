@@ -69,11 +69,13 @@ webserver_user:
   compile-time value is used.
 
 docroot:
-  Patterns matching all allowed script paths. This is an additional security check,
-  especially when check_vhost_docroot is disabled. Defaults to "/*" thus
-  allowing scripts in any location being run. May contain the "*" character
-  which matches zero to n characters excluding the "/" character. Multiple values
-  are allowed for this setting. May contain variables as described above.
+  Patterns matching all allowed script directories. This is an 
+  additional security check, especially when 
+  check_vhost_docroot is disabled. Defaults to "/*" thus
+  allowing scripts in any location being run. May contain the 
+  "*" character which matches zero to n characters excluding 
+  the "/" character. Multiple values are allowed for this 
+  setting. May contain variables as described above.
 
 chroot:
   Path to change the process's root directory to before executing the

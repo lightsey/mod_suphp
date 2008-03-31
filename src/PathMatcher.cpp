@@ -100,7 +100,11 @@ bool suPHP::PathMatcher::matches(std::string pattern, std::string path)
                         return false;
                     }
                     if (i == remainingPattern.length() - 1) {
-                        if (remainingPath.length() == remainingPattern.length()) {
+                        if (c == '/' || (i + 1 < remainingPath.length() && remainingPath.at(i + 1) == '/')) {
+                            // Path represents file in subdirectory
+                            return true;
+                        } else if (remainingPath.length() == remainingPattern.length()) {
+                            // Exact match
                             return true;
                         } else {
                             return false;
