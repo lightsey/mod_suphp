@@ -1,4 +1,4 @@
-* Version ??? (???)
+* Version 0.7.0 (25 December 2008)
 - Fixed "underquoted definition" warning in acinclude.m4
 - mod_suphp (Apache 1.3) checks explicitly for r->content_type
   thus allowing to use AddType instead of AddHandler
