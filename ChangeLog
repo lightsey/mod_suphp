@@ -1,3 +1,6 @@
+* Version 0.7.1
+- Fixed bug causing problems when a symlink was present in the script path.
+
 * Version 0.7.0 (25 December 2008)
 - Fixed "underquoted definition" warning in acinclude.m4
 - mod_suphp (Apache 1.3) checks explicitly for r->content_type

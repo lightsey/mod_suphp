@@ -49,7 +49,7 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
     Configuration config;
     API& api = API_Helper::getSystemAPI();
     Logger& logger = api.getSystemLogger();
-    
+
 #ifdef OPT_CONFIGFILE
     File cfgFile = File(OPT_CONFIGFILE);
 #else
@@ -66,17 +66,17 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
         std::string scriptFilename;
         UserInfo targetUser;
         GroupInfo targetGroup;
-        
+
         // If caller is super-user, print info message and exit
         if (api.getRealProcessUser().isSuperUser()) {
             this->printAboutMessage();
             return 0;
         }
         config.readFromFile(cfgFile);
-        
+
         // Check permissions (real uid, effective uid)
         this->checkProcessPermissions(config);
-        
+
         // Initialize logger
         // not done before, because we need super-user privileges for
         // logging anyway
@@ -93,10 +93,10 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
 
         // Do checks that do not need target user info
         this->checkScriptFileStage1(scriptFilename, config, env);
-        
+
         // Find out target user
         this->checkProcessPermissions(scriptFilename, config, env, targetUser, targetGroup);
-        
+
         // Now do checks that might require user info
         this->checkScriptFileStage2(scriptFilename, config, env, targetUser, targetGroup);
 
@@ -112,26 +112,26 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
 
         interpreter = this->getInterpreter(env, config);
         targetMode = this->getTargetMode(interpreter);
-        
+
         // Prepare environment for new process
         newEnv = this->prepareEnvironment(env, config, targetMode);
-        
+
         // Set PATH_TRANSLATED to SCRIPT_FILENAME, otherwise
         // the PHP interpreter will not be able to find the script
         if (targetMode == TARGETMODE_PHP && newEnv.hasVar("PATH_TRANSLATED")) {
             newEnv.setVar("PATH_TRANSLATED", scriptFilename);
         }
-        
+
         // Log attempt to execute script
         logger.logInfo("Executing \"" + scriptFilename + "\" as UID "
                        + Util::intToStr(api.getEffectiveProcessUser().getUid())
-                       + ", GID " 
+                       + ", GID "
                        + Util::intToStr(
                            api.getEffectiveProcessGroup().getGid()));
 
-        this->executeScript(scriptFilename, interpreter, targetMode, newEnv, 
+        this->executeScript(scriptFilename, interpreter, targetMode, newEnv,
                             config);
-        
+
         // Function should never return
         // So, if we get here, return with error code
         return 1;
@@ -166,7 +166,7 @@ void suPHP::Application::printAboutMessage() {
 }
 
 
-void suPHP::Application::checkProcessPermissions(Configuration& config) 
+void suPHP::Application::checkProcessPermissions(Configuration& config)
     throw (SecurityException, LookupException) {
     API& api = API_Helper::getSystemAPI();
     if (api.getRealProcessUser() !=
@@ -174,7 +174,7 @@ void suPHP::Application::checkProcessPermissions(Configuration& config)
         throw SecurityException("Calling user is not webserver user!",
                                 __FILE__, __LINE__);
     }
-    
+
     if (!api.getEffectiveProcessUser().isSuperUser()) {
         throw SecurityException(
             "Do not have root privileges. Executable not set-uid root?",
@@ -184,7 +184,7 @@ void suPHP::Application::checkProcessPermissions(Configuration& config)
 
 
 void suPHP::Application::checkScriptFileStage1(
-    const std::string& scriptFilename, 
+    const std::string& scriptFilename,
     const Configuration& config,
     const Environment& environment) const
     throw (SystemException, SoftException) {
@@ -199,21 +199,21 @@ void suPHP::Application::checkScriptFileStage1(
         throw SoftException(error, __FILE__, __LINE__);
     }
     if (!realScriptFile.exists()) {
-        std::string error = "File " + realScriptFile.getPath() 
-            + " referenced by symlink " +scriptFile.getPath() 
+        std::string error = "File " + realScriptFile.getPath()
+            + " referenced by symlink " +scriptFile.getPath()
             + " does not exist";
         logger.logWarning(error);
         throw SoftException(error, __FILE__, __LINE__);
     }
-    
+
     // If enabled, check whether script is in the vhost's docroot
     if (!environment.hasVar("DOCUMENT_ROOT"))
         throw SoftException("Environment variable DOCUMENT_ROOT not set",
                                 __FILE__, __LINE__);
     if (config.getCheckVHostDocroot()
-        && realScriptFile.getPath().find(environment.getVar("DOCUMENT_ROOT")) 
+        && realScriptFile.getPath().find(environment.getVar("DOCUMENT_ROOT"))
         != 0) {
-        
+
         std::string error = "File \"" + realScriptFile.getPath()
             + "\" is not in document root of Vhost \""
             + environment.getVar("DOCUMENT_ROOT") + "\"";
@@ -221,9 +221,9 @@ void suPHP::Application::checkScriptFileStage1(
         throw SoftException(error, __FILE__, __LINE__);
     }
     if (config.getCheckVHostDocroot()
-        && scriptFile.getPath().find(environment.getVar("DOCUMENT_ROOT")) 
+        && scriptFile.getPath().find(environment.getVar("DOCUMENT_ROOT"))
         != 0) {
-        
+
         std::string error = "File \"" + scriptFile.getPath()
             + "\" is not in document root of Vhost \""
             + environment.getVar("DOCUMENT_ROOT") + "\"";
@@ -238,7 +238,7 @@ void suPHP::Application::checkScriptFileStage1(
             + "\" not readable";
         logger.logWarning(error);
         throw SoftException(error, __FILE__, __LINE__);
-        
+
     }
 
     if (!config.getAllowFileGroupWriteable()
@@ -248,7 +248,7 @@ void suPHP::Application::checkScriptFileStage1(
         logger.logWarning(error);
         throw SoftException(error, __FILE__, __LINE__);
     }
-    
+
     if (!config.getAllowFileOthersWriteable()
         && realScriptFile.hasOthersWriteBit()) {
         std::string error = "File \"" + realScriptFile.getPath()
@@ -256,11 +256,11 @@ void suPHP::Application::checkScriptFileStage1(
         logger.logWarning(error);
         throw SoftException(error, __FILE__, __LINE__);
     }
-    
+
     // Check UID/GID of symlink is matching target
     if (scriptFile.getUser() != realScriptFile.getUser()
         || scriptFile.getGroup() != realScriptFile.getGroup()) {
-        std::string error = "UID or GID of symlink \"" + scriptFile.getPath() 
+        std::string error = "UID or GID of symlink \"" + scriptFile.getPath()
             + "\" is not matching its target";
         logger.logWarning(error);
         throw SoftException(error, __FILE__, __LINE__);
@@ -268,7 +268,7 @@ void suPHP::Application::checkScriptFileStage1(
 }
 
 void suPHP::Application::checkScriptFileStage2(
-    const std::string& scriptFilename, 
+    const std::string& scriptFilename,
     const Configuration& config,
     const Environment& environment,
     const UserInfo& targetUser,
@@ -280,7 +280,7 @@ void suPHP::Application::checkScriptFileStage2(
 
     // Get full path to script file
     File realScriptFile = File(scriptFile.getRealPath());
-    
+
     // Check wheter script is in one of the defined docroots
     bool file_in_docroot = false;
     const std::vector<std::string> docroots = config.getDocroots();
@@ -292,8 +292,8 @@ void suPHP::Application::checkScriptFileStage2(
         }
     }
     if (!file_in_docroot) {
-        std::string error = "Script \"" + scriptFile.getPath() 
-            + "\" resolving to \"" + realScriptFile.getPath() 
+        std::string error = "Script \"" + scriptFile.getPath()
+            + "\" resolving to \"" + realScriptFile.getPath()
             + "\" not within configured docroot";
         logger.logWarning(error);
         throw SoftException(error, __FILE__, __LINE__);
@@ -307,21 +307,21 @@ void suPHP::Application::checkScriptFileStage2(
         }
     }
     if (!file_in_docroot) {
-        std::string error = "Script \"" + scriptFile.getPath() 
+        std::string error = "Script \"" + scriptFile.getPath()
             + "\" not within configured docroot";
         logger.logWarning(error);
         throw SoftException(error, __FILE__, __LINE__);
     }
-    
+
     // Check directory ownership and permissions
     checkParentDirectories(realScriptFile, targetUser, config);
     checkParentDirectories(scriptFile, targetUser, config);
 }
 
 void suPHP::Application::checkProcessPermissions(
-    const std::string& scriptFilename, 
+    const std::string& scriptFilename,
     const Configuration& config,
-    const Environment& environment, 
+    const Environment& environment,
     UserInfo& targetUser,
     GroupInfo& targetGroup) const
     throw (SystemException, SoftException, SecurityException) {
@@ -355,7 +355,7 @@ void suPHP::Application::checkProcessPermissions(
         logger.logWarning(error);
         throw SoftException(error, __FILE__, __LINE__);
     }
-    
+
     // Paranoid and force mode
 
 #if (defined(OPT_USERGROUP_PARANOID) || defined(OPT_USERGROUP_FORCE))
@@ -365,10 +365,10 @@ void suPHP::Application::checkProcessPermissions(
         targetGroupname = environment.getVar("SUPHP_GROUP");
     } catch (KeyNotFoundException& e) {
         throw SecurityException(
-            "Environment variable SUPHP_USER or SUPHP_GROUP not set", 
+            "Environment variable SUPHP_USER or SUPHP_GROUP not set",
             __FILE__, __LINE__);
     }
-    
+
     if (targetUsername[0] == '#' && targetUsername.find_first_not_of(
             "0123456789", 1) == std::string::npos) {
         targetUser = api.getUserInfo(Util::strToInt(targetUsername.substr(1)));
@@ -391,14 +391,14 @@ void suPHP::Application::checkProcessPermissions(
     targetUser = scriptFile.getUser();
     targetGroup = scriptFile.getGroup();
 #endif // OPT_USERGROUP_OWNER
-    
+
     // Paranoid mode only
 
 #ifdef OPT_USERGROUP_PARANOID
     if (targetUser != scriptFile.getUser()) {
         std::string error ="Mismatch between target UID ("
-            + Util::intToStr(targetUser.getUid()) + ") and UID (" 
-            + Util::intToStr(scriptFile.getUser().getUid()) + ") of file \"" 
+            + Util::intToStr(targetUser.getUid()) + ") and UID ("
+            + Util::intToStr(scriptFile.getUser().getUid()) + ") of file \""
             + scriptFile.getPath() + "\"";
         logger.logWarning(error);
         throw SoftException(error, __FILE__, __LINE__);
@@ -406,13 +406,13 @@ void suPHP::Application::checkProcessPermissions(
 
     if (targetGroup != scriptFile.getGroup()) {
         std::string error ="Mismatch between target GID ("
-            + Util::intToStr(targetGroup.getGid()) + ") and GID (" 
-            + Util::intToStr(scriptFile.getGroup().getGid()) + ") of file \"" 
+            + Util::intToStr(targetGroup.getGid()) + ") and GID ("
+            + Util::intToStr(scriptFile.getGroup().getGid()) + ") of file \""
             + scriptFile.getPath() + "\"";
         logger.logWarning(error);
         throw SoftException(error, __FILE__, __LINE__);
     }
-#endif // OPT_USERGROUP_PARANOID    
+#endif // OPT_USERGROUP_PARANOID
 }
 
 void suPHP::Application::changeProcessPermissions(
@@ -421,11 +421,11 @@ void suPHP::Application::changeProcessPermissions(
     const GroupInfo& targetGroup) const
     throw (SystemException, SoftException, SecurityException) {
     API& api = API_Helper::getSystemAPI();
-    
+
     // Set new group first, because we still need super-user privileges
     // for this
     api.setProcessGroup(targetGroup);
-    
+
     // Then set new user
     api.setProcessUser(targetUser);
 
@@ -438,7 +438,7 @@ Environment suPHP::Application::prepareEnvironment(
     throw (KeyNotFoundException) {
     // Create environment for new process from old environment
     Environment env = sourceEnv;
-    
+
     // Delete unwanted environment variables
     if (env.hasVar("LD_PRELOAD"))
         env.deleteVar("LD_PRELOAD");
@@ -456,7 +456,7 @@ Environment suPHP::Application::prepareEnvironment(
         env.deleteVar("SUPHP_AUTH_PW");
     if (env.hasVar("SUPHP_PHP_CONFIG"))
         env.deleteVar("SUPHP_PHP_CONFIG");
-    
+
     // Reset PATH
     env.putVar("PATH", config.getEnvPath());
 
@@ -475,7 +475,7 @@ Environment suPHP::Application::prepareEnvironment(
             env.putVar("REDIRECT_STATUS", "200");
         }
     }
-    
+
     return env;
 }
 
@@ -487,7 +487,7 @@ std::string suPHP::Application::getInterpreter(
         throw SecurityException("Environment variable SUPHP_HANDLER not set",
                                 __FILE__, __LINE__);
     std::string handler = env.getVar("SUPHP_HANDLER");
-    
+
     std::string interpreter = "";
     try {
         interpreter = config.getInterpreter(handler);
@@ -495,7 +495,7 @@ std::string suPHP::Application::getInterpreter(
         throw SecurityException ("Handler not found in configuration", e,
                                  __FILE__, __LINE__);
     }
-    
+
     return interpreter;
 }
 
@@ -546,7 +546,7 @@ void suPHP::Application::checkParentDirectories(const File& file,
     Logger& logger = API_Helper::getSystemAPI().getSystemLogger();
     do {
         directory = directory.getParentDirectory();
-        
+
         UserInfo directoryOwner = directory.getUser();
         if (directoryOwner != owner && !directoryOwner.isSuperUser()) {
             std::string error = "Directory " + directory.getPath()
@@ -554,17 +554,17 @@ void suPHP::Application::checkParentDirectories(const File& file,
             logger.logWarning(error);
             throw SoftException(error, __FILE__, __LINE__);
         }
-        
+
         if (!directory.isSymlink()
-            && !config.getAllowDirectoryGroupWriteable() 
+            && !config.getAllowDirectoryGroupWriteable()
             && directory.hasGroupWriteBit()) {
             std::string error = "Directory \"" + directory.getPath()
                 + "\" is writeable by group";
             logger.logWarning(error);
             throw SoftException(error, __FILE__, __LINE__);
         }
-        
-        if (directory.isSymlink()
+
+        if (!directory.isSymlink()
             && !config.getAllowDirectoryOthersWriteable()
             && directory.hasOthersWriteBit()) {
             std::string error = "Directory \"" + directory.getPath()
