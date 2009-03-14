@@ -1,4 +1,4 @@
-* Version 0.7.1
+* Version 0.7.1 (14 March 2009)
 - Fixed bug causing problems when a symlink was present in the script path.
 
 * Version 0.7.0 (25 December 2008)
