@@ -136,10 +136,11 @@ In the [handlers] section you specify a mapping between mime-types and
 interpreters to be used.
 
 Example:
-x-httpd-php=php:/usr/bin/php
+x-httpd-php=php\:/usr/bin/php
 
 The "key" is the mime-type. The "value" consists of to parts seperated by a
-colon.
+colon. This colon has to be escaped by a backslash if the value is not 
+enclosed by quotes.
 
 The first part is the "mode". The second part is the path to the
 interpreter.

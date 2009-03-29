@@ -23,8 +23,8 @@ This option tells mod_suphp which path to pass on to the PHP-interpreter
 (by setting the PHPRC environment variable).
 Do *NOT* refer to a file but to the directory the file resists in.
 
-E.g.: If you want to use "/path/to/server/config/php.ini", use "suPHP_Config
-/path/to/server/config".
+E.g.: If you want to use "/path/to/server/config/php.ini", use 
+"suPHP_ConfigPath /path/to/server/config".
 
 If you don't use this option, PHP will use its compiled in default path.
 
