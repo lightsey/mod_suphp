@@ -1,6 +1,6 @@
 /*
     suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
-    
+
     This file is part of suPHP.
 
     suPHP is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ static apr_status_t suphp_log_script_err(request_rec *r, apr_file_t *script_err)
     char argsbuffer[HUGE_STRING_LEN];
     char *newline;
     apr_status_t rv;
-    
+
     while ((rv = apr_file_gets(argsbuffer, HUGE_STRING_LEN,
                          script_err)) == APR_SUCCESS) {
         newline = strchr(argsbuffer, '\n');
@@ -59,7 +59,7 @@ static apr_status_t suphp_log_script_err(request_rec *r, apr_file_t *script_err)
         ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
                       "%s", argsbuffer);
     }
-    
+
     return rv;
 }
 
@@ -69,15 +69,15 @@ char *suphp_brigade_read(apr_pool_t *p, apr_bucket_brigade *bb, int bytes)
     char *next_byte;
     char *last_byte;
     apr_bucket *b;
-    
+
     if (bytes == 0) {
         return NULL;
     }
-    
+
     target_buf = (char *) apr_palloc(p, bytes + 1);
     next_byte = target_buf;
     last_byte = target_buf + bytes;
-    
+
     for (b = APR_BRIGADE_FIRST(bb); b != APR_BRIGADE_SENTINEL(bb); b = APR_BUCKET_NEXT(b)) {
         char *buf;
         apr_size_t size;
@@ -130,7 +130,7 @@ typedef struct {
 static void *suphp_create_dir_config(apr_pool_t *p, char *dir)
 {
     suphp_conf *cfg = (suphp_conf *) apr_pcalloc(p, sizeof(suphp_conf));
-    
+
     cfg->php_config = NULL;
     cfg->engine = SUPHP_ENGINE_UNDEFINED;
     cfg->php_path = NULL;
@@ -140,31 +140,31 @@ static void *suphp_create_dir_config(apr_pool_t *p, char *dir)
     cfg->target_user = NULL;
     cfg->target_group = NULL;
 #endif
-    
+
     /* Create table with 0 initial elements */
     /* This size may be increased for performance reasons */
     cfg->handlers = apr_table_make(p, 0);
-    
+
     return (void *) cfg;
 }
 
 
-static void *suphp_merge_dir_config(apr_pool_t *p, void *base, 
+static void *suphp_merge_dir_config(apr_pool_t *p, void *base,
                                     void *overrides)
 {
     suphp_conf *parent = (suphp_conf *) base;
     suphp_conf *child = (suphp_conf *) overrides;
     suphp_conf *merged = (suphp_conf *) apr_pcalloc(p, sizeof(suphp_conf));
-    
+
     merged->cmode = SUPHP_CONFIG_MODE_DIRECTORY;
-    
+
     if (child->php_config)
         merged->php_config = apr_pstrdup(p, child->php_config);
     else if (parent->php_config)
         merged->php_config = apr_pstrdup(p, parent->php_config);
     else
         merged->php_config = NULL;
-    
+
     if (child->engine != SUPHP_ENGINE_UNDEFINED)
         merged->engine = child->engine;
     else
@@ -177,7 +177,7 @@ static void *suphp_merge_dir_config(apr_pool_t *p, void *base,
         merged->target_user = apr_pstrdup(p, parent->target_user);
     else
         merged->target_user = NULL;
-        
+
     if (child->target_group)
         merged->target_group = apr_pstrdup(p, child->target_group);
     else if (parent->target_group)
@@ -185,25 +185,25 @@ static void *suphp_merge_dir_config(apr_pool_t *p, void *base,
     else
         merged->target_group = NULL;
 #endif
-    
+
     merged->handlers = apr_table_overlay(p, child->handlers, parent->handlers);
-    
-    return (void *) merged;  
+
+    return (void *) merged;
 }
 
 
 static void *suphp_create_server_config(apr_pool_t *p, server_rec *s)
 {
     suphp_conf *cfg = (suphp_conf *) apr_pcalloc(p, sizeof(suphp_conf));
-    
+
     cfg->engine = SUPHP_ENGINE_UNDEFINED;
     cfg->php_path = NULL;
     cfg->cmode = SUPHP_CONFIG_MODE_SERVER;
-    
+
     /* Create table with 0 initial elements */
     /* This size may be increased for performance reasons */
     cfg->handlers = apr_table_make(p, 0);
-    
+
     return (void *) cfg;
 }
 
@@ -214,17 +214,17 @@ static void *suphp_merge_server_config(apr_pool_t *p, void *base,
     suphp_conf *parent = (suphp_conf *) base;
     suphp_conf *child = (suphp_conf *) overrides;
     suphp_conf *merged = (suphp_conf *) apr_pcalloc(p, sizeof(suphp_conf));
-    
+
     if (child->engine != SUPHP_ENGINE_UNDEFINED)
         merged->engine = child->engine;
     else
         merged->engine = parent->engine;
-    
+
     if (child->php_path != NULL)
         merged->php_path = apr_pstrdup(p, child->php_path);
     else
         merged->php_path = apr_pstrdup(p, parent->php_path);
-    
+
 #ifdef SUPHP_USE_USERGROUP
     if (child->target_user)
         merged->target_user = apr_pstrdup(p, child->target_user);
@@ -232,7 +232,7 @@ static void *suphp_merge_server_config(apr_pool_t *p, void *base,
         merged->target_user = apr_pstrdup(p, parent->target_user);
     else
         merged->target_user = NULL;
-        
+
     if (child->target_group)
         merged->target_group = apr_pstrdup(p, child->target_group);
     else if (parent->target_group)
@@ -240,9 +240,9 @@ static void *suphp_merge_server_config(apr_pool_t *p, void *base,
     else
         merged->target_group = NULL;
 #endif
-    
+
     merged->handlers = apr_table_overlay(p, child->handlers, parent->handlers);
-    
+
     return (void*) merged;
 }
 
@@ -256,17 +256,17 @@ static const char *suphp_handle_cmd_engine(cmd_parms *cmd, void *mconfig,
 {
     server_rec *s = cmd->server;
     suphp_conf *cfg;
-    
+
     if (mconfig)
         cfg = (suphp_conf *) mconfig;
     else
         cfg = (suphp_conf *) ap_get_module_config(s->module_config, &suphp_module);
-    
+
     if (flag)
         cfg->engine = SUPHP_ENGINE_ON;
     else
         cfg->engine = SUPHP_ENGINE_OFF;
-    
+
     return NULL;
 }
 
@@ -276,14 +276,14 @@ static const char *suphp_handle_cmd_config(cmd_parms *cmd, void *mconfig,
 {
     server_rec *s = cmd->server;
     suphp_conf *cfg;
-    
+
     if (mconfig)
         cfg = (suphp_conf *) mconfig;
     else
         cfg = (suphp_conf *) ap_get_module_config(s->module_config, &suphp_module);
-    
+
     cfg->php_config = apr_pstrdup(cmd->pool, arg);
-    
+
     return NULL;
 }
 
@@ -293,10 +293,10 @@ static const char *suphp_handle_cmd_user_group(cmd_parms *cmd, void *mconfig,
                                            const char *arg1, const char *arg2)
 {
     suphp_conf *cfg = (suphp_conf *) mconfig;
-    
+
     cfg->target_user = apr_pstrdup(cmd->pool, arg1);
     cfg->target_group = apr_pstrdup(cmd->pool, arg2);
-    
+
     return NULL;
 }
 #endif
@@ -310,7 +310,7 @@ static const char *suphp_handle_cmd_add_handler(cmd_parms *cmd, void *mconfig,
         cfg = (suphp_conf *) mconfig;
     else
         cfg = (suphp_conf *) ap_get_module_config(cmd->server->module_config, &suphp_module);
-    
+
     // Mark active handler with '1'
     apr_table_set(cfg->handlers, arg, "1");
 
@@ -318,8 +318,8 @@ static const char *suphp_handle_cmd_add_handler(cmd_parms *cmd, void *mconfig,
 }
 
 
-static const char *suphp_handle_cmd_remove_handler(cmd_parms *cmd, 
-                                                   void *mconfig, 
+static const char *suphp_handle_cmd_remove_handler(cmd_parms *cmd,
+                                                   void *mconfig,
                                                    const char *arg)
 {
     suphp_conf *cfg;
@@ -327,7 +327,7 @@ static const char *suphp_handle_cmd_remove_handler(cmd_parms *cmd,
         cfg = (suphp_conf *) mconfig;
     else
         cfg = (suphp_conf *) ap_get_module_config(cmd->server->module_config, &suphp_module);
-    
+
     // Mark deactivated handler with '0'
     apr_table_set(cfg->handlers, arg, "0");
 
@@ -339,11 +339,11 @@ static const char *suphp_handle_cmd_phppath(cmd_parms *cmd, void* mconfig, const
 {
     server_rec *s = cmd->server;
     suphp_conf *cfg;
-    
+
     cfg = (suphp_conf *) ap_get_module_config(s->module_config, &suphp_module);
-    
+
     cfg->php_path = apr_pstrdup(cmd->pool, arg);
-    
+
     return NULL;
 }
 
@@ -384,18 +384,18 @@ static apr_bucket *suphp_bucket_create(request_rec *r, apr_file_t *out, apr_file
     apr_status_t rv;
     apr_pollfd_t fd;
     struct suphp_bucket_data *data = apr_palloc(r->pool, sizeof(*data));
-    
+
     APR_BUCKET_INIT(b);
     b->free = apr_bucket_free;
     b->list = list;
     b->type = &bucket_type_suphp;
     b->length = (apr_size_t) (-1);
     b->start = (-1);
-    
+
     /* Create the pollset */
     rv = apr_pollset_create(&data->pollset, 2, r->pool, 0);
     AP_DEBUG_ASSERT(rv == APR_SUCCESS);
-    
+
     fd.desc_type = APR_POLL_FILE;
     fd.reqevents = APR_POLLIN;
     fd.p = r->pool;
@@ -403,12 +403,12 @@ static apr_bucket *suphp_bucket_create(request_rec *r, apr_file_t *out, apr_file
     fd.client_data = (void *) 1;
     rv = apr_pollset_add(data->pollset, &fd);
     AP_DEBUG_ASSERT(rv == APR_SUCCESS);
-    
+
     fd.desc.f = err; /* script's stderr */
     fd.client_data = (void *) 2;
     rv = apr_pollset_add(data->pollset, &fd);
     AP_DEBUG_ASSERT(rv == APR_SUCCESS);
-    
+
     data->r = r;
     b->data = data;
     return b;
@@ -433,18 +433,18 @@ static apr_status_t suphp_read_fd(apr_bucket *b, apr_file_t *fd, const char **st
 {
     char *buf;
     apr_status_t rv;
-    
+
     *str = NULL;
     *len = APR_BUCKET_BUFF_SIZE;
     buf = apr_bucket_alloc(*len, b->list);
-    
+
     rv = apr_file_read(fd, buf, len);
-    
+
     if (*len > 0) {
         /* Got data */
         struct suphp_bucket_data *data = b->data;
         apr_bucket_heap *h;
-        
+
         /* Change the current bucket to refer to what we read
            and append the pipe bucket after it                */
         b = apr_bucket_heap_make(b, buf, *len, apr_bucket_free);
@@ -470,13 +470,13 @@ static apr_status_t suphp_bucket_read(apr_bucket *b, const char **str, apr_size_
   apr_interval_time_t timeout;
   apr_status_t rv;
   int gotdata = 0;
-  
+
   timeout = (block == APR_NONBLOCK_READ) ? 0 : data->r->server->timeout;
-  
+
   do {
       const apr_pollfd_t *results;
       apr_int32_t num;
-      
+
       rv = apr_pollset_poll(data->pollset, timeout, &num, &results);
       if (APR_STATUS_IS_TIMEUP(rv)) {
           return (timeout == 0) ? APR_EAGAIN : rv;
@@ -486,7 +486,7 @@ static apr_status_t suphp_bucket_read(apr_bucket *b, const char **str, apr_size_
           ap_log_rerror(APLOG_MARK, APLOG_ERR, rv, data->r, "Poll failed waiting for suPHP child process");
           return rv;
       }
-      
+
       while (num > 0) {
         if (results[0].client_data == (void *) 1) {
             /* handle stdout */
@@ -506,7 +506,7 @@ static apr_status_t suphp_bucket_read(apr_bucket *b, const char **str, apr_size_
         results++;
       }
   } while (!gotdata);
-  
+
   return rv;
 }
 
@@ -548,10 +548,10 @@ static int suphp_source_handler(request_rec *r);
 static int suphp_handler(request_rec *r)
 {
     suphp_conf *sconf, *dconf;
-    
+
     sconf = ap_get_module_config(r->server->module_config, &suphp_module);
     dconf = ap_get_module_config(r->per_dir_config, &suphp_module);
-    
+
     /* only handle request if mod_suphp is active for this handler */
     /* check only first byte of value (second has to be \0) */
     if (apr_table_get(dconf->handlers, r->handler) != NULL)
@@ -569,13 +569,13 @@ static int suphp_handler(request_rec *r)
             return suphp_script_handler(r);
         }
     }
-    
-    if (!strcmp(r->handler, "x-httpd-php-source") 
+
+    if (!strcmp(r->handler, "x-httpd-php-source")
     || !strcmp(r->handler, "application/x-httpd-php-source"))
     {
         return suphp_source_handler(r);
     }
-    
+
     return DECLINED;
 }
 
@@ -583,7 +583,7 @@ static int suphp_source_handler(request_rec *r)
 {
     suphp_conf *conf;
     apr_status_t rv;
-    apr_pool_t *p;
+    apr_pool_t *p = r->main ? r->main->pool : r->pool;
     apr_file_t *file;
     apr_proc_t *proc;
     apr_procattr_t *procattr;
@@ -592,21 +592,20 @@ static int suphp_source_handler(request_rec *r)
     apr_bucket_brigade *bb;
     apr_bucket *b;
     char *phpexec;
-    
-    p = r->main ? r->main->pool : r->pool;
-    
+    apr_table_t *empty_table = apr_table_make(p, 0);
+
     if (strcmp(r->method, "GET"))
     {
         return DECLINED;
     }
-    
+
     conf = ap_get_module_config(r->server->module_config, &suphp_module);
     phpexec = apr_pstrdup(p, conf->php_path);
     if (phpexec == NULL)
     {
         return DECLINED;
     }
-    
+
     // Try to open file for reading to see whether is is accessible
     rv = apr_file_open(&file, apr_pstrdup(p, r->filename), APR_READ, APR_OS_DEFAULT, p);
     if (rv == APR_SUCCESS)
@@ -629,11 +628,9 @@ static int suphp_source_handler(request_rec *r)
         ap_log_rerror(APLOG_MARK, APLOG_ERR, rv, r, "Could not open file: %s", r->filename);
         return HTTP_INTERNAL_SERVER_ERROR;
     }
-    
-        env = ap_create_environment(p, r->subprocess_env);
-        
+
     /* set attributes for new process */
-    
+
     if (((rv = apr_procattr_create(&procattr, p)) != APR_SUCCESS)
         || ((rv = apr_procattr_io_set(procattr, APR_CHILD_BLOCK, APR_CHILD_BLOCK, APR_CHILD_BLOCK)) != APR_SUCCESS)
         || ((rv = apr_procattr_dir_set(procattr, ap_make_dirstr_parent(r->pool, r->filename))) != APR_SUCCESS)
@@ -646,17 +643,17 @@ static int suphp_source_handler(request_rec *r)
         return HTTP_INTERNAL_SERVER_ERROR;
     }
 
-    
+
     /* create new process */
-    
+
     argv = apr_palloc(p, 4 * sizeof(char *));
     argv[0] = phpexec;
     argv[1] = "-s";
     argv[2] = apr_pstrdup(p, r->filename);
     argv[3] = NULL;
-    
-    env = ap_create_environment(p, r->subprocess_env);
-    
+
+    env = ap_create_environment(p, empty_table);
+
     proc = apr_pcalloc(p, sizeof(*proc));
     rv = apr_proc_create(proc, phpexec, (const char *const *)argv, (const char *const *)env, procattr, p);
     if (rv != APR_SUCCESS)
@@ -670,22 +667,22 @@ static int suphp_source_handler(request_rec *r)
     if (!proc->out)
         return APR_EBADF;
     apr_file_pipe_timeout_set(proc->out, r->server->timeout);
-    
+
     if (!proc->in)
         return APR_EBADF;
     apr_file_pipe_timeout_set(proc->in, r->server->timeout);
-    
+
     if (!proc->err)
         return APR_EBADF;
     apr_file_pipe_timeout_set(proc->err, r->server->timeout);
-    
+
     /* discard input */
-        
+
     bb = apr_brigade_create(r->pool, r->connection->bucket_alloc);
-    
+
     apr_file_flush(proc->in);
     apr_file_close(proc->in);
-    
+
     rv = ap_get_brigade(r->input_filters, bb, AP_MODE_READBYTES, APR_BLOCK_READ, HUGE_STRING_LEN);
     if (rv != APR_SUCCESS)
     {
@@ -695,9 +692,9 @@ static int suphp_source_handler(request_rec *r)
     }
     suphp_discard_output(bb);
     apr_brigade_cleanup(bb);
-    
+
     /* get output from script */
-    
+
 #if APR_FILES_AS_SOCKETS
     apr_file_pipe_timeout_set(proc->out, 0);
     apr_file_pipe_timeout_set(proc->err, 0);
@@ -706,23 +703,23 @@ static int suphp_source_handler(request_rec *r)
     b = apr_bucket_pipe_create(proc->out, r->connection->bucket_alloc);
 #endif
     APR_BRIGADE_INSERT_TAIL(bb, b);
-    
+
     b = apr_bucket_eos_create(r->connection->bucket_alloc);
     APR_BRIGADE_INSERT_TAIL(bb, b);
 
     /* send output to browser (through filters) */
-    
+
     r->content_type = "text/html";
     rv = ap_pass_brigade(r->output_filters, bb);
-    
+
     /* write errors to logfile */
-    
+
     if (rv == APR_SUCCESS && !r->connection->aborted)
     {
         suphp_log_script_err(r, proc->err);
         apr_file_close(proc->err);
     }
-    
+
     return OK;
 }
 
@@ -732,13 +729,13 @@ static int suphp_script_handler(request_rec *r)
     suphp_conf *sconf;
     suphp_conf *dconf;
     core_dir_config *core_conf;
-    
+
     apr_finfo_t finfo;
-    
+
     apr_procattr_t *procattr;
-    
+
     apr_proc_t *proc;
-    
+
     char **argv;
     char **env;
     apr_status_t rv;
@@ -758,29 +755,29 @@ static int suphp_script_handler(request_rec *r)
     char *ud_user = NULL;
     char *ud_group = NULL;
 #endif
-    
+
     apr_bucket_brigade *bb;
     apr_bucket *b;
-    
+
     /* load configuration */
-    
+
     p = r->main ? r->main->pool : r->pool;
     sconf = ap_get_module_config(r->server->module_config, &suphp_module);
     dconf = ap_get_module_config(r->per_dir_config, &suphp_module);
     core_conf = (core_dir_config *) ap_get_module_config(r->per_dir_config, &core_module);
-    
+
     /* check if suPHP is enabled for this request */
-    
+
     if (((sconf->engine != SUPHP_ENGINE_ON)
         && (dconf->engine != SUPHP_ENGINE_ON))
         || ((sconf->engine == SUPHP_ENGINE_ON)
         && (dconf->engine == SUPHP_ENGINE_OFF)))
         return DECLINED;
-    
+
     /* check if file is existing and acessible */
-    
+
     rv = apr_stat(&finfo, apr_pstrdup(p, r->filename), APR_FINFO_NORM, p);
-    
+
     if (rv == APR_SUCCESS)
         ; /* do nothing */
     else if (rv == EACCES)
@@ -798,13 +795,13 @@ static int suphp_script_handler(request_rec *r)
         ap_log_rerror(APLOG_MARK, APLOG_ERR, rv, r, "could not get fileinfo: %s", r->filename);
         return HTTP_NOT_FOUND;
     }
-    
+
     if (!(r->finfo.protection & APR_UREAD))
     {
         ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Insufficient permissions: %s", r->filename);
         return HTTP_FORBIDDEN;
     }
-    
+
 #ifdef SUPHP_USE_USERGROUP
     if ((sconf->target_user == NULL || sconf->target_group == NULL)
         && (dconf->target_user == NULL || dconf->target_group == NULL))
@@ -816,40 +813,40 @@ static int suphp_script_handler(request_rec *r)
             ud_user = apr_psprintf(r->pool, "#%ld", (long) userdir_id->uid);
             ud_group = apr_psprintf(r->pool, "#%ld", (long) userdir_id->gid);
         } else {
-            ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, 
+            ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
                           "No user or group set - set suPHP_UserGroup");
             return HTTP_INTERNAL_SERVER_ERROR;
         }
     }
 #endif
-        
+
     /* prepare argv for new process */
-    
+
     argv = apr_palloc(p, 2 * sizeof(char *));
     argv[0] = SUPHP_PATH_TO_SUPHP;
     argv[1] = NULL;
-    
+
     /* prepare environment for new process */
-    
+
     ap_add_common_vars(r);
     ap_add_cgi_vars(r);
-    
+
     apr_table_unset(r->subprocess_env, "SUPHP_PHP_CONFIG");
     apr_table_unset(r->subprocess_env, "SUPHP_AUTH_USER");
     apr_table_unset(r->subprocess_env, "SUPHP_AUTH_PW");
-    
+
 #ifdef SUPHP_USE_USERGROUP
     apr_table_unset(r->subprocess_env, "SUPHP_USER");
     apr_table_unset(r->subprocess_env, "SUPHP_GROUP");
 #endif
-    
+
     if (dconf->php_config)
     {
         apr_table_setn(r->subprocess_env, "SUPHP_PHP_CONFIG", apr_pstrdup(p, dconf->php_config));
     }
-    
+
     apr_table_setn(r->subprocess_env, "SUPHP_HANDLER", r->handler);
-    
+
     if (r->headers_in)
     {
         const char *auth = NULL;
@@ -871,7 +868,7 @@ static int suphp_script_handler(request_rec *r)
             }
         }
     }
-    
+
     if (auth_user && auth_pass)
     {
         apr_table_setn(r->subprocess_env, "SUPHP_AUTH_USER", auth_user);
@@ -894,7 +891,7 @@ static int suphp_script_handler(request_rec *r)
         apr_table_setn(r->subprocess_env, "SUPHP_USER",
                        apr_pstrdup(r->pool, ud_user));
     }
-    
+
     if (dconf->target_group)
     {
         apr_table_setn(r->subprocess_env, "SUPHP_GROUP",
@@ -911,15 +908,15 @@ static int suphp_script_handler(request_rec *r)
                        apr_pstrdup(r->pool, ud_group));
     }
 #endif
-    
+
     env = ap_create_environment(p, r->subprocess_env);
-        
+
     /* set attributes for new process */
-    
+
     if (((rv = apr_procattr_create(&procattr, p)) != APR_SUCCESS)
         || ((rv = apr_procattr_io_set(procattr, APR_CHILD_BLOCK, APR_CHILD_BLOCK, APR_CHILD_BLOCK)) != APR_SUCCESS)
         || ((rv = apr_procattr_dir_set(procattr, ap_make_dirstr_parent(r->pool, r->filename))) != APR_SUCCESS)
-    
+
     /* set resource limits */
 
 #ifdef RLIMIT_CPU
@@ -940,9 +937,9 @@ static int suphp_script_handler(request_rec *r)
                       "couldn't set child process attributes: %s", r->filename);
         return HTTP_INTERNAL_SERVER_ERROR;
     }
-    
+
     /* create new process */
-    
+
 
     proc = apr_pcalloc(p, sizeof(*proc));
     rv = apr_proc_create(proc, SUPHP_PATH_TO_SUPHP, (const char *const *)argv, (const char *const *)env, procattr, p);
@@ -957,47 +954,47 @@ static int suphp_script_handler(request_rec *r)
     if (!proc->out)
         return APR_EBADF;
     apr_file_pipe_timeout_set(proc->out, r->server->timeout);
-    
+
     if (!proc->in)
         return APR_EBADF;
     apr_file_pipe_timeout_set(proc->in, r->server->timeout);
-    
+
     if (!proc->err)
         return APR_EBADF;
     apr_file_pipe_timeout_set(proc->err, r->server->timeout);
-    
+
     /* send request body to script */
-    
+
     bb = apr_brigade_create(r->pool, r->connection->bucket_alloc);
     do
     {
         apr_bucket *bucket;
         rv = ap_get_brigade(r->input_filters, bb, AP_MODE_READBYTES, APR_BLOCK_READ, HUGE_STRING_LEN);
-        
+
         if (rv != APR_SUCCESS)
         {
             return rv;
         }
-        
+
         for (bucket = APR_BRIGADE_FIRST(bb); bucket != APR_BRIGADE_SENTINEL(bb); bucket = APR_BUCKET_NEXT(bucket))
         {
             const char *data;
             apr_size_t len;
             int child_stopped_reading = 0;
-            
+
             if (APR_BUCKET_IS_EOS(bucket))
             {
                 eos_reached = 1;
                 break;
             }
-            
+
             if (APR_BUCKET_IS_FLUSH(bucket) || child_stopped_reading)
             {
                 continue;
             }
-            
+
             apr_bucket_read(bucket, &data, &len, APR_BLOCK_READ);
-            
+
             rv = apr_file_write_full(proc->in, data, len, NULL);
             if (rv != APR_SUCCESS)
             {
@@ -1007,12 +1004,12 @@ static int suphp_script_handler(request_rec *r)
         apr_brigade_cleanup(bb);
     }
     while (!eos_reached);
-    
+
     apr_file_flush(proc->in);
     apr_file_close(proc->in);
-    
+
     /* get output from script and check if non-parsed headers are used */
-    
+
 #if APR_FILES_AS_SOCKETS
     apr_file_pipe_timeout_set(proc->out, 0);
     apr_file_pipe_timeout_set(proc->err, 0);
@@ -1022,7 +1019,7 @@ static int suphp_script_handler(request_rec *r)
 #endif
 
     APR_BRIGADE_INSERT_TAIL(bb, b);
-    
+
     b = apr_bucket_eos_create(r->connection->bucket_alloc);
     APR_BRIGADE_INSERT_TAIL(bb, b);
 
@@ -1031,14 +1028,14 @@ static int suphp_script_handler(request_rec *r)
     {
         nph = 1;
     }
-    
+
     if (!nph)
     {
         /* normal cgi headers, so we have to create the real headers ourselves */
-        
+
         int ret;
         const char *location;
-    
+
         ret = ap_scan_script_header_err_brigade(r, bb, strbuf);
         if (ret == HTTP_NOT_MODIFIED)
         {
@@ -1049,25 +1046,25 @@ static int suphp_script_handler(request_rec *r)
             suphp_discard_output(bb);
             apr_brigade_destroy(bb);
             suphp_log_script_err(r, proc->err);
-            
+
             /* ap_scan_script_header_err_brigade does logging itself,
                so simply return                                       */
-               
+
             return HTTP_INTERNAL_SERVER_ERROR;
         }
-        
+
         location = apr_table_get(r->headers_out, "Location");
         if (location && location[0] == '/' && r->status == 200)
         {
             /* empty brigade (script output) and modify headers */
-            
+
             suphp_discard_output(bb);
             apr_brigade_destroy(bb);
             suphp_log_script_err(r, proc->err);
             r->method = apr_pstrdup(r->pool, "GET");
             r->method_number = M_GET;
             apr_table_unset(r->headers_in, "Content-Length");
-            
+
             ap_internal_redirect_handler(location, r);
             return OK;
         }
@@ -1079,42 +1076,42 @@ static int suphp_script_handler(request_rec *r)
             suphp_log_script_err(r, proc->err);
             return HTTP_MOVED_TEMPORARILY;
         }
-        
+
         /* send output to browser (through filters) */
-        
+
         rv = ap_pass_brigade(r->output_filters, bb);
-        
+
         /* write errors to logfile */
-        
+
         if (rv == APR_SUCCESS && !r->connection->aborted)
             suphp_log_script_err(r, proc->err);
-        
+
         apr_file_close(proc->err);
     }
-    
+
     if (proc->out && nph)
     {
         /* use non-parsed headers (direct output) */
-        
+
         struct ap_filter_t *cur;
-        
+
         /* get rid of output filters */
-        
+
         cur = r->proto_output_filters;
         while (cur && cur->frec->ftype < AP_FTYPE_CONNECTION)
         {
             cur = cur->next;
         }
         r->output_filters = r->proto_output_filters = cur;
-        
+
         /* send output to browser (directly) */
-        
+
         rv = ap_pass_brigade(r->output_filters, bb);
-        
+
         /* log errors */
         if (rv == APR_SUCCESS && !r->connection->aborted)
             suphp_log_script_err(r, proc->err);
-            
+
         apr_file_close(proc->err);
     }
 
@@ -1130,7 +1127,7 @@ static void suphp_register_hooks(apr_pool_t *p)
 /********************
   Module declaration
  ********************/
- 
+
 module AP_MODULE_DECLARE_DATA suphp_module =
 {
     STANDARD20_MODULE_STUFF,

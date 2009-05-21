@@ -68,7 +68,7 @@ static void *suphp_create_dir_config(pool *p, char *dir) {
     cfg->php_config = NULL;
     cfg->engine = SUPHP_ENGINE_UNDEFINED;
     cfg->cmode = SUPHP_CONFIG_MODE_DIRECTORY;
-    
+
 #ifdef SUPHP_USE_USERGROUP
     cfg->target_user = NULL;
     cfg->target_group = NULL;
@@ -77,7 +77,7 @@ static void *suphp_create_dir_config(pool *p, char *dir) {
     /* Create table with 0 initial elements */
     /* This size may be increased for performance reasons */
     cfg->handlers = ap_make_table(p, 0);
-    
+
     return (void *) cfg;
 }
 
@@ -87,14 +87,14 @@ static void *suphp_merge_dir_config(pool *p, void *base, void *overrides) {
     suphp_conf *merged = (suphp_conf *) ap_pcalloc(p, sizeof(suphp_conf));
 
     merged->cmode = SUPHP_CONFIG_MODE_DIRECTORY;
-    
+
     if (child->php_config)
         merged->php_config = ap_pstrdup(p, child->php_config);
     else if (parent->php_config)
         merged->php_config = ap_pstrdup(p, parent->php_config);
-    else 
+    else
         merged->php_config = NULL;
-    
+
     if (child->engine != SUPHP_ENGINE_UNDEFINED)
         merged->engine = child->engine;
     else
@@ -115,7 +115,7 @@ static void *suphp_merge_dir_config(pool *p, void *base, void *overrides) {
     else
         merged->target_group = NULL;
 #endif
-    
+
     merged->handlers = ap_overlay_tables(p, child->handlers, parent->handlers);
 
     return (void *) merged;
@@ -124,16 +124,16 @@ static void *suphp_merge_dir_config(pool *p, void *base, void *overrides) {
 
 static void *suphp_create_server_config(pool *p, server_rec *s) {
     suphp_conf *cfg = (suphp_conf *) ap_pcalloc(p, sizeof(suphp_conf));
-    
+
     cfg->engine = SUPHP_ENGINE_UNDEFINED;
     cfg->php_path = NULL;
     cfg->cmode = SUPHP_CONFIG_MODE_SERVER;
-    
+
 #ifdef SUPHP_USE_USERGROUP
     cfg->target_user = NULL;
     cfg->target_group = NULL;
 #endif
-    
+
     /* Create table with 0 initial elements */
     /* This size may be increased for performance reasons */
     cfg->handlers = ap_make_table(p, 0);
@@ -146,12 +146,12 @@ static void *suphp_merge_server_config(pool *p, void *base, void *overrides) {
     suphp_conf *parent = (suphp_conf *) base;
     suphp_conf *child = (suphp_conf *) overrides;
     suphp_conf *merged = (suphp_conf *) ap_pcalloc(p, sizeof(suphp_conf));
-    
+
     if (child->engine != SUPHP_ENGINE_UNDEFINED)
         merged->engine = child->engine;
     else
         merged->engine = parent->engine;
-    
+
     if (child->php_path != NULL)
         merged->php_path = ap_pstrdup(p, child->php_path);
     else
@@ -172,7 +172,7 @@ static void *suphp_merge_server_config(pool *p, void *base, void *overrides) {
     else
         merged->target_group = NULL;
 #endif
-    
+
      merged->handlers = ap_overlay_tables(p, child->handlers, parent->handlers);
 
     return (void *) merged;
@@ -190,7 +190,7 @@ static const char *suphp_handle_cmd_engine(cmd_parms *cmd, void *mconfig,
     else
         cfg = (suphp_conf *) ap_get_module_config(cmd->server->module_config,
                                                   &suphp_module);
-    
+
     if (flag)
         cfg->engine = SUPHP_ENGINE_ON;
     else
@@ -203,16 +203,16 @@ static const char *suphp_handle_cmd_engine(cmd_parms *cmd, void *mconfig,
 static const char *suphp_handle_cmd_config(cmd_parms *cmd, void *mconfig,
                                            const char *arg) {
     suphp_conf *cfg = (suphp_conf *) mconfig;
-    
+
     cfg->php_config = ap_pstrdup(cmd->pool, arg);
-    
+
     return NULL;
 }
 
 
 #ifdef SUPHP_USE_USERGROUP
 static const char *suphp_handle_cmd_user_group(cmd_parms *cmd, void *mconfig,
-                                               const char *arg1, 
+                                               const char *arg1,
                                                const char *arg2) {
     suphp_conf *cfg;
 
@@ -220,7 +220,7 @@ static const char *suphp_handle_cmd_user_group(cmd_parms *cmd, void *mconfig,
         cfg = (suphp_conf *) mconfig;
     else
         cfg = ap_get_module_config(cmd->server->module_config, &suphp_module);
-    
+
     cfg->target_user = ap_pstrdup(cmd->pool, arg1);
     cfg->target_group = ap_pstrdup(cmd->pool, arg2);
 
@@ -243,15 +243,15 @@ static const char *suphp_handle_cmd_add_handler(cmd_parms *cmd, void *mconfig,
     return NULL;
 }
 
-static const char *suphp_handle_cmd_remove_handler(cmd_parms *cmd, 
-                                                   void *mconfig, 
+static const char *suphp_handle_cmd_remove_handler(cmd_parms *cmd,
+                                                   void *mconfig,
                                                    const char *arg) {
     suphp_conf *cfg;
     if (mconfig)
         cfg = (suphp_conf *) mconfig;
     else
         cfg = ap_get_module_config(cmd->server->module_config, &suphp_module);
-    
+
     // Mark deactivated handlers with '0'
     ap_table_set(cfg->handlers, arg, "0");
 
@@ -262,11 +262,11 @@ static const char *suphp_handle_cmd_remove_handler(cmd_parms *cmd,
 static const char *suphp_handle_cmd_phppath(cmd_parms *cmd, void* mconfig, const char *arg)
 {
     suphp_conf *cfg;
-    
+
     cfg = (suphp_conf *) ap_get_module_config(cmd->server->module_config, &suphp_module);
-    
+
     cfg->php_path = ap_pstrdup(cmd->pool, arg);
-    
+
     return NULL;
 }
 
@@ -276,12 +276,12 @@ static const char *suphp_handle_cmd_phppath(cmd_parms *cmd, void* mconfig, const
 static const command_rec suphp_cmds[] = {
     {"suPHP_Engine", suphp_handle_cmd_engine, NULL, RSRC_CONF|ACCESS_CONF,
      FLAG, "Whether suPHP is on or off, default is off"},
-    {"suPHP_ConfigPath", suphp_handle_cmd_config, NULL, OR_OPTIONS, TAKE1, 
+    {"suPHP_ConfigPath", suphp_handle_cmd_config, NULL, OR_OPTIONS, TAKE1,
      "Where the php.ini resides, default is the PHP default"},
 #ifdef SUPHP_USE_USERGROUP
-    {"suPHP_UserGroup", suphp_handle_cmd_user_group, NULL, 
+    {"suPHP_UserGroup", suphp_handle_cmd_user_group, NULL,
      RSRC_CONF|ACCESS_CONF, TAKE2, "User and group scripts shall be run as"},
-#endif 
+#endif
     {"suPHP_AddHandler", suphp_handle_cmd_add_handler, NULL, RSRC_CONF | ACCESS_CONF,
      ITERATE, "Tells mod_suphp to handle these MIME-types"},
     {"suphp_RemoveHandler", suphp_handle_cmd_remove_handler, NULL, RSRC_CONF | ACCESS_CONF,
@@ -298,14 +298,15 @@ int suphp_source_child(void *rp, child_info *cinfo) {
     suphp_conf *conf;
     pool *p = r->main ? r->main->pool : r->pool;
     char **argv, **env;
+    table *empty_table = ap_make_table(p, 0);
 
     conf = ap_get_module_config(r->server->module_config, &suphp_module);
-    
+
     /* We want to log output written to stderr */
     ap_error_log2stderr(r->server);
 
     /* prepare argv for new process */
-    
+
     argv = ap_palloc(p, 4 * sizeof(char *));
     argv[0] = ap_pstrdup(p, conf->php_path);
     argv[1] = "-s";
@@ -314,14 +315,14 @@ int suphp_source_child(void *rp, child_info *cinfo) {
 
     /* prepare environment */
 
-    env = ap_create_environment(p, r->subprocess_env);
+    env = ap_create_environment(p, empty_table);
 
     /* We cannot use ap_call_exec because of the interference with suExec */
     /* So we do everything ourselves */
- 
+
     /* mandatory cleanup before execution */
     ap_cleanup_for_exec();
-    
+
     execve(ap_pstrdup(p, conf->php_path), argv, env);
 
     /* We are still here? Okay - exec failed */
@@ -337,17 +338,17 @@ int suphp_child(void *rp, child_info *cinfo) {
     request_rec *r = (request_rec *) rp;
     core_dir_config *core_conf;
     pool *p = r->main ? r->main->pool : r->pool;
-     
+
     char **argv, **env;
 
     core_conf = (core_dir_config *) ap_get_module_config(
         r->per_dir_config, &core_module);
-    
+
     /* We want to log output written to stderr */
     ap_error_log2stderr(r->server);
 
     /* prepare argv for new process */
-    
+
     argv = ap_palloc(p, 2 * sizeof(char *));
     argv[0] = SUPHP_PATH_TO_SUPHP;
     argv[1] = NULL;
@@ -358,13 +359,13 @@ int suphp_child(void *rp, child_info *cinfo) {
 
     /* We cannot use ap_call_exec because of the interference with suExec */
     /* So we do everything ourselves */
- 
+
     /* Set resource limits from core config */
-   
+
 #ifdef RLIMIT_CPU
     if (core_conf->limit_cpu != NULL) {
         if ((setrlimit(RLIMIT_CPU, core_conf->limit_cpu)) != 0) {
-            ap_log_error(APLOG_MARK, APLOG_ERR, r->server, 
+            ap_log_error(APLOG_MARK, APLOG_ERR, r->server,
                          "setrlimit: failed to set CPU usage limit");
         }
     }
@@ -372,7 +373,7 @@ int suphp_child(void *rp, child_info *cinfo) {
 #ifdef RLIMIT_NPROC
     if (core_conf->limit_nproc != NULL) {
         if ((setrlimit(RLIMIT_NPROC, core_conf->limit_nproc)) != 0) {
-            ap_log_error(APLOG_MARK, APLOG_ERR, r->server, 
+            ap_log_error(APLOG_MARK, APLOG_ERR, r->server,
                          "setrlimit: failed to set process limit");
         }
     }
@@ -380,7 +381,7 @@ int suphp_child(void *rp, child_info *cinfo) {
 #ifdef RLIMIT_AS
     if (core_conf->limit_mem != NULL) {
         if ((setrlimit(RLIMIT_AS, core_conf->limit_mem)) != 0) {
-            ap_log_error(APLOG_MARK, APLOG_ERR, r->server, 
+            ap_log_error(APLOG_MARK, APLOG_ERR, r->server,
                          "setrlimit: failed to set memory limit");
         }
     }
@@ -388,7 +389,7 @@ int suphp_child(void *rp, child_info *cinfo) {
 #ifdef RLIMIT_DATA
     if (core_conf->limit_mem != NULL) {
         if ((setrlimit(RLIMIT_DATA, core_conf->limit_mem)) != 0) {
-            ap_log_error(APLOG_MARK, APLOG_ERR, r->server, 
+            ap_log_error(APLOG_MARK, APLOG_ERR, r->server,
                          "setrlimit: failed to set memory limit");
         }
     }
@@ -396,7 +397,7 @@ int suphp_child(void *rp, child_info *cinfo) {
 #ifdef RLIMIT_VMEM
     if (core_conf->limit_mem != NULL) {
         if ((setrlimit(RLIMIT_VMEM, core_conf->limit_mem)) != 0) {
-            ap_log_error(APLOG_MARK, APLOG_ERR, r->server, 
+            ap_log_error(APLOG_MARK, APLOG_ERR, r->server,
                          "setrlimit: failed to set memory limit");
         }
     }
@@ -404,7 +405,7 @@ int suphp_child(void *rp, child_info *cinfo) {
 
     /* mandatory cleanup before execution */
     ap_cleanup_for_exec();
-    
+
     execve(SUPHP_PATH_TO_SUPHP, argv, env);
 
     /* We are still here? Okay - exec failed */
@@ -425,18 +426,18 @@ static int suphp_source_handler(request_rec *r) {
     int fd;
     BUFF *script_in, *script_out, *script_err;
     char buffer[HUGE_STRING_LEN];
-    
+
     if (strcmp(r->method, "GET")) {
         return DECLINED;
     }
-    
+
     conf = ap_get_module_config(r->server->module_config, &suphp_module);
     if (conf->php_path == NULL) {
         return DECLINED;
     }
-    
+
     p = r->main ? r->main->pool : r->pool;
-    
+
     fd = open(r->filename, O_NOCTTY, O_RDONLY);
     if (fd != -1) {
         close(fd);
@@ -453,18 +454,18 @@ static int suphp_source_handler(request_rec *r) {
                       r->filename);
         return HTTP_NOT_FOUND;
     }
-    
+
     /* Fork child process */
-    
+
     if (!ap_bspawn_child(p, suphp_source_child, (void *) r, kill_after_timeout,
                          &script_in, &script_out, &script_err)) {
         ap_log_rerror(APLOG_MARK, APLOG_ERR, r,
                       "couldn't spawn child process for: %s", r->filename);
         return HTTP_INTERNAL_SERVER_ERROR;
     }
-    
+
     /* Read request body */
-    
+
     if (ap_should_client_block(r)) {
         char buffer[HUGE_STRING_LEN];
         int len_read;
@@ -475,13 +476,13 @@ static int suphp_source_handler(request_rec *r) {
             ap_reset_timeout(r);
             // Ignore input
         }
-        
+
         ap_bflush(script_in);
         ap_kill_timeout(r);
     }
 
     ap_bclose(script_in);
-    
+
     /* Transfer output from PHP to client */
 
     if (script_out) {
@@ -496,7 +497,7 @@ static int suphp_source_handler(request_rec *r) {
         /* Errors have already been logged by child */
         ap_bclose(script_err);
     }
-    
+
     return OK;
 
 }
@@ -510,18 +511,18 @@ static int suphp_handler(request_rec *r) {
     char *ud_user = NULL;
     char *ud_group = NULL;
 #endif
-    
+
     struct stat finfo;
-    
+
     int rv;
-    
+
     char *auth_user = NULL;
     char *auth_pass = NULL;
 
     pool *p;
 
     BUFF *script_in, *script_out, *script_err;
-    
+
     const char *handler;
 
     sconf = ap_get_module_config(r->server->module_config, &suphp_module);
@@ -554,7 +555,7 @@ static int suphp_handler(request_rec *r) {
         return DECLINED;
 
     /* check if file is existing and accessible */
-    
+
     rv = stat(ap_pstrdup(p, r->filename), &finfo);
     if (rv == 0) {
         ; /* do nothing */
@@ -575,7 +576,7 @@ static int suphp_handler(request_rec *r) {
 #ifdef SUPHP_USE_USERGROUP
     if ((sconf->target_user == NULL || sconf->target_group == NULL)
         && (dconf->target_user == NULL || dconf->target_group == NULL)) {
-        
+
         /* Identify mod_userdir request
            As Apache 1.3 does not yet provide a clean way to see
            whether a request was handled by mod_userdir, we assume
@@ -595,7 +596,7 @@ static int suphp_handler(request_rec *r) {
                     char *grpname;
                     if ((pw = getpwnam(username)) != NULL) {
                         gid = pw->pw_gid;
-                        
+
                         if ((gr = getgrgid(gid)) != NULL) {
                             grpname = gr->gr_name;
                         } else {
@@ -604,19 +605,19 @@ static int suphp_handler(request_rec *r) {
                             }
                             ap_snprintf(grpname, 16, "#%ld", (long) gid);
                         }
-                        
+
                         ud_user = username;
                         ud_group = grpname;
                         ud_success = 1;
                     }
                 }
-            }       
+            }
         }
-        
+
         if (!ud_success) {
             /* This is not a userdir request and user/group are not
                set, so log the error and return */
-            ap_log_rerror(APLOG_MARK, APLOG_ERR, r, 
+            ap_log_rerror(APLOG_MARK, APLOG_ERR, r,
                           "No user or group set - set suPHP_UserGroup");
             return HTTP_INTERNAL_SERVER_ERROR;
         }
@@ -625,14 +626,14 @@ static int suphp_handler(request_rec *r) {
 
 
     /* prepare environment for new process */
-    
+
     ap_add_common_vars(r);
     ap_add_cgi_vars(r);
 
     ap_table_unset(r->subprocess_env, "SUPHP_PHP_CONFIG");
     ap_table_unset(r->subprocess_env, "SUPHP_AUTH_USER");
     ap_table_unset(r->subprocess_env, "SUPHP_AUTH_PW");
-    
+
 #ifdef SUPHP_USE_USERGROUP
     ap_table_unset(r->subprocess_env, "SUPHP_USER");
     ap_table_unset(r->subprocess_env, "SUPHP_GROUP");
@@ -661,7 +662,7 @@ static int suphp_handler(request_rec *r) {
             }
         }
     }
-    
+
     if (auth_user && auth_pass) {
         ap_table_setn(r->subprocess_env, "SUPHP_AUTH_USER", auth_user);
         ap_table_setn(r->subprocess_env, "SUPHP_AUTH_PW", auth_pass);
@@ -684,30 +685,30 @@ static int suphp_handler(request_rec *r) {
         ap_table_set(r->subprocess_env, "SUPHP_GROUP", ud_group);
     }
 #endif /* SUPHP_USE_USERGROUP */
-    
+
     /* Fork child process */
-    
+
     if (!ap_bspawn_child(p, suphp_child, (void *) r, kill_after_timeout,
                          &script_in, &script_out, &script_err)) {
         ap_log_rerror(APLOG_MARK, APLOG_ERR, r,
                       "couldn't spawn child process for: %s", r->filename);
         return HTTP_INTERNAL_SERVER_ERROR;
     }
-    
+
     /* Transfer request body to script */
-    
+
     if ((rv = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
         /* Call failed, return status */
         return rv;
     }
-    
+
     if (ap_should_client_block(r)) {
         char buffer[HUGE_STRING_LEN];
         int len_read;
 
         ap_hard_timeout("reading request body", r);
 
-        while ((len_read = ap_get_client_block(r, buffer, HUGE_STRING_LEN)) 
+        while ((len_read = ap_get_client_block(r, buffer, HUGE_STRING_LEN))
                > 0) {
             ap_reset_timeout(r);
             if (ap_bwrite(script_in, buffer, len_read) < len_read) {
@@ -718,27 +719,27 @@ static int suphp_handler(request_rec *r) {
                 break;
             }
         }
-        
+
         ap_bflush(script_in);
         ap_kill_timeout(r);
     }
 
     ap_bclose(script_in);
-    
+
     /* Transfer output from script to client */
 
     if (script_out) {
         const char *location;
         char hbuffer[MAX_STRING_LEN];
         char buffer[HUGE_STRING_LEN];
-        
+
         rv = ap_scan_script_header_err_buff(r, script_out, hbuffer);
         if (rv == HTTP_NOT_MODIFIED) {
             return rv;
         } else if (rv) {
             return HTTP_INTERNAL_SERVER_ERROR;
         }
-        
+
         location = ap_table_get(r->headers_out, "Location");
         if (location && r->status == 200) {
             /* Soak up all the script output */
@@ -749,16 +750,16 @@ static int suphp_handler(request_rec *r) {
             ap_kill_timeout(r);
             ap_bclose(script_out);
             ap_bclose(script_err);
-        
-            if (location[0] == '/') { 
+
+            if (location[0] == '/') {
                 /* Redirect has always GET method */
                 r->method = ap_pstrdup(p, "GET");
                 r->method_number = M_GET;
-                
+
                 /* Remove Content-Length - redirect should not read  *
                  * request body                                      */
                 ap_table_unset(r->headers_in, "Content-Length");
-                
+
                 /* Do the redirect */
                 ap_internal_redirect_handler(location, r);
                 return OK;
@@ -768,7 +769,7 @@ static int suphp_handler(request_rec *r) {
                 return REDIRECT;
             }
         }
-            
+
         /* Output headers and body */
 
         ap_send_http_header(r);
@@ -779,7 +780,7 @@ static int suphp_handler(request_rec *r) {
         /* Errors have already been logged by child */
         ap_bclose(script_err);
     }
-    
+
     return OK;
 }
 
