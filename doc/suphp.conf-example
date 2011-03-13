@@ -27,7 +27,7 @@ check_vhost_docroot=true
 errors_to_browser=false
 
 ;PATH environment variable
-env_path=/bin:/usr/bin
+env_path="/bin:/usr/bin"
 
 ;Umask to set, specify in octal notation
 umask=0077

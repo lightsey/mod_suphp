@@ -114,7 +114,9 @@ errors_to_browser:
   invocation to the browser. This option is disabled by default.
 
 env_path:
-  Content of the "PATH" environment variable. Set this to a secure value.
+  Content of the "PATH" environment variable. Set this to a safe value.
+  The value has to be enclosed in quotes or colons have to be escaped with
+  the backslash character.
   The default value is "/bin:/usr/bin".
 
 umask:
