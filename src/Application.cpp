@@ -444,6 +444,8 @@ Environment suPHP::Application::prepareEnvironment(
         env.deleteVar("LD_PRELOAD");
     if (env.hasVar("LD_LIBRARY_PATH"))
         env.deleteVar("LD_LIBRARY_PATH");
+    if (env.hasVar("PHPRC"))
+        env.deleteVar("PHPRC");
     if (env.hasVar("SUPHP_USER"))
         env.deleteVar("SUPHP_USER");
     if (env.hasVar("SUPHP_GROUP"))
