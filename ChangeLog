@@ -1,4 +1,4 @@
-* Version ???
+* Version 0.7.2 (20 May 2013)
 - Use empty environment when forking a process for PHP source rendering.
 - Ignore PHPRC environment variable, to force use of suPHP_ConfigPath directive
   instead of SetEnv directive.
