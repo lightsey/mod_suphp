@@ -210,37 +210,109 @@ int suphp_call_exec(request_rec *r, child_info *pinfo, char *argv0,
 #define DEFAULT_LOGBYTES 10385760
 #define DEFAULT_BUFBYTES 1024
 
+#define CONFIG_MODE_SERVER 1
+#define CONFIG_MODE_DIRECTORY 2
+#define CONFIG_MODE_COMBO 3	/* Shouldn't ever happen. */
+
+#define SUPHP_ENGINE_OFF 0
+#define SUPHP_ENGINE_ON 1
+#define SUPHP_ENGINE_UNDEFINED 2
+
 typedef struct {
+    int cmode;
     char *logname;
     long logbytes;
     int bufbytes;
-} suphp_server_conf;
+    int engine;
+    char *php_config;
+} suphp_conf;
 
-static void *create_suphp_config(pool *p, server_rec *s)
+static void *suphp_create_dir_config(pool *p, char *dirspec)
 {
-    suphp_server_conf *c =
-    (suphp_server_conf *) ap_pcalloc(p, sizeof(suphp_server_conf));
-
-    c->logname = NULL;
-    c->logbytes = DEFAULT_LOGBYTES;
-    c->bufbytes = DEFAULT_BUFBYTES;
-
-    return c;
+ suphp_conf *cfg;
+ cfg = (suphp_conf *) ap_pcalloc(p, sizeof(suphp_conf));
+ cfg->php_config = NULL;
+ cfg->cmode = CONFIG_MODE_DIRECTORY;
+ return (void *) cfg;
 }
 
-static void *merge_suphp_config(pool *p, void *basev, void *overridesv)
+static void *suphp_merge_dir_config(pool *p, void *base_conf, void *new_conf)
 {
-    suphp_server_conf *base = (suphp_server_conf *) basev, *overrides = (suphp_server_conf *) overridesv;
+ suphp_conf *parent = (suphp_conf *) base_conf;
+ suphp_conf *child = (suphp_conf *) new_conf;
+ suphp_conf *merged = (suphp_conf *) ap_pcalloc(p, sizeof(suphp_conf));
+ 
+ merged->php_config = child->php_config ? child->php_config : parent->php_config;
+ 
+ return merged;
+}
 
-    return overrides->logname ? overrides : base;
+static void *suphp_create_server_config(pool *p, server_rec *s)
+{
+    suphp_conf *cfg = (suphp_conf *) ap_pcalloc(p, sizeof(suphp_conf));
+
+    cfg->logname = NULL;
+    cfg->logbytes = DEFAULT_LOGBYTES;
+    cfg->bufbytes = DEFAULT_BUFBYTES;
+    cfg->engine = SUPHP_ENGINE_UNDEFINED;
+
+    return (void *) cfg;
+}
+
+static void *suphp_merge_server_config(pool *p, void *base_conf, void *new_conf)
+{
+    suphp_conf *merged = (suphp_conf *) ap_pcalloc(p, sizeof(suphp_conf));
+    suphp_conf *parent = (suphp_conf *) base_conf;
+    suphp_conf *child = (suphp_conf *) new_conf;
+    
+    if (child->logname)
+    {
+     merged->logname = child->logname;
+     merged->logbytes = child->logbytes;
+     merged->bufbytes = child->bufbytes;
+    }
+    else
+    {
+     merged->logname = parent->logname;
+     merged->logbytes = parent->logbytes;
+     merged->bufbytes = parent->bufbytes;
+    }
+
+    if (child->engine != SUPHP_ENGINE_UNDEFINED)
+     merged->engine = child->engine;
+    else
+     merged->engine = parent->engine;
+    
+    return (void *) merged;
+}
+
+static const char *suphp_handle_cmd_engine(cmd_parms *cmd, void *mconfig, int flag)
+{
+ suphp_conf *cfg = (suphp_conf *) ap_get_module_config(cmd->server->module_config, &suphp_module);
+ 
+ if (flag)
+  cfg->engine = SUPHP_ENGINE_ON;
+ else
+  cfg->engine = SUPHP_ENGINE_OFF;
+ 
+ return NULL;
+}
+
+static const char *suphp_handle_cmd_config(cmd_parms *parms, void *mconfig, const char *arg)
+{
+ suphp_conf *cfg = (suphp_conf *) mconfig;
+ cfg->php_config = (char*)ap_pstrdup(parms->pool, arg);
+ return NULL;
 }
 
 static const command_rec suphp_cmds[] =
 {
+    {"suPHP_Engine", suphp_handle_cmd_engine, NULL, RSRC_CONF, FLAG, "Whether PHP is on or off, default is off"},
+    {"suPHP_ConfigPath", suphp_handle_cmd_config, NULL, OR_OPTIONS, TAKE1, "Where the php.ini resists, default is to use PHP's default configuration"},
     {NULL}
 };
 
-static int log_scripterror(request_rec *r, suphp_server_conf * conf, int ret,
+static int log_scripterror(request_rec *r, suphp_conf * conf, int ret,
 			   int show_errno, char *error)
 {
     FILE *f;
@@ -269,7 +341,7 @@ static int log_scripterror(request_rec *r, suphp_server_conf * conf, int ret,
     return ret;
 }
 
-static int log_script(request_rec *r, suphp_server_conf * conf, int ret,
+static int log_script(request_rec *r, suphp_conf * conf, int ret,
 		  char *dbuf, const char *sbuf, BUFF *script_in, BUFF *script_err)
 {
     array_header *hdrs_arr = ap_table_elts(r->headers_in);
@@ -382,6 +454,7 @@ static int suphp_child(void *child_stuff, child_info *pinfo)
     char *tmp=NULL;
     char *auth_user=NULL;
     char *auth_password=NULL;
+    suphp_conf *cfg = (suphp_conf *) ap_get_module_config(r->per_dir_config, &suphp_module);
 
 #ifdef DEBUG_SUPHP
 #ifdef OS2
@@ -436,6 +509,11 @@ static int suphp_child(void *child_stuff, child_info *pinfo)
       ap_table_setn(r->subprocess_env, "PHP_AUTH_PW", auth_password);
      }
     }
+    
+    if (cfg->php_config)
+    {
+     ap_table_setn(r->subprocess_env, "PHP_CONFIG", cfg->php_config);
+    }
      
     ap_add_cgi_vars(r);
     env = ap_create_environment(r->pool, r->subprocess_env);
@@ -487,11 +565,15 @@ static int suphp_handler(request_rec *r)
     char argsbuffer[HUGE_STRING_LEN];
     int is_included = !strcmp(r->protocol, "INCLUDED");
     void *sconf = r->server->module_config;
-    suphp_server_conf *conf =
-    (suphp_server_conf *) ap_get_module_config(sconf, &suphp_module);
+    suphp_conf *conf =
+    (suphp_conf *) ap_get_module_config(sconf, &suphp_module);
+    suphp_conf *mconf = (suphp_conf *) ap_get_module_config(r->server->module_config, &suphp_module);
 
     struct suphp_child_stuff cld;
 
+    if ((mconf->engine == SUPHP_ENGINE_OFF) || (mconf->engine == SUPHP_ENGINE_UNDEFINED))
+     return DECLINED;
+    
     if (r->method_number == M_OPTIONS) {
 	/* 99 out of 100 CGI scripts, this is all they support */
 	r->allowed |= (1 << M_GET);
@@ -700,10 +782,10 @@ module MODULE_VAR_EXPORT suphp_module =
 {
     STANDARD_MODULE_STUFF,
     NULL,			/* initializer */
-    NULL,			/* dir config creater */
-    NULL,			/* dir merger --- default is to override */
-    create_suphp_config,		/* server config */
-    merge_suphp_config,		/* merge server config */
+    suphp_create_dir_config,	/* dir config creater */
+    suphp_merge_dir_config,	/* dir merger --- default is to override */
+    suphp_create_server_config,	/* server config */
+    suphp_merge_server_config,	/* merge server config */
     suphp_cmds,			/* command table */
     suphp_handlers,		/* handlers */
     NULL,			/* filename translation */

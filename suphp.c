@@ -26,12 +26,15 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "suphp.h"
 
 
 void exec_script(char* scriptname)
 {
+ char *php_config;
+ 
  // Set the enviroment (for compatibility reasons)
  setenv("SCRIPT_URL", getenv("REQUEST_URI"), 1);
  setenv("PATH_TRANSLATED", getenv("SCRIPT_FILENAME"), 1);
@@ -44,8 +47,20 @@ void exec_script(char* scriptname)
  
  setenv("PATH", "/bin:/usr/bin", 1);
  
+ // Check for PHP_CONFIG environment variable
+ 
+ if (getenv("PHP_CONFIG"))
+ {
+  if ((php_config = strdup(getenv("PHP_CONFIG")))==NULL)
+   error_exit(ERRCODE_UNKNOWN);
+  unsetenv("PHP_CONFIG");
+ }
+ 
  // Exec PHP
- execl(OPT_PATH_TO_PHP, "php", NULL);
+ if (php_config)
+  execl(OPT_PATH_TO_PHP, "php", "-c", php_config, NULL);
+ else
+  execl(OPT_PATH_TO_PHP, "php", NULL);
 }
 
 int main(int argc, char* argv[])

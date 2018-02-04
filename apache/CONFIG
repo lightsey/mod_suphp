@@ -1,0 +1,36 @@
+===========================
+== suPHP Apache module   ==
+===========================
+
+Configuration
+-------------
+
+mod_suphp knows two configuration directives:
+
+suPHP_Engine (can either be turned "on" or "off")
+
+This option tells mod_suphp if a PHP-script requested on this server (or
+VirtualHost) should be run with the PHP-interpreter or returned to the
+browser "as it is".
+
+This directive can be used in the global context or in a
+"<VirtualHost>"-directive.
+
+
+suPHP_ConfigPath (expects a path name)
+
+This option tells mod_suphp which path to pass on to the PHP-interpreter
+(with the -c option).
+Do *NOT* refer to a file but to the directory the file resists in.
+
+E.g.: If you want to use "/path/to/server/config/php.ini", use "suPHP_Config
+/path/to/server/config".
+
+If you don't use this option, PHP will use its compiled in default path.
+
+
+==============================
+(c)2002 by Sebastian Marsching
+<sebastian@marsching.com>
+Please see LICENSE for
+additional information
