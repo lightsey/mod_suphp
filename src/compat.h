@@ -18,35 +18,12 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef SUPHP_COMPAT_H
+#define SUPHP_COMPAT_H
 
-#include "config.h"
-#include "filesystem.h"
-#include "check.h"
-#include "error.h"
-#include "log.h"
-#include "compat.h"
+// Functions in compat.c
+int suphp_setenv(const char *name, const char *value, int overwrite);
+int suphp_unsetenv(const char *name);
 
-#ifndef OPT_DISABLE_CHECKPATH
-#define OPT_CHECKPATH
-#endif
-
-#ifndef OPT_MIN_UID
-#define OPT_MIN_UID 100
-#endif
-
-#ifndef OPT_MIN_GID
-#define OPT_MIN_GID 100
-#endif
-
-#ifndef OPT_APACHE_USER
-#define OPT_APACHE_USER "wwwrun"
-#endif
-
-#ifndef OPT_PATH_TO_PHP
-#define OPT_PATH_TO_PHP "/usr/bin/php"
-#endif
-
-#ifndef OPT_LOGFILE
-#define OPT_LOGFILE "/var/log/httpd/suphp_log"
 #endif
 

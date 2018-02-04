@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2004 Sebastian Marsching <sebastian@marsching.com>
     
     This file is part of suPHP.
 
@@ -21,10 +21,13 @@
 #ifndef SUPHP_LOG_H
 #define SUPHP_LOG_H
 
+extern int log_initialized;
+
 // Functions in log.c
-void log_error(char* err_msg, ...);
-void log_info(char* info_msg, ...);
-void log(char* msg, char* category);
+void suphp_init_log();
+void suphp_log_error(char* err_msg, ...);
+void suphp_log_info(char* info_msg, ...);
+void suphp_log(char* msg, char* category);
 
 #endif
 

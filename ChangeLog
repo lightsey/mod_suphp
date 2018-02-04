@@ -1,3 +1,13 @@
+* Version 0.5 (10 January 2004)
+- Apache 2.x support
+- Portability to other *NIX systems improved by using more compatible
+  system calls
+- Improved logging
+- Added "--with-setid-mode" compile time option (see doc/INSTALL for
+  details)
+- Apache 2.x version now supports direct header output
+  (like "HTTP/1.0 401 ...")
+
 * Version 0.3 (23 August 2003)
 - Changed build system to GNU autoconf
 - Supplementary groups are set correctly

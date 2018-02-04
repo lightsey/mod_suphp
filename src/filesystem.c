@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2004 Sebastian Marsching <sebastian@marsching.com>
     
     This file is part of suPHP.
 
@@ -45,8 +45,8 @@ int file_is_symbollink(char *filename)
  fileinfo = (struct stat*) malloc(sizeof(struct stat));
  if (lstat(filename, fileinfo))
  {
-  log_error("Could not lstat() %s", filename);
-  error_exit(ERRCODE_UNKNOWN);
+  suphp_log_error("Could not lstat() %s", filename);
+  error_sysmsg_exit(ERRCODE_UNKNOWN, "lstat() failed", __FILE__, __LINE__);
  }
  if (fileinfo->st_mode & S_IFLNK)
   is_symbollink = 1;
@@ -65,8 +65,8 @@ uid_t file_get_uid(char *filename)
  fileinfo = (struct stat*) malloc(sizeof(struct stat));
  if (stat(filename, fileinfo))
  {
-  log_error("Could not stat() %s", filename);
-  error_exit(ERRCODE_UNKNOWN);
+  suphp_log_error("Could not stat() %s", filename);
+  error_sysmsg_exit(ERRCODE_UNKNOWN, "stat() failed", __FILE__, __LINE__);
  }
  uid = fileinfo->st_uid;
  free(fileinfo);
@@ -82,8 +82,8 @@ gid_t file_get_gid(char *filename)
  fileinfo = (struct stat*) malloc(sizeof(struct stat));
  if (stat(filename, fileinfo))
  {
-  log_error("Could not stat() %s", filename);
-  error_exit(ERRCODE_UNKNOWN);
+  suphp_log_error("Could not stat() %s", filename);
+  error_sysmsg_exit(ERRCODE_UNKNOWN, "stat() failed", __FILE__, __LINE__);
  }
  gid = fileinfo->st_gid;
  free(fileinfo);
@@ -99,8 +99,8 @@ uid_t file_get_uid_l(char *filename)
  fileinfo = (struct stat*) malloc(sizeof(struct stat));
  if (lstat(filename, fileinfo))
  {
-  log_error("Could not lstat() %s", filename);
-  error_exit(ERRCODE_UNKNOWN);
+  suphp_log_error("Could not lstat() %s", filename);
+  error_sysmsg_exit(ERRCODE_UNKNOWN, "lstat() failed", __FILE__, __LINE__);
  }
  uid = fileinfo->st_uid;
  free(fileinfo);
@@ -116,8 +116,8 @@ gid_t file_get_gid_l(char *filename)
  fileinfo = (struct stat*) malloc(sizeof(struct stat));
  if (lstat(filename, fileinfo))
  {
-  log_error("Could not lstat() %s", filename);
-  error_exit(ERRCODE_UNKNOWN);
+  suphp_log_error("Could not lstat() %s", filename);
+  error_sysmsg_exit(ERRCODE_UNKNOWN, "lstat() failed", __FILE__, __LINE__);
  }
  gid = fileinfo->st_gid;
  free(fileinfo);

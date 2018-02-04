@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2004 Sebastian Marsching <sebastian@marsching.com>
     
     This file is part of suPHP.
 
@@ -30,8 +30,8 @@ int check_path(char *script_path)
  char *document_root = getenv("DOCUMENT_ROOT");
  if(!document_root)
  {
-  log_error("Could not get DOCUMENT_ROOT from the environment processing %s", script_path);
-  error_exit(ERRCODE_WRONG_ENVIROMENT);
+  suphp_log_error("Could not get DOCUMENT_ROOT from the environment processing %s", script_path);
+  error_msg_exit(ERRCODE_WRONG_ENVIRONMENT, "DOCUMENT_ROOT not set", __FILE__, __LINE__);
  }
  if (strncmp(document_root, script_path, strlen(document_root))!=0)
   return 0;
@@ -45,19 +45,19 @@ int check_permissions(char *script_path)
  
  if (stat(script_path, &file_info))
  {
-  log_error("Could not stat() script %s", script_path);
-  error_exit(ERRCODE_UNKNOWN);
+  suphp_log_error("Could not stat() script %s", script_path);
+  error_sysmsg_exit(ERRCODE_UNKNOWN, "stat() failed", __FILE__, __LINE__);
  }
  
  if (!(file_info.st_mode & S_IRUSR))
  {
-  log_error("Owner doesn't have read permission on %s", script_path);
+  suphp_log_error("Owner doesn't have read permission on %s", script_path);
   return 0;
  }
  
  if (file_info.st_mode & (S_IWGRP | S_IWOTH))
  {
-  log_error("Script (%s) is writeable by others", script_path);
+  suphp_log_error("Script (%s) is writeable by others", script_path);
   return 0;
  }
   

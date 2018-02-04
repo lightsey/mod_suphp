@@ -32,8 +32,18 @@ Wenn Sie diese Option nicht benutzen, wird PHP den einkompilierten
 Standard-Pfad benutzen.
 
 
+suPHP_UserGroup (erwartet Benutzer- und Gruppenamen)
+
+* Wird nur unterstützt wenn mit dem setid-mode "force" oder "paranoid"
+  kompiliert wurde *
+
+Geben Sie den Benutzer-Gruppennamen an, mit denen PHP-Skripte ausgeführt
+werden sollen.
+Beispiel: suPHP_UserGroup foouser bargroup
+
+
 ===================================
-(c)2002-2003 by Sebastian Marsching
+(c)2002-2004 by Sebastian Marsching
 <sebastian@marsching.com>
 Please see LICENSE for
 additional information

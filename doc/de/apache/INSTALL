@@ -42,9 +42,9 @@ ausgeführt haben, wird das Apache Modul automatisch kompiliert wenn Sie
 Informationen darüber, wie mod_suphp konfiguriert wird, können Sie in der
 Datei "CONFIG" in diesem Verzeichnis finden.
 
-Bitte beachten Sie dass mod_suphp für Apache 1.3.2x entwickelt wurde und
-möglicherweise nicht mit anderen Apache-Versionen funktioniert (besonders
-Apache 2.x).
+Bitte beachten Sie dass mod_suphp für Apache 1.3.2x und Apache 2.0.x 
+entwickelt wurde und möglicherweise nicht mit anderen Apache-Versionen 
+funktioniert.
 
 suPHP wurde für Linux entwickelt, möglicherweise funktioniert es auch auf
 einigen anderen *NIX-Systemen. Es scheint eine FreeBSD-Port von suPHP zu
@@ -125,7 +125,7 @@ kann, beantworten werde.
 
 
 ===================================
-(c)2002-2003 by Sebastian Marsching
+(c)2002-2004 by Sebastian Marsching
 <sebastian@marsching.com>
 Please see LICENSE for
 additional information

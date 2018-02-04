@@ -18,30 +18,43 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-#include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "suphp.h"
 
-void error_exit(int errcode)
+int suphp_setenv(const char *name, const char *value, int overwrite)
 {
- fprintf(stderr, "Error on executing script(%d)\n", errcode);
- _exit(errcode);
+ char *putstr;
+ char *temp;
+ int retval;
+ if (!overwrite && getenv(name) != NULL)
+  return 0;
+ temp = NULL;
+ putstr = malloc(strlen(name) + strlen(value) + 2);
+ if (putstr == NULL)
+  error_sysmsg_exit(ERRCODE_MEMORY, "Could not allocate memory", __FILE__, __LINE__);
+ strcpy(putstr, name);
+ temp = putstr + strlen(name);
+ *temp = '=';
+ temp++;
+ strcpy(temp, value);
+ retval = putenv(putstr);
+ return retval;
 }
 
-void error_msg_exit(int errcode, char *msg, char *file, int line)
+int suphp_unsetenv(const char *name)
 {
- fprintf(stderr, "Error in %s on line %d: %s\n", file, line, msg);
- _exit(errcode);
-}
-
-void error_sysmsg_exit(int errcode, char *msg, char *file, int line)
-{
- if (log_initialized)
-  suphp_log_error("System error: %s (%s)", msg, strerror(errno));
- fprintf(stderr, "Error in %s on line %d: %s (%s)\n", file, line, msg, strerror(errno));
- _exit(errcode);
+ char *putstr = malloc(strlen(name) + 2);
+ char *temp;
+ int retval;
+ if (putstr == NULL)
+  error_sysmsg_exit(ERRCODE_MEMORY, "Could not allocate memory", __FILE__, __LINE__);
+ strcpy(putstr, name);
+ temp = putstr + strlen(name);
+ *temp = '=';
+ temp++;
+ *temp = 0;
+ retval = putenv(putstr);
+ return retval;
 }

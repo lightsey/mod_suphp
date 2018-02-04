@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2004 Sebastian Marsching <sebastian@marsching.com>
     
     This file is part of suPHP.
 
@@ -29,7 +29,10 @@
 #include <string.h>
 #include "suphp.h"
 
-void log_error(char *err_msg, ...)
+int log_fd;
+int log_initialized = 0;
+
+void suphp_log_error(char *err_msg, ...)
 {
  char msg[4096];
  va_list vargs;
@@ -41,10 +44,10 @@ void log_error(char *err_msg, ...)
  va_end(vargs); 
  
  // Write message to logfile
- log(msg, "error");
+ suphp_log(msg, "error");
 }
 
-void log_info(char *info_msg, ...)
+void suphp_log_info(char *info_msg, ...)
 {
  char msg[4096];
  va_list vargs;
@@ -56,21 +59,25 @@ void log_info(char *info_msg, ...)
  va_end(vargs); 
  
  // Write message to logfile
- log(msg, "info");
+ suphp_log(msg, "info");
 }
 
-void log(char *msg, char *category)
+void suphp_init_log()
 {
- int fd;
+ if ((log_fd = open(OPT_LOGFILE, O_WRONLY | O_CREAT | O_APPEND | O_NOCTTY, S_IRUSR | S_IWUSR)) == -1)
+  error_sysmsg_exit(ERRCODE_NO_LOG, "Could not open logfile", __FILE__, __LINE__);
+ if (fcntl(log_fd, F_SETFD, FD_CLOEXEC))
+  error_sysmsg_exit(ERRCODE_UNKNOWN, "Could not set close-on-exec attribute for logfile", __FILE__, __LINE__);
+ log_initialized = 1;
+}
+
+void suphp_log(char *msg, char *category)
+{
  time_t ts;
  struct tm *now;
  char str_time[1024];
  char row[8192];
  
- 
- // Open logfile
- if ((fd = open(OPT_LOGFILE, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR)) == -1)
-  error_exit(ERRCODE_NO_LOG);
  
  // Get time
  ts = time(NULL);
@@ -81,8 +88,5 @@ void log(char *msg, char *category)
  snprintf(row, 8191, "%s [%s] %s\n", str_time, category, msg);
  
  // Write to logfile
- write(fd, row, strlen(row));
- 
- // Close logfile
- close(fd);
+ write(log_fd, row, strlen(row));
 }

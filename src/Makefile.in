@@ -15,6 +15,9 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 APXS = @APXS@
 
+APACHE_VERSION_1_3 = @APACHE_VERSION_1_3@
+APACHE_VERSION_2 = @APACHE_VERSION_2@
+
 DESTDIR =
 
 MAKEDEFS = CC='$(CC)' DEFS='$(DEFS)' CFLAGS='$(CFLAGS)' \
@@ -27,13 +30,20 @@ RM = rm -f
 
 all: suphp suphp.mod
 
-suphp: suphp.o filesystem.o check.o error.o log.o
+suphp: suphp.o filesystem.o check.o error.o log.o compat.o
 	$(CC) $(LDFLAGS) $(DEFS) -o suphp \
-	 suphp.o filesystem.o check.o error.o log.o
+	 suphp.o filesystem.o check.o error.o log.o compat.o
 
 suphp.mod:
 	@if test "$(APXS)" != "/notfound/"; then \
-	  $(MAKE) $(MAKEDEFS) -C apache; \
+	  if test "$(APACHE_VERSION_2)" = "true"; then \
+	    echo "*** INFO: Building mod_suphp for Apache 2.0 ***"; \
+	    $(MAKE) $(MAKEDEFS) -C apache2; \
+	  fi; \
+	  if test "$(APACHE_VERSION_1_3)" = "true"; then \
+	    echo "*** INFO: Building mod_suphp for Apache 1.3 ***"; \
+	    $(MAKE) $(MAKEDEFS) -C apache; \
+	  fi; \
 	else \
 	  echo "*** WARNING: No 'apxs' found. Skipping mod_suphp! ***"; \
 	fi
@@ -41,11 +51,23 @@ suphp.mod:
 install: suphp suphp.mod
 	$(INSTALL_PROGRAM) -d $(DESTDIR)$(sbindir)
 	$(INSTALL_PROGRAM) -m 4755 suphp $(DESTDIR)$(sbindir)/suphp
-	@$(MAKE) $(MAKEDEFS) -C apache install
+	@if test "$(APXS)" != "/notfound/"; then \
+	  if test "$(APACHE_VERSION_2)" = "true"; then \
+	    echo "*** INFO: Installing mod_suphp for Apache 2.0 ***"; \
+	    $(MAKE) $(MAKEDEFS) -C apache2 install; \
+	  fi; \
+	  if test "$(APACHE_VERSION_1_3)" = "true"; then \
+	    echo "*** INFO: Installing mod_suphp for Apache 1.3 ***"; \
+	    $(MAKE) $(MAKEDEFS) -C apache install; \
+	  fi; \
+	else \
+	  echo "*** WARNING: No 'apxs' found. Skipping installation of mod_suphp! ***"; \
+	fi
 
 clean:
 	$(RM) suphp *.o
 	@$(MAKE) $(MAKEDEFS) -C apache clean
+	@$(MAKE) $(MAKEDEFS) -C apache2 clean
 
 %.o : %.c
 	$(CC) -c $(CFLAGS) $(DEFS) $(INCLUDES) -o $@ $<

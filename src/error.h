@@ -22,7 +22,7 @@
 #define SUPHP_ERROR_H
 
 // Errorcode, only used internally
-#define ERRCODE_WRONG_ENVIROMENT 1
+#define ERRCODE_WRONG_ENVIRONMENT 1
 #define ERRCODE_WRONG_PATH 2
 #define ERRCODE_LOW_UID 3
 #define ERRCODE_LOW_GID 6
@@ -32,9 +32,14 @@
 #define ERRCODE_SYMBOLLINK_NO_MATCH 9
 #define ERRCODE_NO_LOG 8
 #define ERRCODE_UNKNOWN 9999
+#define ERRCODE_MEMORY 10
+#define ERRCODE_WRONG_UID 11
+#define ERRCODE_WRONG_GID 12
 
 // Functions in error.c
 void error_exit(int errcode);
+void error_msg_exit(int errcode, char *msg, char *file, int line);
+void error_sysmsg_exit(int errcode, char *msg, char *file, int line);
 
 #endif
 

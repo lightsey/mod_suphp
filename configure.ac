@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT([suphp], [0.3.1], [sebastian.marsching@suphp.org])
+AC_INIT([suphp], [0.5], [sebastian.marsching@suphp.org])
 AC_CONFIG_SRCDIR([src/suphp.c])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADER([src/config.h])
@@ -30,13 +30,72 @@ fi
 
 if test -n "$APXS"; then
     AC_SUBST(APXS)
+    
+    APACHE_VERSION=`\`$APXS -q SBINDIR\`/\`$APXS -q TARGET\` -v \
+                    | grep "Server version" \
+                    | cut -f2 -d":" \
+                    | cut -f2 -d"/" \
+                    | cut -f1 -d" "`
+    major_version=`echo $APACHE_VERSION|cut -f1,2 -d.`
+    if test $major_version = 2.0; then
+      APACHE_VERSION_2=true
+      APACHE_VERSION_1_3=false
+    else
+      APACHE_VERSION_2=false
+      APACHE_VERSION_1_3=true
+    fi
+    AC_SUBST(APACHE_VERSION_1_3)
+    AC_SUBST(APACHE_VERSION_2)
 
-    AC_MSG_RESULT(found at $APXS)
+    AC_MSG_RESULT(found at $APXS (version $APACHE_VERSION))
 else
     APXS="/notfound/"
     AC_SUBST(APXS)
     
     AC_MSG_RESULT(no)
+fi
+
+AC_MSG_CHECKING([for set-UID/set-GID mode])
+AC_ARG_WITH(setid-mode, 
+            AC_HELP_STRING([--with-setid-mode=MODE], 
+                           [Mode to use for setting UID/GID.  MODE can be on of "owner", "config" or "paranoid"; defaults to "owner".]),
+            [
+            if test "$withval" = "yes"; then
+              SETID_MODE="owner"
+            else
+              SETID_MODE="$withval"
+            fi
+            ])
+
+if test "$SETID_MODE" = ""; then
+  SETID_MODE="owner"
+fi
+
+if test -n "$SETID_MODE"; then
+    case "$SETID_MODE" in 
+      owner)
+        OPT_APACHEMOD_USERGROUP_DEF=""
+        AC_SUBST(OPT_APACHEMOD_USERGROUP_DEF)
+        AC_DEFINE(OPT_USERGROUP_OWNER, 1,
+                  [Define if you want to set UID/GID to the owner of the script])
+        ;;
+      force)
+        OPT_APACHEMOD_USERGROUP_DEF=-DSUPHP_USE_USERGROUP
+        AC_SUBST(OPT_APACHEMOD_USERGROUP_DEF)
+        AC_DEFINE(OPT_USERGROUP_FORCE, 1,
+                  [Define if you want to set UID/GID to the user/group specified in the Apache configuration])
+        ;;
+      paranoid)
+        OPT_APACHEMOD_USERGROUP_DEF=-DSUPHP_USE_USERGROUP
+        AC_SUBST(OPT_APACHEMOD_USERGROUP_DEF)
+        AC_DEFINE(OPT_USERGROUP_PARANOID, 1,
+                  [Define if you want to set UID/GID to the user/group specified in the Apache configuration AND check if these settings match the UID/GID of the script])
+        ;;
+      *)
+        AC_MSG_ERROR([--with-setid-mode has to be set to one of "owner", "force" or "paranoid"])
+        ;;
+    esac
+    AC_MSG_RESULT([ok - using $SETID_MODE])
 fi
 
 checkpath=yes
@@ -161,9 +220,18 @@ AC_FUNC_STAT
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS([setenv strcasecmp strdup strrchr])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/apache/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile src/apache/Makefile src/apache2/Makefile])
 AC_OUTPUT
 
+if test -n "$OPT_APACHEMOD_USERGROUP_DEF" -a "$APACHE_VERSION_1_3" = "true"; then
+  AC_MSG_WARN([
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!*** The suPHP module for Apache 1.3 only works with     ***!!
+!!*** set-ID mode "owner", other modes are only supported ***!!
+!!*** by the Apache 2.x module                            ***!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ])
+fi
 
 if test $APXS = "/notfound/"; then
   AC_MSG_WARN([

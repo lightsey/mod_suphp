@@ -53,7 +53,10 @@ folgenden suPHP spezifischen Paramtern übergen werden:
                      Option nicht angegenben wird, sucht "configure" im PATH
                      nach "apxs". Wenn "apxs" nicht gefunden wird oder Ihr
                      Apache nicht mit DSO-Unterstützung kompiliert wurde,
-                     wird mod_suphp nicht kompiliert.
+                     wird mod_suphp nicht kompiliert. Bitte stellen Sie 
+                     sicher, dass der Pfad zu apxs richtig ist, da suPHP
+                     apxs benutzt um festzustellen, ob mod_suphp für
+                     Apache 1 oder Apache2 kompiliert werden soll.
 
 --with-min-uid=UID:  Die kleinste UID für die suPHP die Ausführung von
                      PHP-Skripten zulässt (Standard: 100).
@@ -69,6 +72,17 @@ folgenden suPHP spezifischen Paramtern übergen werden:
 
 --with-logfile=FILE: Pfad zur suPHP Logdatei (Standard:
                      /var/log/http/suphp_log).
+
+--with-setid-mode=MODE:
+                     Für MODE gibt es folgende Möglichkeiten:
+                     "owner":   Skripte mit der UID/GID des Besitzers 
+                                ausführen.
+                     "force":   Skripte mit UID/GID ausführen, die in der 
+                                Apache-Konfiguration angegeben ist.
+                     "paranoid: Skripte mit der UID/GID des Besitzers
+                                ausführen und zusätzlich überprüfen, ob diese
+                                mit der UID/GID aus der Apache-Konfiguration
+                                übereinstimmt.
 
 Kompilieren Sie jetzt suPHP mit Hilfe von "make" und, falls keine Fehler
 dabei auftreten, installieren Sie es mit "make install". Stellen Sie sicher,
@@ -87,7 +101,7 @@ apache/INSTALL zu finden.
 
 
 ===================================
-(c)2002-2003 by Sebastian Marsching
+(c)2002-2004 by Sebastian Marsching
 <sebastian@marsching.com>
 Please see LICENSE for
 additional information

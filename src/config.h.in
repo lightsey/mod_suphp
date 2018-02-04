@@ -87,6 +87,18 @@
 /* Defines path to PHP interpreter */
 #undef OPT_PATH_TO_PHP
 
+/* Define if you want to set UID/GID to the user/group specified in the Apache
+   configuration */
+#undef OPT_USERGROUP_FORCE
+
+/* Define if you want to set UID/GID to the owner of the script */
+#undef OPT_USERGROUP_OWNER
+
+/* Define if you want to set UID/GID to the user/group specified in the Apache
+   configuration AND check if these settings match the UID/GID of the script
+   */
+#undef OPT_USERGROUP_PARANOID
+
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 
