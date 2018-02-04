@@ -1,0 +1,40 @@
+===========================
+== suPHP                 ==
+===========================
+
+Installation
+------------
+
+1. Introduction
+
+The suPHP Apache module together with suPHP itself provides an easy way to
+run PHP scripts with different users on the same server.
+
+It provides security, because the PHP scripts are not run with the rights of
+the webserver's user.
+In addition to that you probably won't have to use PHP's "safe mode", which
+applies many restrictions on the scripts.
+
+Please note that the suPHP binary have to be installed setuid-root to work,
+so a security bug in suPHP probably will allow atackers to run commands with
+root privileges. Although I currently don't know any bug in suPHP I can't
+guarantee that there aren't any.
+
+2. Installation
+
+Modify config.h to match your needs.
+
+Now compile suPHP using "make" and if no error occured install it using
+"make install". Be sure to be root, when you try to install it.
+
+Now you have to add the setuid-root-bit to the executable. Do so by using
+"chmod u+s /usr/sbin/suphp".
+
+Now you have to compile Apache with mod_suphp. See apache/INSTALL for
+information on this.
+
+==============================
+(c)2002 by Sebastian Marsching
+<sebastian@marsching.com>
+Please see LICENSE for
+additional information

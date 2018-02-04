@@ -1,0 +1,74 @@
+===========================
+== suPHP Apache module   ==
+===========================
+
+Installation
+------------
+
+1. Introduction
+
+The suPHP Apache module together with suPHP itself provides an easy way to
+run PHP scripts with different users on the same server.
+
+It provides security, because the PHP scripts are not run with the rights of
+the webserver's user.
+In addition to that you probably won't have to use PHP's "safe mode", which
+applies many restrictions on the scripts.
+
+Please be sure to have read the README file in this directory and both the
+README and the INSTALL file in the main directory of the suPHP distribution.
+
+
+2. The simple facts
+
+In this part, I'll give the most important information for people who know
+how to compile the Apache Server with additional modules.
+If you aren't familiar with doing this, you'll find a step-by-step guide in
+the third part of this manual.
+
+mod_suphp only consists of one file, called "mod_suphp.c".
+If the suphp binary is not in the default path (/usr/sbin/suphp) you'll have
+to modify the corresponding line in mod_suphp.c before adding it to your
+Apache sources with the "configure" script of Apache.
+ 
+You should be able to compile mod_suphp as a dynamically loadable module
+(DSO), although I haven't tested it.
+
+Please note that mod_suphp was developped for Apache 1.3.22 and perhaps
+won't work with other Versions (especially Apache 2.x).
+
+suPHP was developped for Linux, perhaps it'll also work with some other
+*NIX-systems.
+If you have tested it with another system and it works, please tell me.
+
+
+3. Step-by-step guide
+
+I. Apache sources
+
+Get the Apache sources from http://www.apache.org and unpack them.
+Now go into the newly created directory. And run "./configure --help" which
+will output some really useful information about the configure-script.
+
+Now run the configure script with the parameters that match your needs but
+add the option "--add-module=/path/to/mod_suphp.c".
+
+This will copy mod_suphp.c to the Apache sources and activate it.
+
+Now you can "make" Apache and install it using "make install".
+
+Please note that suPHP will not work if you also compile in mod_php.
+
+To use suPHP to parse PHP-Files the only thing you have to is to add a Line
+like
+
+AddHandler x-httpd-php .php
+
+to your Apache configuration.
+
+
+==============================
+(c)2002 by Sebastian Marsching
+<sebastian@marsching.com>
+Please see LICENSE for
+additional information
