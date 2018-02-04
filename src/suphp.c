@@ -81,6 +81,8 @@ int main(int argc, char* argv[])
  struct group emptygroup;
 #endif
 
+ char *path_translated;
+ 
 #ifdef OPT_NO_PASSWD
  // Initialize structure
  emptyuser.pw_name = "";
@@ -100,8 +102,6 @@ int main(int argc, char* argv[])
  emptygroup.gr_mem = NULL;
 #endif
 
- char *path_translated;
- 
  path_translated = getenv("SCRIPT_FILENAME");
   
  if ((apacheuser = getpwnam(OPT_APACHE_USER))==NULL)

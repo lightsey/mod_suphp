@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT([suphp], [0.3], [sebastian.marsching@suphp.org])
+AC_INIT([suphp], [0.3.1], [sebastian.marsching@suphp.org])
 AC_CONFIG_SRCDIR([src/suphp.c])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADER([src/config.h])
