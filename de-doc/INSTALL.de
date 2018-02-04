@@ -1,0 +1,44 @@
+===========================
+== suPHP                 ==
+===========================
+
+Installation
+------------
+
+1. Einführung
+
+Das Zusammenspiel zwischen dem suPHP-Apache-Modul und suPHP selbst bietet einen 
+einfachen Weg, um PHP-Scripts unter unterschiedlichen User-IDs auf dem gleichen 
+Server auszuführen.
+
+Es bietet Sicherheit, weil die PHP-Scripts fortan nicht mehr unter der User-ID 
+des Webservers laufen.
+Dadurch wird der Einsatz von PHPs "Safe Mode", der viele Einschränkungen beim 
+Programmieren in PHP mit sich bringt, in der Regel überflüssig.
+
+Bitte beachte, dass das suPHP-Binary setuid root installiert werden muss, um 
+arbeiten zu können. Das heisst, dass eine Sicherheitslücke in suPHP es 
+Angreifern eventuell ermöglicht, Kommandos mit root-Rechten ausführen zu 
+können. Obwohl mir derzeit keine einzige Sicherheitslücke in suPHP bekannt ist, 
+kann ich nicht garantieren, dass es keine gibt.
+
+2. Installation
+
+Passe config.h nach deinen Bedürfnissen an.
+
+Nun kannst du suPHP durch die Eingabe von "make" kompilieren und - sofern dabei 
+kein Fehler auftrat - mittels "make install" installieren. Stelle sicher, dass 
+du root-Rechte hast, wenn du es installierst.
+
+Nun muss suPHP noch das setuid-Bit gesetzt bekommen. Das kannst du mit "chmod 
+u+s /usr/sbin/suphp" erreichen.
+
+Nachdem suPHP kompiliert und installiert wurde, musst du nun Apache mit 
+mod_suphp kompilieren. In der Datei apache/INSTALL erfährst du, wie du das tun 
+kannst.
+
+==============================
+(c)2002 by Sebastian Marsching
+<sebastian@marsching.com>
+Bitte sieh in die Datei LICENSE, um
+weitere Informationen zu erhalten.

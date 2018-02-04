@@ -53,6 +53,7 @@ void exec_script(char* scriptname)
  {
   if ((php_config = strdup(getenv("PHP_CONFIG")))==NULL)
    error_exit(ERRCODE_UNKNOWN);
+  setenv("PHPRC", getenv("PHP_CONFIG"), 1);
   unsetenv("PHP_CONFIG");
  }
  

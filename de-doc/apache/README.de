@@ -1,0 +1,21 @@
+===========================
+== suPHP Apache-Modul    ==
+===========================
+
+mod_suphp (und nur dieser Teil von suPHP) wird unter der Apache Software 
+License, Version 1.1, veröffentlicht.
+
+Eine Kopie dieser Lizenz findest Du in der Datei LICENSE im gleichen 
+Verzeichnis.
+
+Für Informationen zur Installation lies bitte die Datei INSTALL.
+
+"Dieses Produkt enthält Software der Apache Software Foundation 
+(http://www.apache.org/)."
+
+
+==============================
+(c)2002 by Sebastian Marsching
+<sebastian@marsching.com>
+Bitte sieh in die Datei LICENSE, um
+weitere Informationen zu erhalten.
