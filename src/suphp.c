@@ -30,11 +30,14 @@
 
 #include "suphp.h"
 
+extern char **environ;
 
 void exec_script(char* scriptname)
 {
  char *php_config;
  char *env;
+ char *const argv[] = { OPT_PATH_TO_PHP, NULL };
+ char *const *envp;
  
  // Set the enviroment (for compatibility reasons)
 
@@ -61,8 +64,6 @@ void exec_script(char* scriptname)
   if ((php_config = strdup(getenv("PHP_CONFIG")))==NULL)
    error_sysmsg_exit(ERRCODE_UNKNOWN, "strdup() failed", __FILE__, __LINE__);
   suphp_setenv("PHPRC", php_config, 1);
-  free(php_config);
-  php_config = NULL;
   suphp_unsetenv("PHP_CONFIG");
  }
 
@@ -71,8 +72,10 @@ void exec_script(char* scriptname)
  suphp_unsetenv("PHP_SU_GROUP");
 #endif
  
+ envp = suphp_copyenv((const char **) environ);
+
  // Exec PHP
- execl(OPT_PATH_TO_PHP, OPT_PATH_TO_PHP, NULL);
+ execve(OPT_PATH_TO_PHP, argv, envp);
  
  // Should never be reached
  error_sysmsg_exit(ERRCODE_UNKNOWN, "execl() failed", __FILE__, __LINE__);

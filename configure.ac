@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT([suphp], [0.5], [sebastian.marsching@suphp.org])
+AC_INIT([suphp], [0.5.1], [sebastian.marsching@suphp.org])
 AC_CONFIG_SRCDIR([src/suphp.c])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADER([src/config.h])
@@ -19,6 +19,10 @@ AC_ARG_WITH(apxs,
               APXS="$withval"
             fi
             ])
+
+if test -z "$APXS"; then
+  APXS=`which apxs`
+fi
 
 if test "$BINNAME" = "" -a "$APXS" = "" -a "$FAIL_STATIC" = ""; then
   for i in /usr/sbin /usr/local/apache/bin ; do

@@ -25,36 +25,81 @@
 
 int suphp_setenv(const char *name, const char *value, int overwrite)
 {
- char *putstr;
- char *temp;
- int retval;
- if (!overwrite && getenv(name) != NULL)
-  return 0;
- temp = NULL;
- putstr = malloc(strlen(name) + strlen(value) + 2);
- if (putstr == NULL)
-  error_sysmsg_exit(ERRCODE_MEMORY, "Could not allocate memory", __FILE__, __LINE__);
- strcpy(putstr, name);
- temp = putstr + strlen(name);
- *temp = '=';
- temp++;
- strcpy(temp, value);
- retval = putenv(putstr);
- return retval;
+  char *putstr = NULL;
+  char *temp = NULL;
+  int retval = 0;
+  if (!overwrite && getenv(name) != NULL)
+    return 0;
+  temp = NULL;
+  putstr = malloc(strlen(name) + strlen(value) + 2);
+  if (putstr == NULL)
+    error_sysmsg_exit(ERRCODE_MEMORY, "Could not allocate memory", __FILE__, __LINE__);
+  strcpy(putstr, name);
+  temp = putstr + strlen(name);
+  *temp = '=';
+  temp++;
+  strcpy(temp, value);
+  retval = putenv(putstr);
+  return retval;
 }
 
 int suphp_unsetenv(const char *name)
 {
- char *putstr = malloc(strlen(name) + 2);
- char *temp;
- int retval;
- if (putstr == NULL)
-  error_sysmsg_exit(ERRCODE_MEMORY, "Could not allocate memory", __FILE__, __LINE__);
- strcpy(putstr, name);
- temp = putstr + strlen(name);
- *temp = '=';
- temp++;
- *temp = 0;
- retval = putenv(putstr);
- return retval;
+  char *putstr = malloc(strlen(name) + 2);
+  char *temp = NULL;
+  int retval = 0;
+  if (putstr == NULL)
+    error_sysmsg_exit(ERRCODE_MEMORY, "Could not allocate memory", __FILE__, __LINE__);
+  strcpy(putstr, name);
+  temp = putstr + strlen(name);
+  *temp = '=';
+  temp++;
+  *temp = 0;
+  retval = putenv(putstr);
+  return retval;
+}
+
+char** suphp_copyenv(const char **old_env)
+{
+  char** new_env = NULL;
+  char** element = NULL;
+  char** new_element = NULL;
+  char* lastchar = NULL;
+  int num_elements = 0;
+ 
+  element = (char **) old_env;
+  while (*element != NULL)
+    {
+      lastchar = (char *) *element + strlen(*element) - 1;
+      if (*lastchar != '=')
+	{
+	  num_elements++;
+	}
+      element++;
+    }
+
+  new_env = (char**) malloc(sizeof(char*) * (num_elements + 1));
+  if (new_env == NULL)
+    {
+      error_sysmsg_exit(ERRCODE_MEMORY, "Could not allocate memory", __FILE__, __LINE__);
+    }
+  new_element = new_env;
+  element = (char **) old_env;
+  while (*element != NULL)
+    {
+      lastchar = *element + strlen(*element) - 1;
+      if (*lastchar != '=')
+	{
+	  *new_element = malloc(strlen(*element) + 1);
+	  if (*new_element == NULL)
+	    {
+	      error_sysmsg_exit(ERRCODE_MEMORY, "Could not allocate memory", __FILE__, __LINE__);
+	    }
+	  strcpy(*new_element, *element);
+	  new_element++;
+	}
+      element++;
+    }
+  *new_element = NULL;
+  return new_env;
 }

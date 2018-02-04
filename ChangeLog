@@ -1,3 +1,10 @@
+* Version 0.5.1 (24 February 2004)
+- Empty environment variables now are deleted from the environment instead
+  of being set to "no value"
+- Fixed bug causing a segmentation fault when using different suPHP_Engine 
+  settings in vhosts (special thanks to Matthias Brunner for tracking down 
+  this problem)
+	
 * Version 0.5 (10 January 2004)
 - Apache 2.x support
 - Portability to other *NIX systems improved by using more compatible

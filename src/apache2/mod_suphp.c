@@ -213,7 +213,8 @@ static void *suphp_merge_server_config(apr_pool_t *p, void *base,
     else
         merged->target_group = NULL;
 #endif
-
+    
+    return (void*) merged;
 }
 
 
@@ -230,7 +231,7 @@ static const char *suphp_handle_cmd_engine(cmd_parms *cmd, void *mconfig,
     if (mconfig)
         cfg = (suphp_conf *) mconfig;
     else
-        cfg = ap_get_module_config(s->module_config, &suphp_module);
+        cfg = (suphp_conf *) ap_get_module_config(s->module_config, &suphp_module);
     
     if (flag)
         cfg->engine = SUPHP_ENGINE_ON;

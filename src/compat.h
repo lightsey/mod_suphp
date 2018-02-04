@@ -24,6 +24,7 @@
 // Functions in compat.c
 int suphp_setenv(const char *name, const char *value, int overwrite);
 int suphp_unsetenv(const char *name);
+char** suphp_copyenv(const char **old_env);
 
 #endif
 
