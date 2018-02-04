@@ -1,0 +1,39 @@
+===========================
+== suPHP Apache module   ==
+===========================
+
+Konfiguration
+-------------
+
+mod_suphp kennt zwei Konfigurations-Direktiven
+
+suPHP_Engine (kann entweder auf "on" oder "off" gestellt werden)
+
+Die Option sagt mod_suphp, ob PHP-Skripte, die von diesem Server (oder
+VirtualHost) angefordert werden, ausgeführt werden oder im Quelltext an den
+Browser zurückgegeben werden sollen.
+
+Diese Direktive kann sowohl im globalen Kontext als auch innerhalb einer
+"<VirtualHost>"-Direktive benutzt werden.
+
+
+suPHP_ConfigPath (erwartet den Pfad zu einem Verzeichnis)
+
+Diese Option stellt ein, welcher Pfad zur "php.ini" dem PHP-Interpreter
+übergeben werden soll (indem die PHPRC Umgebungsvariable gesetzt wird).
+
+Sie bezieht sich *NICHT* auf eine Datei, sondern auf das Verzeichnis, in dem
+sich die Datei befindet.
+
+Beispiel: Wenn Sie die Konfigurationsdatei "/path/to/server/config/php.ini"
+verwenden möchten, müssen Sie "suPHP_Config /path/to/server/config" angeben.
+
+Wenn Sie diese Option nicht benutzen, wird PHP den einkompilierten
+Standard-Pfad benutzen.
+
+
+===================================
+(c)2002-2003 by Sebastian Marsching
+<sebastian@marsching.com>
+Please see LICENSE for
+additional information

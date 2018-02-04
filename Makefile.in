@@ -1,0 +1,21 @@
+SHELL = /bin/sh
+
+srcdir = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+sbindir = @sbindir@
+CC = @CC@
+CFLAGS = @CFLAGS@
+DEFS = @DEFS@
+LDFLAGS = @LDFLAGS@
+
+DESTDIR =
+
+MAKEDEFS = CC='$(CC)' DEFS='$(DEFS)' CFLAGS='$(CFLAGS)' \
+           LDFLAGS='$(LDFLAGS)' prefix='$(prefix)' \
+           sbindir='$(sbindir)' DESTDIR='$(DESTDIR)' \
+           srcdir='$(srcdir)'
+
+all install clean:
+	@$(MAKE) $(MAKEDEFS) -C src $@
+

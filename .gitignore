@@ -1,2 +1,5 @@
 *.tar.gz
-CVS
+*.o
+configure
+config/*
+aclocal.m4

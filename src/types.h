@@ -18,8 +18,17 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef SUPHP_TYPES_H
+#define SUPHP_TYPES_H
 
-// Functions in log.c
-void log_error(char* err_msg, ...);
-void log_info(char* info_msg, ...);
-void log(char* msg, char* category);
+// Type definitions
+#ifndef uid_t
+# define uid_t int
+#endif
+
+#ifndef gid_t
+# define gid_t int
+#endif
+
+#endif
+

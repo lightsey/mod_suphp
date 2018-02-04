@@ -18,11 +18,13 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef SUPHP_LOG_H
+#define SUPHP_LOG_H
 
-// Functions in filesystem.c
-int file_exists(char *filename);
-int file_is_symbollink(char *filename);
-uid_t file_get_uid(char *filename);
-gid_t file_get_gid(char *filename);
-uid_t file_get_uid_l(char *filename);
-gid_t file_get_gid_l(char *filename);
+// Functions in log.c
+void log_error(char* err_msg, ...);
+void log_info(char* info_msg, ...);
+void log(char* msg, char* category);
+
+#endif
+

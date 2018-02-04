@@ -1,0 +1,52 @@
+SHELL = /bin/sh
+
+top_srcdir = @top_srcdir@
+srcdir = @srcdir@
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+sbindir = @sbindir@
+CC = @CC@
+CFLAGS = @CFLAGS@
+DEFS = @DEFS@
+LDFLAGS = @LDFLAGS@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+APXS = @APXS@
+
+DESTDIR =
+
+MAKEDEFS = CC='$(CC)' DEFS='$(DEFS)' CFLAGS='$(CFLAGS)' \
+           LDFLAGS='$(LDFLAGS)' prefix='$(prefix)' \
+           sbindir='$(sbindir)' DESTDIR='$(DESTDIR)' \
+           srcdir='$(srcdir)'
+
+INCLUDES = -I$(top_srcdir)/src
+RM = rm -f
+
+all: suphp suphp.mod
+
+suphp: suphp.o filesystem.o check.o error.o log.o
+	$(CC) $(LDFLAGS) $(DEFS) -o suphp \
+	 suphp.o filesystem.o check.o error.o log.o
+
+suphp.mod:
+	@if test "$(APXS)" != "/notfound/"; then \
+	  $(MAKE) $(MAKEDEFS) -C apache; \
+	else \
+	  echo "*** WARNING: No 'apxs' found. Skipping mod_suphp! ***"; \
+	fi
+
+install: suphp suphp.mod
+	$(INSTALL_PROGRAM) -d $(DESTDIR)$(sbindir)
+	$(INSTALL_PROGRAM) -m 4755 suphp $(DESTDIR)$(sbindir)/suphp
+	@$(MAKE) $(MAKEDEFS) -C apache install
+
+clean:
+	$(RM) suphp *.o
+	@$(MAKE) $(MAKEDEFS) -C apache clean
+
+%.o : %.c
+	$(CC) -c $(CFLAGS) $(DEFS) $(INCLUDES) -o $@ $<
+

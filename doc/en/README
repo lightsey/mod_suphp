@@ -1,8 +1,9 @@
-/*
-    suPHP - (c)2002 Sebastian Marsching <sebastian@marsching.com>
-    
-    This file is part of suPHP.
+===========================
+== suPHP                 ==
+===========================
 
+    suPHP - (c)2002-2003 Sebastian Marsching <sebastian@marsching.com>
+    
     suPHP is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -15,21 +16,20 @@
 
     You should have received a copy of the GNU General Public License
     along with suPHP; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+    USA
 
 
-// Errorcode, only used internally
-#define ERRCODE_WRONG_ENVIROMENT 1
-#define ERRCODE_WRONG_PATH 2
-#define ERRCODE_LOW_UID 3
-#define ERRCODE_LOW_GID 6
-#define ERRCODE_FILE_NOT_FOUND 4
-#define ERRCODE_WRONG_PARENT 5
-#define ERRCODE_WRONG_PERMISSIONS 7
-#define ERRCODE_SYMBOLLINK_NO_MATCH 9
-#define ERRCODE_NO_LOG 8
-#define ERRCODE_UNKNOWN 9999
+For help on installation see INSTALL in this directory.
 
-// Functions in error.c
-void error_exit(int errcode);
+
+Please note, that files in the "src/apache"-directory are not covered by
+the GPL but by the Apache License. See file "README" in the directory 
+for details.
+
+
+===================================
+(c)2002-2003 by Sebastian Marsching
+<sebastian@marsching.com>
+Please see LICENSE for
+additional information

@@ -1,0 +1,93 @@
+===========================
+== suPHP                 ==
+===========================
+
+Installation
+------------
+
+1. Einführung
+
+Das suPHP Apache Modul bietet zusammen mit suPHP selbst eine einfache
+Möglichlkeit PHP Skripte unter verschiedenen Benutzern auf dem selben Server
+auszuführen.
+
+Es bietet dadurch Sicherheit, dass die PHP-Skripte nicht mit den Rechten des
+Webservers ausgeführt werden.
+Dadurch muss man in den meisten Fällen nicht den Apache "Safe Mode"
+benutzen, der viele Einschränkungen für die Skripte bedeutet.
+
+Bitte beachten Sie, dass die suPHP Binary als "root" mit gesetztem
+"SetUID"-Bit installiert werden muss, d.h. eine Sicherheitslücke in suPHP
+würde es wahrscheinlich Angreifern erlauben Befehle mit "root"-Rechten
+auszuführen. Obwohl mir zur Zeit keine solchen Fehler in suPHP bekannt sind,
+kann ich nicht garantieren, dass es keine gibt.
+
+
+2. Installation
+
+Führen Sie "./configure" mit den entsprechenden Paramatern für Ihr System
+aus.
+
+Auf den meisten Systemen dürfte ein
+ ./configure --prefix=/usr
+genügen.
+
+Dem "./configure"-Skript könenn die üblichen GNU autoconf Parameter plus den
+folgenden suPHP spezifischen Paramtern übergen werden:
+
+--disable-checkpath: Diese Option bewirkt, dass suPHP nicht überprüft, ob
+                     sich ein Skript (oder ein Symlink darauf) auch 
+                     tatsächlich im DOCUMENT_ROOT befinden. Sie werden diese
+                     Option wahrscheinlich benutzen wollen, wenn Sie
+                     von der "Alias"-Direktive Gebrauch machen.
+
+--disable-checkuid:  Diese Option kann angegeben werden, um PHP-Skripte mit
+                     UIDs ausführen zu können, für die kein Eintrag in der 
+                     /etc/passwd vorhanden ist.
+
+--disable-checkgid:  Diese Option kann angegeben werden, um PHP-Skripte mit
+                     GIDs ausführen zu können, für die kein Eintrag in der
+                     /etc/group vorhanden ist.
+
+--with-apxs=FILE:    Der Pfad zum "apxs" Ihrer Apache Installation. Wenn die
+                     Option nicht angegenben wird, sucht "configure" im PATH
+                     nach "apxs". Wenn "apxs" nicht gefunden wird oder Ihr
+                     Apache nicht mit DSO-Unterstützung kompiliert wurde,
+                     wird mod_suphp nicht kompiliert.
+
+--with-min-uid=UID:  Die kleinste UID für die suPHP die Ausführung von
+                     PHP-Skripten zulässt (Standard: 100).
+
+--with-min-gid=GID:  Die kleinste GID für die suPHP die Ausführung von
+                     PHP-Skripten zulässt (Standard: 100).
+
+--with-apache-user=USERNAME:
+                     Benutzername (nicht UID), unter dem Apache läuft
+                     (Standard: "wwwrun").
+
+--with-php=FILE:     Pfad zum PHP-Interpreter (Standard: /usr/bin/php).
+
+--with-logfile=FILE: Pfad zur suPHP Logdatei (Standard:
+                     /var/log/http/suphp_log).
+
+Kompilieren Sie jetzt suPHP mit Hilfe von "make" und, falls keine Fehler
+dabei auftreten, installieren Sie es mit "make install". Stellen Sie sicher,
+dass Sie als "root" eingeloggt sind, wenn Sie "make install" ausführen.
+
+Wenn Ihr Apache mit DSO-Unterstützung läuft und "apxs" während des Laufs von
+"./configure" gefunden wurde, ist jetzt alles erledigt. Es muss nur noch die
+Konfiguration erfolgen (siehe CONFIG).
+Ansonsten müssen Sie Ihren Apache Server mit "mod_suphp.c" darin neu
+kompilieren. Wenn Sie ein anderes Prefix als "/usr" verwendet haben, müssen
+Sie in der "mod_suphp.c" den Pfad zu suPHP anpassen (dieses kann in
+$exec_prefix/sbin/suphp gefunden werden).
+
+Details zur Kompilierung des Apache Webservers mit mod_suphp sind in
+apache/INSTALL zu finden.
+
+
+===================================
+(c)2002-2003 by Sebastian Marsching
+<sebastian@marsching.com>
+Please see LICENSE for
+additional information

@@ -26,6 +26,7 @@
 #include <time.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <string.h>
 #include "suphp.h"
 
 void log_error(char *err_msg, ...)

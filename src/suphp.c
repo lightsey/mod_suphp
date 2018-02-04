@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2003 Sebastian Marsching <sebastian@marsching.com>
     
     This file is part of suPHP.
 
@@ -58,10 +58,7 @@ void exec_script(char* scriptname)
  }
  
  // Exec PHP
- if (php_config)
-  execl(OPT_PATH_TO_PHP, "php", "-c", php_config, NULL);
- else
-  execl(OPT_PATH_TO_PHP, "php", NULL);
+ execl(OPT_PATH_TO_PHP, "php", NULL);
 }
 
 int main(int argc, char* argv[])
@@ -71,12 +68,53 @@ int main(int argc, char* argv[])
  struct passwd *calluser;
  struct passwd *targetuser;
  struct group *targetgroup;
+
+#ifdef OPT_NO_PASSWD
+ // Declare empty structure for user
+ struct passwd emptyuser;
+ // Declare variable for information whether to use supplementary groups
+ int use_supp_groups = 1;
+#endif
+
+#ifdef OPT_NO_GROUP
+ // Declare emtpy structure for group
+ struct group emptygroup;
+#endif
+
+#ifdef OPT_NO_PASSWD
+ // Initialize structure
+ emptyuser.pw_name = "";
+ emptyuser.pw_passwd = "";
+ emptyuser.pw_uid = 65534;
+ emptyuser.pw_gid = 65534;
+ emptyuser.pw_gecos = "";
+ emptyuser.pw_dir = "/dev/null";
+ emptyuser.pw_shell = "/bin/false";
+#endif
+
+#ifdef OP_NO_GROUP
+ // Initialize structure
+ emptygroup.gr_name = "";
+ emptygroup.gr_passwd = "";
+ emptygroup.gr_gid = 65534;
+ emptygroup.gr_mem = NULL;
+#endif
+
  char *path_translated;
  
  path_translated = getenv("SCRIPT_FILENAME");
   
- apacheuser = getpwnam(OPT_APACHE_USER);
- calluser = getpwuid(getuid());
+ if ((apacheuser = getpwnam(OPT_APACHE_USER))==NULL)
+ {
+  log_error("Could not get passwd information for Apache user (%s)", OPT_APACHE_USER);
+  error_exit(ERRCODE_UNKNOWN);
+ }
+ 
+ if ((calluser = getpwuid(getuid()))==NULL)
+ {
+  log_error("Could not get passwd information for calling UID %d", getuid());
+  error_exit(ERRCODE_UNKNOWN);
+ }
  
  if (calluser->pw_uid!=apacheuser->pw_uid)
  {
@@ -104,13 +142,38 @@ int main(int argc, char* argv[])
   error_exit(ERRCODE_WRONG_PERMISSIONS);
  
  // Get gid and uid of the file and check it
- targetuser = getpwuid(file_get_uid(path_translated));
+ if ((targetuser = getpwuid(file_get_uid(path_translated)))==NULL)
+ {
+#ifdef OPT_NO_PASSWD
+  emptyuser.pw_uid = file_get_uid(path_translated);
+  emptyuser.pw_gid = file_get_gid(path_translated);
+  emptyuser.pw_name = "NOT AVAILABLE";
+  targetuser = &emptyuser;
+  use_supp_groups = 0;
+#else
+  log_error ("Could not get passwd information for UID %d", file_get_uid(path_translated));
+  error_exit(ERRCODE_UNKNOWN);
+#endif
+ }
+
  if (targetuser->pw_uid < OPT_MIN_UID)
  {
   log_error ("UID of %s or its target (%d / %s) < %d", path_translated, targetuser->pw_uid, targetuser->pw_name, OPT_MIN_UID);
   error_exit(ERRCODE_LOW_UID);
  }
- targetgroup = getgrgid(file_get_gid(path_translated));
+ 
+ if ((targetgroup = getgrgid(file_get_gid(path_translated)))==NULL)
+ {
+#ifdef OPT_NO_GROUP
+  emptygroup.gr_gid = file_get_gid(path_translated);
+  emptygroup.gr_name = "NOT AVAILABLE";
+  targetgroup = &emptygroup;
+#else
+  log_error ("Could not get group information for GID %d", file_get_gid(path_translated));
+  error_exit(ERRCODE_UNKNOWN);
+#endif 
+ }
+ 
  if (targetgroup->gr_gid < OPT_MIN_GID)
  {
   log_error ("GID of %s or its target (%d / %s) < %d", path_translated, targetgroup->gr_gid, targetgroup->gr_name, OPT_MIN_GID);
@@ -142,6 +205,30 @@ int main(int argc, char* argv[])
   log_error("Could not change GID to %d (%s)", targetgroup->gr_gid, targetgroup->gr_name);
   error_exit(ERRCODE_UNKNOWN); 
  }
+ 
+ // Initialize supplementary groups for user
+#ifdef OPT_NO_PASSWD
+ if (use_supp_groups && initgroups(targetuser->pw_name, targetuser->pw_gid))
+ {
+  log_error("Could not initialize supplementary groups for user %s (%d)", targetuser->pw_name, targetuser->pw_uid);
+  error_exit(ERRCODE_UNKNOWN);
+ }
+ if (!use_supp_groups)
+ {
+  if (setgroups(0, NULL))
+  {
+   log_error("Could not set supplementary groups to null");
+   error_exit(ERRCODE_UNKNOWN);
+  }
+ }
+#else
+ if (initgroups(targetuser->pw_name, targetuser->pw_gid))
+ {
+  log_error("Could not initialize supplementary groups for user %s (%d)", targetuser->pw_name, targetuser->pw_uid);
+  error_exit(ERRCODE_UNKNOWN);
+ }
+#endif 
+
  
  if (setuid(targetuser->pw_uid))
  {

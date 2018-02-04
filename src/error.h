@@ -18,14 +18,23 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef SUPHP_ERROR_H
+#define SUPHP_ERROR_H
 
-#include <stdio.h>
-#include "suphp.h"
+// Errorcode, only used internally
+#define ERRCODE_WRONG_ENVIROMENT 1
+#define ERRCODE_WRONG_PATH 2
+#define ERRCODE_LOW_UID 3
+#define ERRCODE_LOW_GID 6
+#define ERRCODE_FILE_NOT_FOUND 4
+#define ERRCODE_WRONG_PARENT 5
+#define ERRCODE_WRONG_PERMISSIONS 7
+#define ERRCODE_SYMBOLLINK_NO_MATCH 9
+#define ERRCODE_NO_LOG 8
+#define ERRCODE_UNKNOWN 9999
 
-void error_exit(int errcode)
-{
- //puts("Content-Type: text/plain\n\n");
- printf("Error on executing script(%d)\n", errcode);
- //puts("Status: 500\n\n");
- exit(errcode);
-}
+// Functions in error.c
+void error_exit(int errcode);
+
+#endif
+

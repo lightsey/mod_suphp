@@ -1,0 +1,22 @@
+* Version 0.3 (23 August 2003)
+- Changed build system to GNU autoconf
+- Supplementary groups are set correctly
+- Optional support for environments with UIDs/GIDs not in the system's
+  configuration files
+
+* Version 0.2.3 (25 December 2002)
+- Fixed handling of symlinks
+
+* Version 0.2.2 (24 October 2002)
+- Added missing file "suphp.h"
+
+* Version 0.2.1 (20 October 2002)
+- Fixed problems with "suPHP_ConfigPath"-option on some systems
+- Added German documentation
+
+* Version 0.2 (13 July 2002)
+- Added support for VirtualHost based (de-)activation of suPHP
+- Added support for concurrent use of different PHP configuration files
+
+* Version 0.1 (04 June 2002)
+- First release of suPHP

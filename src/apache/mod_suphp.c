@@ -74,6 +74,10 @@
 #include "util_script.h"
 #include "http_conf_globals.h"
 
+#ifndef PATH_TO_SUPHP
+#define PATH_TO_SUPHP "/usr/sbin/suphp"
+#endif
+
 module MODULE_VAR_EXPORT suphp_module;
 
 /* KLUDGE --- for back-combatibility, we don't have to check ExecCGI
@@ -199,7 +203,7 @@ int suphp_call_exec(request_rec *r, child_info *pinfo, char *argv0,
 //	    execve("/usr/sbin/suphp",
 //		   suphp_create_argv(r->pool, NULL, NULL, NULL, "suphp", r->args),
 //		   env);
-	    execle("/usr/sbin/suphp", "suphp", NULL, env); 
+	    execle(PATH_TO_SUPHP, "suphp", NULL, env); 
     return (pid);
 }
 

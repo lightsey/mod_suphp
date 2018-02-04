@@ -19,5 +19,14 @@
 */
 
 
-int check_path(char *script_path);
-int check_permissions(char *script_path);
+#include <stdio.h>
+#include <unistd.h>
+#include "suphp.h"
+
+void error_exit(int errcode)
+{
+ //puts("Content-Type: text/plain\n\n");
+ printf("Error on executing script(%d)\n", errcode);
+ //puts("Status: 500\n\n");
+ _exit(errcode);
+}

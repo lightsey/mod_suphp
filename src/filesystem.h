@@ -18,11 +18,18 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef SUPHP_FILESYSTEM_H
+#define SUPHP_FILESYSTEM_H
 
-// Options that must be set related to the system configuration
-#define OPT_CHECKPATH
-#define OPT_MIN_UID 100
-#define OPT_MIN_GID 100
-#define OPT_APACHE_USER "wwwrun"
-#define OPT_PATH_TO_PHP "/usr/bin/php"
-#define OPT_LOGFILE "/opt/apache/var/logs/suphp_log"
+#include <sys/types.h>
+
+// Functions in filesystem.c
+int file_exists(char *filename);
+int file_is_symbollink(char *filename);
+uid_t file_get_uid(char *filename);
+gid_t file_get_gid(char *filename);
+uid_t file_get_uid_l(char *filename);
+gid_t file_get_gid_l(char *filename);
+
+#endif
+

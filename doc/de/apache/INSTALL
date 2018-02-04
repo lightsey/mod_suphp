@@ -1,0 +1,131 @@
+===========================
+== suPHP Apache module   ==
+===========================
+
+Installation
+------------
+
+1. Einführung
+
+Das suPHP Apache Modul bietet zusammen mit suPHP selbst eine einfache
+Mvglichlkeit PHP Skripte unter verschiedenen Benutzern auf dem selben Server
+auszuf|hren.
+
+Es bietet dadurch Sicherheit, dass die PHP-Skripte nicht mit den Rechten des
+Webservers ausgef|hrt werden.
+Dadurch muss man in den meisten Fdllen nicht den Apache "Safe Mode"
+benutzen, der viele Einschrdnkungen f|r die Skripte bedeutet.
+
+Bitte lesen Sie zuerst die "README" in diesem Verzeichnis und sowohl
+"README" als auch "INSTALL" in dem übergeordneten Verzeichnis.
+
+
+2. Kurze Zusammenfassung
+
+In diesem Teil werden die wichtigsten Informationen für Leute, die wissen,
+wie man den Apache Server mit zusätzlichen Modulen kompiliert, gegeben.
+Wenn Sie sich damit nicht auskennen, finden Sie eine
+Schritt-für-Schritt-Anleitung im dritten Teil dieser Dokumentation.
+
+mod_suphp besteht aus nur einer Datei mit den Namen "mod_suphp.c".
+Wenn sich die suPHP Binary nicht im Standard-Pfad (/usr/sbin/suphp)
+befindet, müssen Sie die entsprechende Zeile in der "mod_suphp.c"
+entsprechend anpassen, bevor Sie es zu den Apache Sourcen hinzufügen.
+ 
+Die einfachste Möglichkeit mod_suphpzu installieren, ist es als ein
+dynamisch ladbares Modul (DSO) zu kompilieren. Wenn Ihr Apache mit
+DSO-Unterstützung kompiliert wurde und sich entweder "apxs" im PATH befindet
+oder Sie den Pfad zu "apxs" angegeben haben, als Sie "./configure"
+ausgeführt haben, wird das Apache Modul automatisch kompiliert wenn Sie
+"make" und installiert wenn Sie "make install" ausführen.
+
+Informationen darüber, wie mod_suphp konfiguriert wird, können Sie in der
+Datei "CONFIG" in diesem Verzeichnis finden.
+
+Bitte beachten Sie dass mod_suphp für Apache 1.3.2x entwickelt wurde und
+möglicherweise nicht mit anderen Apache-Versionen funktioniert (besonders
+Apache 2.x).
+
+suPHP wurde für Linux entwickelt, möglicherweise funktioniert es auch auf
+einigen anderen *NIX-Systemen. Es scheint eine FreeBSD-Port von suPHP zu
+geben, da ich jedoch momentan kein FreeBSD-System habe, kann ich nicht
+ausprobieren, welche Änderugen an der aktuellen Version von suPHP
+vorgenommen werden müssen, damit es unter FreeBSD läuft. Wenn es jemand
+weiß, möge er es mir bitte mitteilen, so dass ich die GNU autoconf Skripte
+modifizieren kann, damit die entsprechenden Entscheidungen beim Kompilieren
+automatischen getroffen werden könnne.
+
+Wenn Sie es auf einem anderen System ausprobiert haben und es funktioniert,
+wäre es nett, wenn Sie mir dies mitteilen würden.
+
+
+3. Schritt-für-Schritt-Anleitung
+
+Wenn Sie bereits Apache mit DSO-Unterstützung am Laufen haben, sollte
+mod_suphp automatisch in Ihrem Apache Server installiert worden sein.
+
+Wenn es nicht funktioniert sollten Sie nach den folgenden beiden Zeilen in
+Ihrer "httpd.conf" sehen:
+
+ LoadModule suphp_module       /usr/lib/httpd/mod_suphp.so
+ AddModule mod_suphp.c
+
+Manchmal fügt "apxs" diese Zeilen an der falschen Stelle ein. In diesem Fall
+müssen Sie die Zeilen an die richtige Stelle verschieben (lesen Sie die
+Apache Dokumentation für Details).
+
+Um den Apache aus dem Quelltext mit mod_suphp (statisch) zu kompilieren,
+müssen Sie die folgenden Schritte ausführen.
+
+Ändern Sie ggf. den Pfad zur suPHP Binary in der "mod_suphp.c".
+
+Laden Sie die Apache Quellen von http://www.apache.org/ und entapcken Sie
+diese. Wechseln Sie jetzt in das neu angelegte Verzeichnis und starten Sie
+"./configure --help". Es werden sehr nützliche Information über das
+"configure"-Skript ausgegeben.
+
+Führen Sie anschließend das "configure"-Skript mit den Paramtern, die Ihren
+Anforderungen entsprechen, aus und fügen Sie außerdem die Option
+"--ad-module=/path/to/mod_suphp.c" hinzu.
+
+Dies wird "mod_suphp.c" zu den Apache Quellen kopieren und es aktivieren.
+
+Sie können jetzt Apache mit "make" kompilieren und anschließenden mit "make
+install" installieren.
+
+Bitte beachten Sie, dass suPHP wahrscheinlich nicht funktionieren wird, wenn
+Sie auch mod_php kompilieren.
+
+Um mit suPHP PHP-Skripte zu verarbeiten müssen Sie nur eine Zeile wie
+
+AddHandler x-httpd-php .php
+
+in Ihre Apache-Konfiguration einfügen und mod_suphp für die entsprechenden
+VHosts aktivieren.
+
+Sie können mod_suphp einschalten, indem Sie die Zeile
+
+suPHP_Engine on
+
+in Ihrer globalen Apache-Konfiguration hinzufügen.
+Dies aktiviert suPHP für alle VirtualHosts.
+
+Informationen über zusätzliche Optionen können in der "CONFIG"-ReadMe
+gefunden werden.
+
+4. Zusätzliche Informationen
+
+Bitte beachten Sie, dass mod_suphp in den meisten Fällen *NICHT*
+funktionieren wird, wenn mod_php in Ihrem Apache-Server installiert ist,
+weil beide den gleiche MIME-Typ "x-httpd-php" benutzen. Mir wurde von
+einigen Benutzern berichtet, die beide Module gleichzeitig am Laufen haben,
+aber eine solche Konfiguration dürfte nicht trivial sein, weshalb ich keine
+Fragen darüber, wie man mod_php und mod_suphp gleichzeitig laufen lassen
+kann, beantworten werde.
+
+
+===================================
+(c)2002-2003 by Sebastian Marsching
+<sebastian@marsching.com>
+Please see LICENSE for
+additional information

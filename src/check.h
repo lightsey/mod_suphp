@@ -18,10 +18,11 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef SUPHP_CHECK_H
+#define SUPHP_CHECK_H
 
-#include "types.h"
-#include "config.h"
-#include "filesystem.h"
-#include "check.h"
-#include "error.h"
-#include "log.h"
+int check_path(char *script_path);
+int check_permissions(char *script_path);
+
+#endif
+

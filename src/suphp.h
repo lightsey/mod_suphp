@@ -19,11 +19,33 @@
 */
 
 
-// Type definitions
-#ifndef uid_t
-# define uid_t int
+#include "config.h"
+#include "filesystem.h"
+#include "check.h"
+#include "error.h"
+#include "log.h"
+
+#ifndef OPT_DISABLE_CHECKPATH
+#define OPT_CHECKPATH
 #endif
 
-#ifndef gid_t
-# define gid_t int
+#ifndef OPT_MIN_UID
+#define OPT_MIN_UID 100
 #endif
+
+#ifndef OPT_MIN_GID
+#define OPT_MIN_GID 100
+#endif
+
+#ifndef OPT_APACHE_USER
+#define OPT_APACHE_USER "wwwrun"
+#endif
+
+#ifndef OPT_PATH_TO_PHP
+#define OPT_PATH_TO_PHP "/usr/bin/php"
+#endif
+
+#ifndef OPT_LOGFILE
+#define OPT_LOGFILE "/var/log/httpd/suphp_log"
+#endif
+

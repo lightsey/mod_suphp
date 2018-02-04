@@ -2,7 +2,7 @@
 == suPHP                 ==
 ===========================
 
-    suPHP - (c)2002 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2003 Sebastian Marsching <sebastian@marsching.com>
     
     suPHP is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,15 +20,16 @@
     USA
 
 
-For help on installation see INSTALL in this directory.
+For help on installation see INSTALL in the "doc" directory.
 
 
-Please note, that files in the "apache"-directory are not covered by the GPL
-but by the Apache License. See file "README" in the directory for details.
+Please note, that files in the "src/apache"-directory are not covered by
+the GPL but by the Apache License. See file "README" in the "doc/apache" 
+directory for details.
 
 
-==============================
-(c)2002 by Sebastian Marsching
+===================================
+(c)2002-2003 by Sebastian Marsching
 <sebastian@marsching.com>
 Please see LICENSE for
 additional information
