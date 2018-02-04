@@ -107,16 +107,32 @@ int main(int argc, char* argv[])
  targetuser = getpwuid(file_get_uid(path_translated));
  if (targetuser->pw_uid < OPT_MIN_UID)
  {
-  log_error ("UID of %s (%d / %s) < %d", path_translated, targetuser->pw_uid, targetuser->pw_name, OPT_MIN_UID);
+  log_error ("UID of %s or its target (%d / %s) < %d", path_translated, targetuser->pw_uid, targetuser->pw_name, OPT_MIN_UID);
   error_exit(ERRCODE_LOW_UID);
  }
  targetgroup = getgrgid(file_get_gid(path_translated));
  if (targetgroup->gr_gid < OPT_MIN_GID)
  {
-  log_error ("GID of %s (%d / %s) < %d", path_translated, targetgroup->gr_gid, targetgroup->gr_name, OPT_MIN_GID);
+  log_error ("GID of %s or its target (%d / %s) < %d", path_translated, targetgroup->gr_gid, targetgroup->gr_name, OPT_MIN_GID);
   error_exit(ERRCODE_LOW_GID);
  }
- 
+
+ // Check if file is a symbollink
+ if (file_is_symbollink(path_translated))
+ {
+  // Get gid and uid of the symbollink and check if it matches to the target
+  if (targetuser->pw_uid != file_get_uid_l(path_translated))
+  {
+   log_error ("UID of symbollink %s does not match its target", path_translated);
+   error_exit(ERRCODE_SYMBOLLINK_NO_MATCH);
+  }
+  if (targetgroup->gr_gid != file_get_gid_l(path_translated))
+  {
+   log_error ("GID of symbollink %s does not match its target", path_translated);
+   error_exit(ERRCODE_SYMBOLLINK_NO_MATCH);
+  }
+ }
+
  // We have to create the log entry before losing root privileges
  log_info("%s executed as user %s (%d), group %s (%d)", path_translated, targetuser->pw_name, targetuser->pw_uid, targetgroup->gr_name, targetgroup->gr_gid);
  

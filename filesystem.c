@@ -37,6 +37,26 @@ int file_exists(char *filename)
  return 1;
 }
 
+int file_is_symbollink(char *filename)
+{
+ struct stat *fileinfo;
+ int is_symbollink;
+
+ fileinfo = (struct stat*) malloc(sizeof(struct stat));
+ if (lstat(filename, fileinfo))
+ {
+  log_error("Could not lstat() %s", filename);
+  error_exit(ERRCODE_UNKNOWN);
+ }
+ if (fileinfo->st_mode & S_IFLNK)
+  is_symbollink = 1;
+ else
+  is_symbollink = 0;
+ free(fileinfo);
+ fileinfo = NULL;
+ return is_symbollink;
+}
+
 uid_t file_get_uid(char *filename)
 {
  struct stat *fileinfo;
@@ -63,6 +83,40 @@ gid_t file_get_gid(char *filename)
  if (stat(filename, fileinfo))
  {
   log_error("Could not stat() %s", filename);
+  error_exit(ERRCODE_UNKNOWN);
+ }
+ gid = fileinfo->st_gid;
+ free(fileinfo);
+ fileinfo = NULL;
+ return gid;
+}
+
+uid_t file_get_uid_l(char *filename)
+{
+ struct stat *fileinfo;
+ uid_t uid;
+
+ fileinfo = (struct stat*) malloc(sizeof(struct stat));
+ if (lstat(filename, fileinfo))
+ {
+  log_error("Could not lstat() %s", filename);
+  error_exit(ERRCODE_UNKNOWN);
+ }
+ uid = fileinfo->st_uid;
+ free(fileinfo);
+ fileinfo = NULL;
+ return uid;
+}
+
+gid_t file_get_gid_l(char *filename)
+{
+ struct stat *fileinfo;
+ gid_t gid;
+
+ fileinfo = (struct stat*) malloc(sizeof(struct stat));
+ if (lstat(filename, fileinfo))
+ {
+  log_error("Could not lstat() %s", filename);
   error_exit(ERRCODE_UNKNOWN);
  }
  gid = fileinfo->st_gid;

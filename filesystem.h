@@ -20,7 +20,9 @@
 
 
 // Functions in filesystem.c
-int checkPath(char *script_path);
 int file_exists(char *filename);
+int file_is_symbollink(char *filename);
 uid_t file_get_uid(char *filename);
 gid_t file_get_gid(char *filename);
+uid_t file_get_uid_l(char *filename);
+gid_t file_get_gid_l(char *filename);
