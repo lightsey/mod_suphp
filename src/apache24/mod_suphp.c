@@ -396,7 +396,7 @@ static apr_bucket *suphp_bucket_create(request_rec *r, apr_file_t *out, apr_file
 
     /* Create the pollset */
     rv = apr_pollset_create(&data->pollset, 2, r->pool, 0);
-    AP_DEBUG_ASSERT(rv == APR_SUCCESS);
+    ap_assert(rv == APR_SUCCESS);
 
     fd.desc_type = APR_POLL_FILE;
     fd.reqevents = APR_POLLIN;
@@ -404,12 +404,12 @@ static apr_bucket *suphp_bucket_create(request_rec *r, apr_file_t *out, apr_file
     fd.desc.f = out; /* script's stdout */
     fd.client_data = (void *) 1;
     rv = apr_pollset_add(data->pollset, &fd);
-    AP_DEBUG_ASSERT(rv == APR_SUCCESS);
+    ap_assert(rv == APR_SUCCESS);
 
     fd.desc.f = err; /* script's stderr */
     fd.client_data = (void *) 2;
     rv = apr_pollset_add(data->pollset, &fd);
-    AP_DEBUG_ASSERT(rv == APR_SUCCESS);
+    ap_assert(rv == APR_SUCCESS);
 
     data->r = r;
     b->data = data;
@@ -741,7 +741,6 @@ static int suphp_script_handler(request_rec *r)
     char **argv;
     char **env;
     apr_status_t rv;
-    int len = 0;
 #if MAX_STRING_LEN < 1024
     char strbuf[1024];
 #else
