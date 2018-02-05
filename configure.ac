@@ -5,12 +5,14 @@ AC_INIT([suPHP], [0.7.2], [sebastian.marsching@suphp.org], [suphp])
 
 # Auxiliary tools
 AC_CONFIG_AUX_DIR([config])
+AC_CONFIG_MACRO_DIRS([m4])
 
-AM_INIT_AUTOMAKE([suPHP], [0.7.2-pre])
 # Check for right directory
 AC_CONFIG_SRCDIR([src/Application.cpp])
 # Config headers for automake
 AM_CONFIG_HEADER([src/config.h])
+
+AM_INIT_AUTOMAKE
 
 # Build time sanity check
 AM_SANITY_CHECK
@@ -66,14 +68,14 @@ if test -n "$APXS"; then
                     | cut -f2 -d"/" \
                     | cut -f1 -d" "`
     major_version=`echo $APACHE_VERSION|cut -f1,2 -d.`
-    if test "$major_version" = "2.0" -o "$major_version" = "2.2"; then
-      APACHE_VERSION_2=true
-      APACHE_VERSION_1_3=false
-    else
+    if test "$major_version" = "2.4"; then
+      APACHE_VERSION_2_4=true
       APACHE_VERSION_2=false
-      APACHE_VERSION_1_3=true
+    else
+      APACHE_VERSION_2=true
+      APACHE_VERSION_2_4=false
     fi
-    AC_SUBST(APACHE_VERSION_1_3)
+    AC_SUBST(APACHE_VERSION_2_4)
     AC_SUBST(APACHE_VERSION_2)
     
     APXS_INCLUDEDIR=`$APXS -q INCLUDEDIR`
@@ -81,7 +83,7 @@ if test -n "$APXS"; then
     if test x"${APACHE_VERSION_2}" = xtrue ; then \
       APXS_EXTRA_CFLAGS=`$APXS -q EXTRA_CFLAGS`
     fi
-    if test x"${APACHE_VERSION_1_3}" = xtrue; then \
+    if test x"${APACHE_VERSION_2_4}" = xtrue; then \
       APXS_EXTRA_CFLAGS=`$APXS -q CFLAGS`
     fi
     AC_SUBST([APXS_INCLUDEDIR])
@@ -96,16 +98,14 @@ else
     AC_MSG_RESULT(no)
 fi
 
-if test x"${APACHE_VERSION_2}" = xtrue ; then \
 dnl For Apache 2.x APR is needed
-    if test x"${apr_found}" = xyes ; then \
-        APR_INCLUDEDIR=`${apr_config} --includedir`
-	AC_SUBST([APR_INCLUDEDIR])
-	APR_CPPFLAGS=`${apr_config} --cppflags`
-	AC_SUBST([APR_CPPFLAGS])
-    else
-	AC_MSG_ERROR([APR is needed to build mod_suphp for Apache 2.x but was not found])
-    fi
+if test x"${apr_found}" = xyes ; then \
+    APR_INCLUDEDIR=`${apr_config} --includedir`
+    AC_SUBST([APR_INCLUDEDIR])
+    APR_CPPFLAGS=`${apr_config} --cppflags`
+    AC_SUBST([APR_CPPFLAGS])
+else
+    AC_MSG_ERROR([APR is needed to build mod_suphp for Apache 2.x but was not found])
 fi
 
 # Get uid/gid mode
@@ -235,13 +235,13 @@ path to logfile])
 
 
 # Conditional building of Apache module
-AM_CONDITIONAL([COND_AP13], [test x"$APACHE_VERSION_1_3" = xtrue])
 AM_CONDITIONAL([COND_AP20], [test x"$APACHE_VERSION_2" = xtrue])
+AM_CONDITIONAL([COND_AP24], [test x"$APACHE_VERSION_2_4" = xtrue])
 
 # Conditionally include UserGroup support
 AM_CONDITIONAL([COND_APUSERGROUP], [test \( x"$SETID_MODE" = xparanoid \) -o \( x"$SETID_MODE" = xforce \) ])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/apache/Makefile src/apache2/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile src/apache2/Makefile src/apache24/Makefile])
 AC_OUTPUT
 
 if test "$APXS" = "/notfound/"; then

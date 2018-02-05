@@ -1,13 +1,13 @@
 AM_CXXFLAGS=-DOPT_CONFIGFILE=\"${sysconfdir}/suphp.conf\"
 
-if COND_AP13
-  MAYBE_AP = apache
-endif
 if COND_AP20
   MAYBE_AP = apache2
 endif
+if COND_AP24
+  MAYBE_AP = apache24
+endif
 SUBDIRS = $(MAYBE_AP)
-DIST_SUBDIRS = apache apache2
+DIST_SUBDIRS = apache2 apache24
 
 sbin_PROGRAMS = suphp
 
