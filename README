@@ -2,7 +2,7 @@
 == suPHP                 ==
 ===========================
 
-    suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2013 Sebastian Marsching <sebastian@marsching.com>
             (c)2018 John Lightsey <john@nixnuts.net>
 
     suPHP is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@ For help on installation see INSTALL in the "doc" directory.
 
 
 ===================================
-(c)2002-2005 by Sebastian Marsching <sebastian@marsching.com>
+(c)2002-2013 by Sebastian Marsching <sebastian@marsching.com>
 (c)2018 by John Lightsey <john@nixnuts.net>
 Please see COPYING for
 additional information

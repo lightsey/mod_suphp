@@ -1,5 +1,5 @@
 /*
-    suPHP - (c)2002-2008 Sebastian Marsching <sebastian@marsching.com>
+    suPHP - (c)2002-2013 Sebastian Marsching <sebastian@marsching.com>
 
     This file is part of suPHP.
 
