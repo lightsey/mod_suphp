@@ -1,3 +1,9 @@
+* Version 0.8.0-pre (4 February 2018)
+- Remove Apache 1.3 support.
+- Add Apache 2.4 support.
+- Update copyright files and dates.
+- Fix compiler warnings.
+
 * Version 0.7.2 (20 May 2013)
 - Use empty environment when forking a process for PHP source rendering.
 - Ignore PHPRC environment variable, to force use of suPHP_ConfigPath directive
