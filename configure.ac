@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 # Initialize
-AC_INIT([suPHP], [0.7.2], [sebastian.marsching@suphp.org], [suphp])
+AC_INIT([suPHP], [0.8.0-pre], [john@nixnuts.net], [suphp])
 
 # Auxiliary tools
 AC_CONFIG_AUX_DIR([config])
