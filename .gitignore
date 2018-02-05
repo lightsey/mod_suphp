@@ -22,3 +22,6 @@ src/stamp-h1
 *.lo
 .libs
 src/suphp
+
+# Tarballs
+*.tar.gz
