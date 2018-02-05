@@ -1,5 +1,6 @@
 /*
     suPHP - (c)2002-2005 Sebastian Marsching <sebastian@marsching.com>
+            (c)2018 John Lightsey <john@nixnuts.net>
 
     This file is part of suPHP.
 
@@ -30,6 +31,7 @@
 #include "http_config.h"
 #include "http_core.h"
 #include "http_log.h"
+#include "http_request.h"
 
 #include "util_script.h"
 #include "util_filter.h"
@@ -79,7 +81,7 @@ char *suphp_brigade_read(apr_pool_t *p, apr_bucket_brigade *bb, int bytes)
     last_byte = target_buf + bytes;
 
     for (b = APR_BRIGADE_FIRST(bb); b != APR_BRIGADE_SENTINEL(bb); b = APR_BUCKET_NEXT(b)) {
-        char *buf;
+        const char *buf;
         apr_size_t size;
         apr_size_t i;
         if (apr_bucket_read(b, &buf, &size, APR_BLOCK_READ) == APR_SUCCESS) {
