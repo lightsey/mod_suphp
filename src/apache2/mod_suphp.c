@@ -27,10 +27,11 @@
 
 #define CORE_PRIVATE
 
+#include "httpd.h"
+
 #include "http_config.h"
 #include "http_core.h"
 #include "http_log.h"
-#include "httpd.h"
 
 #include "util_filter.h"
 #include "util_script.h"
