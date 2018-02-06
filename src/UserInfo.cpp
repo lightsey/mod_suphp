@@ -20,10 +20,10 @@
 
 #include <string>
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <pwd.h>
 #include <grp.h>
+#include <pwd.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "API.hpp"
 #include "API_Helper.hpp"
@@ -32,49 +32,38 @@
 
 using namespace suPHP;
 
+suPHP::UserInfo::UserInfo() { this->uid = -1; }
 
-suPHP::UserInfo::UserInfo() {
-    this->uid = -1;
+suPHP::UserInfo::UserInfo(int uid) { this->uid = uid; }
+
+std::string suPHP::UserInfo::getUsername() const throw(LookupException) {
+  API& api = API_Helper::getSystemAPI();
+  return api.UserInfo_getUsername(*this);
 }
 
+int suPHP::UserInfo::getUid() const { return this->uid; }
 
-suPHP::UserInfo::UserInfo(int uid) {
-    this->uid = uid;
+GroupInfo suPHP::UserInfo::getGroupInfo() const throw(LookupException) {
+  API& api = API_Helper::getSystemAPI();
+  return api.UserInfo_getGroupInfo(*this);
 }
 
-std::string suPHP::UserInfo::getUsername() const
-    throw (LookupException) {
-    API& api = API_Helper::getSystemAPI();
-    return api.UserInfo_getUsername(*this);
-}
-
-int suPHP::UserInfo::getUid() const {
-    return this->uid;
-}
-
-GroupInfo suPHP::UserInfo::getGroupInfo() const
-    throw (LookupException) {
-    API& api = API_Helper::getSystemAPI();
-    return api.UserInfo_getGroupInfo(*this);
-}
-
-std::string suPHP::UserInfo::getHomeDirectory() const
-    throw (LookupException) {
-    API& api = API_Helper::getSystemAPI();
-        return api.UserInfo_getHomeDirectory(*this);
+std::string suPHP::UserInfo::getHomeDirectory() const throw(LookupException) {
+  API& api = API_Helper::getSystemAPI();
+  return api.UserInfo_getHomeDirectory(*this);
 }
 
 bool suPHP::UserInfo::isSuperUser() {
-    return API_Helper::getSystemAPI().UserInfo_isSuperUser(*this);
+  return API_Helper::getSystemAPI().UserInfo_isSuperUser(*this);
 }
 
 bool suPHP::UserInfo::operator==(const UserInfo& uinfo) const {
-    if (this->getUid() == uinfo.getUid())
-        return true;
-    else
-        return false;
+  if (this->getUid() == uinfo.getUid())
+    return true;
+  else
+    return false;
 }
 
 bool suPHP::UserInfo::operator!=(const UserInfo& uinfo) const {
-    return !this->operator==(uinfo);
+  return !this->operator==(uinfo);
 }

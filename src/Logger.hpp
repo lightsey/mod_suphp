@@ -22,14 +22,9 @@
 #ifndef SUPHP_LOGGER_H
 
 namespace suPHP {
-    class Logger;
+class Logger;
 
-    enum LogLevel {
-        LOGLEVEL_NONE,
-        LOGLEVEL_ERROR,
-        LOGLEVEL_WARN,
-        LOGLEVEL_INFO
-    };
+enum LogLevel { LOGLEVEL_NONE, LOGLEVEL_ERROR, LOGLEVEL_WARN, LOGLEVEL_INFO };
 };
 
 #define SUPHP_LOGGER_H
@@ -38,66 +33,65 @@ namespace suPHP {
 //#include "API_Helper.hpp"
 
 namespace suPHP {
-    /**
-     * Class containing logging facility.
-     * This is only an interface class.
-     * It contains the code doing the formatting
-     * but the API implementation has to provide
-     * the file access code.
-     */
-    class Logger {
-    private:
-        LogLevel logLevel;
-        
-        /**
-         * Internal log function
-         */
-        virtual void log(const std::string& classification, 
-                         const std::string& message) =0;
-        
-    protected:
-        /**
-         * Set log level
-         */
-        virtual void setLogLevel(LogLevel level);
+/**
+ * Class containing logging facility.
+ * This is only an interface class.
+ * It contains the code doing the formatting
+ * but the API implementation has to provide
+ * the file access code.
+ */
+class Logger {
+ private:
+  LogLevel logLevel;
 
-    public:
+  /**
+   * Internal log function
+   */
+  virtual void log(const std::string& classification,
+                   const std::string& message) = 0;
 
-        /**
-         * Virtual destructor so that derived class destructors are invoked
-         */
-        virtual ~Logger() = default;
+ protected:
+  /**
+   * Set log level
+   */
+  virtual void setLogLevel(LogLevel level);
 
-        /***
-         * Get log level
-         */
-        virtual LogLevel getLogLevel();
+ public:
+  /**
+   * Virtual destructor so that derived class destructors are invoked
+   */
+  virtual ~Logger() = default;
 
-        /**
-         * Initialize (open logfile)
-         */
-        virtual void init(const Configuration& config) throw (IOException) =0;
-        
-        /**
-         * Check wheter Logger has been initialized
-         */
-        virtual bool isInitialized() =0;
-        
-        /**
-         * Logs info message
-         */
-        virtual void logInfo(const std::string& message);
+  /***
+   * Get log level
+   */
+  virtual LogLevel getLogLevel();
 
-        /**
-         * Logs warning
-         */
-        virtual void logWarning(const std::string& message);
-        
-        /**
-         * Logs error
-         */
-        virtual void logError(const std::string& message);
-    };
+  /**
+   * Initialize (open logfile)
+   */
+  virtual void init(const Configuration& config) throw(IOException) = 0;
+
+  /**
+   * Check wheter Logger has been initialized
+   */
+  virtual bool isInitialized() = 0;
+
+  /**
+   * Logs info message
+   */
+  virtual void logInfo(const std::string& message);
+
+  /**
+   * Logs warning
+   */
+  virtual void logWarning(const std::string& message);
+
+  /**
+   * Logs error
+   */
+  virtual void logError(const std::string& message);
+};
 };
 
-#endif // SUPHP_LOGGER_H
+#endif  // SUPHP_LOGGER_H

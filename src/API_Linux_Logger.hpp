@@ -21,7 +21,7 @@
 #ifndef SUPHP_API_LINUX_LOGGER_H
 
 namespace suPHP {
-    class API_Linux_Logger;
+class API_Linux_Logger;
 };
 
 #define SUPHP_API_LINUX_LOGGER_H
@@ -29,36 +29,36 @@ namespace suPHP {
 #include "Logger.hpp"
 
 namespace suPHP {
-    /**
-     * Class containing logging facility.
-     * Implementation for Linux API.
-     */
-    class API_Linux_Logger : public Logger {
-    private:
-        int logFd;
-        bool ready;
+/**
+ * Class containing logging facility.
+ * Implementation for Linux API.
+ */
+class API_Linux_Logger : public Logger {
+ private:
+  int logFd;
+  bool ready;
 
-        /**
-         * Internal log function - implementation
-         */
-        virtual void log(const std::string& classification, 
-                         const std::string& message);
+  /**
+   * Internal log function - implementation
+   */
+  virtual void log(const std::string& classification,
+                   const std::string& message);
 
-    public:
-        /**
-         * Constructor
-         */
-        API_Linux_Logger();
-        
-        /**
-         * Initialize (open logfile) - implementation
-         */
-        virtual void init(const Configuration& config) throw (IOException);
-        /**
-         * Is Logger initialized?
-         */
-        virtual bool isInitialized();
-    };
+ public:
+  /**
+   * Constructor
+   */
+  API_Linux_Logger();
+
+  /**
+   * Initialize (open logfile) - implementation
+   */
+  virtual void init(const Configuration& config) throw(IOException);
+  /**
+   * Is Logger initialized?
+   */
+  virtual bool isInitialized();
+};
 };
 
-#endif // SUPHP_API_LINUX_LOGGER_H
+#endif  // SUPHP_API_LINUX_LOGGER_H

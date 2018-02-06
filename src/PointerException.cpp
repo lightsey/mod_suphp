@@ -23,17 +23,20 @@
 using namespace suPHP;
 
 std::string suPHP::PointerException::getName() const {
-    return "PointerException";
+  return "PointerException";
 }
 
-suPHP::PointerException::PointerException(std::string file, int line) : 
-    Exception(file, line) {}
+suPHP::PointerException::PointerException(std::string file, int line)
+    : Exception(file, line) {}
 
-suPHP::PointerException::PointerException(std::string message, std::string file, int line) :
-    Exception(message, file, line) {}
+suPHP::PointerException::PointerException(std::string message, std::string file,
+                                          int line)
+    : Exception(message, file, line) {}
 
-suPHP::PointerException::PointerException(Exception& cause, std::string file, int line) : 
-    Exception(cause, file, line) {}
+suPHP::PointerException::PointerException(Exception& cause, std::string file,
+                                          int line)
+    : Exception(cause, file, line) {}
 
-suPHP::PointerException::PointerException(std::string message, Exception& cause, std::string file, int line) : 
-    Exception(message, cause, file, line) {}
+suPHP::PointerException::PointerException(std::string message, Exception& cause,
+                                          std::string file, int line)
+    : Exception(message, cause, file, line) {}

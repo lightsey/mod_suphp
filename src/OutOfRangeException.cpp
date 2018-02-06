@@ -23,17 +23,21 @@
 using namespace suPHP;
 
 std::string suPHP::OutOfRangeException::getName() const {
-    return "OutOfRangeException";
+  return "OutOfRangeException";
 }
 
-suPHP::OutOfRangeException::OutOfRangeException(std::string file, int line) : 
-    Exception(file, line) {}
+suPHP::OutOfRangeException::OutOfRangeException(std::string file, int line)
+    : Exception(file, line) {}
 
-suPHP::OutOfRangeException::OutOfRangeException(std::string message, std::string file, int line) :
-    Exception(message, file, line) {}
+suPHP::OutOfRangeException::OutOfRangeException(std::string message,
+                                                std::string file, int line)
+    : Exception(message, file, line) {}
 
-suPHP::OutOfRangeException::OutOfRangeException(Exception& cause, std::string file, int line) : 
-    Exception(cause, file, line) {}
+suPHP::OutOfRangeException::OutOfRangeException(Exception& cause,
+                                                std::string file, int line)
+    : Exception(cause, file, line) {}
 
-suPHP::OutOfRangeException::OutOfRangeException(std::string message, Exception& cause, std::string file, int line) : 
-    Exception(message, cause, file, line) {}
+suPHP::OutOfRangeException::OutOfRangeException(std::string message,
+                                                Exception& cause,
+                                                std::string file, int line)
+    : Exception(message, cause, file, line) {}

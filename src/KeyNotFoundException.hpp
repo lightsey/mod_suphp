@@ -21,45 +21,46 @@
 #ifndef SUPHP_KEYNOTFOUNDEXCEPTION_H
 
 namespace suPHP {
-    class KeyNotFoundException;
+class KeyNotFoundException;
 };
 
 #define SUPHP_KEYNOTFOUNDEXCEPTION_H
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "Exception.hpp"
 
 namespace suPHP {
-    /**
-     * Exception showing that a specified key was not found within a list
-     */
-    class KeyNotFoundException : public Exception {
-    private:
-        std::string getName() const;
-    public:
-        /**
-         * Constructor without message.
-         */
-        KeyNotFoundException(std::string file, int line);
+/**
+ * Exception showing that a specified key was not found within a list
+ */
+class KeyNotFoundException : public Exception {
+ private:
+  std::string getName() const;
 
-        /**
-         * Constructor with message.
-         */
-        KeyNotFoundException(std::string message, std::string file, int line);
-        
-        /**
-         * Constructor without message but with cause.
-         */
-        KeyNotFoundException(Exception& cause, std::string file, int line);
-        
-        /**
-         * Constructor with message and cause.
-         */
-        KeyNotFoundException(std::string message, Exception& cause, std::string file, int line);
-        
-    };
+ public:
+  /**
+   * Constructor without message.
+   */
+  KeyNotFoundException(std::string file, int line);
+
+  /**
+   * Constructor with message.
+   */
+  KeyNotFoundException(std::string message, std::string file, int line);
+
+  /**
+   * Constructor without message but with cause.
+   */
+  KeyNotFoundException(Exception& cause, std::string file, int line);
+
+  /**
+   * Constructor with message and cause.
+   */
+  KeyNotFoundException(std::string message, Exception& cause, std::string file,
+                       int line);
+};
 };
 
-#endif // SUPHP_KEYNOTFOUNDEXCEPTION_H
+#endif  // SUPHP_KEYNOTFOUNDEXCEPTION_H

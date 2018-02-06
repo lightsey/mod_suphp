@@ -26,6 +26,4 @@ using namespace suPHP;
 
 API_Linux suPHP::API_Helper::api;
 
-API& suPHP::API_Helper::getSystemAPI() {
-    return API_Helper::api;
-}
+API& suPHP::API_Helper::getSystemAPI() { return API_Helper::api; }

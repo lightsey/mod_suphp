@@ -21,46 +21,47 @@
 #ifndef SUPHP_LOOKUPEXCEPTION_H
 
 namespace suPHP {
-    class LookupException;
+class LookupException;
 };
 
 #define SUPHP_LOOKUPEXCEPTION_H
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "Exception.hpp"
 
 namespace suPHP {
-    /**
-     * Exception showing that an error ocurred during a lookup operation
-     * (e.g. reading in the system's user database
-     */
-    class LookupException : public Exception {
-    private:
-        std::string getName() const;
-    public:
-        /**
-         * Constructor without message.
-         */
-        LookupException(std::string file, int line);
+/**
+ * Exception showing that an error ocurred during a lookup operation
+ * (e.g. reading in the system's user database
+ */
+class LookupException : public Exception {
+ private:
+  std::string getName() const;
 
-        /**
-         * Constructor with message.
-         */
-        LookupException(std::string message, std::string file, int line);
-        
-        /**
-         * Constructor without message but with cause.
-         */
-        LookupException(Exception& cause, std::string file, int line);
-        
-        /**
-         * Constructor with message and cause.
-         */
-        LookupException(std::string message, Exception& cause, std::string file, int line);
-        
-    };
+ public:
+  /**
+   * Constructor without message.
+   */
+  LookupException(std::string file, int line);
+
+  /**
+   * Constructor with message.
+   */
+  LookupException(std::string message, std::string file, int line);
+
+  /**
+   * Constructor without message but with cause.
+   */
+  LookupException(Exception& cause, std::string file, int line);
+
+  /**
+   * Constructor with message and cause.
+   */
+  LookupException(std::string message, Exception& cause, std::string file,
+                  int line);
+};
 };
 
-#endif // SUPHP_LOOKUPEXCEPTION_H
+#endif  // SUPHP_LOOKUPEXCEPTION_H

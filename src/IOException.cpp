@@ -22,18 +22,17 @@
 
 using namespace suPHP;
 
-std::string suPHP::IOException::getName() const {
-    return "IOException";
-}
+std::string suPHP::IOException::getName() const { return "IOException"; }
 
-suPHP::IOException::IOException(std::string file, int line) : 
-    Exception(file, line) {}
+suPHP::IOException::IOException(std::string file, int line)
+    : Exception(file, line) {}
 
-suPHP::IOException::IOException(std::string message, std::string file, int line) :
-    Exception(message, file, line) {}
+suPHP::IOException::IOException(std::string message, std::string file, int line)
+    : Exception(message, file, line) {}
 
-suPHP::IOException::IOException(Exception& cause, std::string file, int line) : 
-    Exception(cause, file, line) {}
+suPHP::IOException::IOException(Exception& cause, std::string file, int line)
+    : Exception(cause, file, line) {}
 
-suPHP::IOException::IOException(std::string message, Exception& cause, std::string file, int line) : 
-    Exception(message, cause, file, line) {}
+suPHP::IOException::IOException(std::string message, Exception& cause,
+                                std::string file, int line)
+    : Exception(message, cause, file, line) {}

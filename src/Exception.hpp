@@ -21,61 +21,60 @@
 #ifndef SUPHP_EXCEPTION_H
 
 namespace suPHP {
-    class Exception;
+class Exception;
 };
 
 #define SUPHP_EXCEPTION_H
 
-#include <string>
 #include <iostream>
+#include <string>
 
 namespace suPHP {
-    /**
-     * Parent class for exceptions.
-     * All exceptions are derived from this class.
-     */
-    class Exception {
-    private:
-        std::string message;
-        std::string backtrace;
-        int line;
-        std::string file;
-        virtual std::string getName() const =0;
-        
-    public:
-        /**
-         * Constructor without message.
-         */
-        Exception(std::string file, int line);
+/**
+ * Parent class for exceptions.
+ * All exceptions are derived from this class.
+ */
+class Exception {
+ private:
+  std::string message;
+  std::string backtrace;
+  int line;
+  std::string file;
+  virtual std::string getName() const = 0;
 
-        /**
-         * Constructor with message.
-         */
-        Exception(std::string message, std::string file, int line);
-        
-        /**
-         * Constructor without message but with cause.
-         */
-        Exception(Exception& cause, std::string file, int line);
-        
-        /**
-         * Constructor with message and cause.
-         */
-        Exception(std::string message, Exception& cause, std::string file, int line);
-        
-        /**
-         * Get the message
-         */
-        std::string getMessage();
+ public:
+  /**
+   * Constructor without message.
+   */
+  Exception(std::string file, int line);
 
-        /**
-         * Get string representing the exception
-         */
-        std::string toString() const;
-    };
+  /**
+   * Constructor with message.
+   */
+  Exception(std::string message, std::string file, int line);
 
-std::ostream& operator<<(std::ostream& os, const Exception& e);
+  /**
+   * Constructor without message but with cause.
+   */
+  Exception(Exception& cause, std::string file, int line);
 
+  /**
+   * Constructor with message and cause.
+   */
+  Exception(std::string message, Exception& cause, std::string file, int line);
+
+  /**
+   * Get the message
+   */
+  std::string getMessage();
+
+  /**
+   * Get string representing the exception
+   */
+  std::string toString() const;
 };
 
-#endif // SUPHP_EXCEPTION_H
+std::ostream& operator<<(std::ostream& os, const Exception& e);
+};
+
+#endif  // SUPHP_EXCEPTION_H

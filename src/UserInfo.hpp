@@ -21,7 +21,7 @@
 #ifndef SUPHP_USERINFO_H
 
 namespace suPHP {
-    class UserInfo;
+class UserInfo;
 };
 
 #define SUPHP_USERINFO_H
@@ -29,64 +29,64 @@ namespace suPHP {
 #include <string>
 #include <vector>
 
-#include "LookupException.hpp"
 #include "GroupInfo.hpp"
+#include "LookupException.hpp"
 
 namespace suPHP {
-    /**
-     * Class encapsulating user information.
-     */
-    class UserInfo {
-    private:
-        int uid;
-    public:
-        /**
-         * Constructor without arguments.
-         * Does not create a "valid" object, since it has no well defined UID
-         */
-        UserInfo();
-        
-        /**
-         * Constructor (takes UID)
-         */
-        UserInfo(int uid);
-        
-        /**
-         * Returns username
-         */
-        std::string getUsername() const throw (LookupException);
-        
-        /**
-         * Returns UID
-         */
-        int getUid() const;
+/**
+ * Class encapsulating user information.
+ */
+class UserInfo {
+ private:
+  int uid;
 
-        /**
-         * Returns primary group
-         */
-        GroupInfo getGroupInfo() const throw (LookupException);
-        
-        /**
-         * Returns home directory
-         */
-        std::string getHomeDirectory() const throw (LookupException);
-        
-        /**
-         * Checks wheter user is super-user
-         */
-        bool isSuperUser();
-        
-        /**
-         * Compares to UserInfo objects for equality (same UID)
-         */
-        bool operator==(const UserInfo& uinfo) const;
+ public:
+  /**
+   * Constructor without arguments.
+   * Does not create a "valid" object, since it has no well defined UID
+   */
+  UserInfo();
 
-        /**
-         * Overloaded operator
-         */
-        bool operator!=(const UserInfo& uinfo) const;
-        
-    };
+  /**
+   * Constructor (takes UID)
+   */
+  UserInfo(int uid);
+
+  /**
+   * Returns username
+   */
+  std::string getUsername() const throw(LookupException);
+
+  /**
+   * Returns UID
+   */
+  int getUid() const;
+
+  /**
+   * Returns primary group
+   */
+  GroupInfo getGroupInfo() const throw(LookupException);
+
+  /**
+   * Returns home directory
+   */
+  std::string getHomeDirectory() const throw(LookupException);
+
+  /**
+   * Checks wheter user is super-user
+   */
+  bool isSuperUser();
+
+  /**
+   * Compares to UserInfo objects for equality (same UID)
+   */
+  bool operator==(const UserInfo& uinfo) const;
+
+  /**
+   * Overloaded operator
+   */
+  bool operator!=(const UserInfo& uinfo) const;
+};
 };
 
-#endif // SUPHP_USERINFO_H
+#endif  // SUPHP_USERINFO_H

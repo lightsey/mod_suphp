@@ -21,56 +21,59 @@
 #ifndef SUPHP_INIFILE_H
 
 namespace suPHP {
-    class IniFile;
+class IniFile;
 };
 
 #define SUPHP_INIFILE_H
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
-#include "KeyNotFoundException.hpp"
-#include "ParsingException.hpp"
 #include "IOException.hpp"
 #include "IniSection.hpp"
+#include "KeyNotFoundException.hpp"
+#include "ParsingException.hpp"
 
 namespace suPHP {
-    /**
-     * Class providing access to configuration in a INI file.
-     */
-    class IniFile {
-    private:
-        std::map<std::string, IniSection> sections;
-        
-        std::string parseValue(const std::string& value) const throw (ParsingException);
+/**
+ * Class providing access to configuration in a INI file.
+ */
+class IniFile {
+ private:
+  std::map<std::string, IniSection> sections;
 
-    public:
-        /**
-         * Reads values from INI file
-         */
-        void parse(const File& file) throw (IOException, ParsingException);
+  std::string parseValue(const std::string& value) const
+      throw(ParsingException);
 
-        /**
-         * Returns section
-         */
-        const IniSection& getSection(const std::string& name) const throw (KeyNotFoundException);
-        
-        /**
-         * Index operator
-         */
-        const IniSection& operator[](const std::string& name) const throw (KeyNotFoundException);
+ public:
+  /**
+   * Reads values from INI file
+   */
+  void parse(const File& file) throw(IOException, ParsingException);
 
-        /**
-         * Returns vector containing names of all sections
-         */
-        const std::vector<const std::string> getSections();
+  /**
+   * Returns section
+   */
+  const IniSection& getSection(const std::string& name) const
+      throw(KeyNotFoundException);
 
-        /**
-         * Checks wheter a section is existing
-         */
-        bool hasSection(const std::string& name) const;
-    };
+  /**
+   * Index operator
+   */
+  const IniSection& operator[](const std::string& name) const
+      throw(KeyNotFoundException);
+
+  /**
+   * Returns vector containing names of all sections
+   */
+  const std::vector<const std::string> getSections();
+
+  /**
+   * Checks wheter a section is existing
+   */
+  bool hasSection(const std::string& name) const;
+};
 };
 
-#endif // SUPHP_INIFILE_H
+#endif  // SUPHP_INIFILE_H

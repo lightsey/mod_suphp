@@ -23,17 +23,20 @@
 using namespace suPHP;
 
 std::string suPHP::SystemException::getName() const {
-    return "SystemException";
+  return "SystemException";
 }
 
-suPHP::SystemException::SystemException(std::string file, int line) : 
-    Exception(file, line) {}
+suPHP::SystemException::SystemException(std::string file, int line)
+    : Exception(file, line) {}
 
-suPHP::SystemException::SystemException(std::string message, std::string file, int line) :
-    Exception(message, file, line) {}
+suPHP::SystemException::SystemException(std::string message, std::string file,
+                                        int line)
+    : Exception(message, file, line) {}
 
-suPHP::SystemException::SystemException(Exception& cause, std::string file, int line) : 
-    Exception(cause, file, line) {}
+suPHP::SystemException::SystemException(Exception& cause, std::string file,
+                                        int line)
+    : Exception(cause, file, line) {}
 
-suPHP::SystemException::SystemException(std::string message, Exception& cause, std::string file, int line) : 
-    Exception(message, cause, file, line) {}
+suPHP::SystemException::SystemException(std::string message, Exception& cause,
+                                        std::string file, int line)
+    : Exception(message, cause, file, line) {}

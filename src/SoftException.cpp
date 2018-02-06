@@ -22,18 +22,19 @@
 
 using namespace suPHP;
 
-std::string suPHP::SoftException::getName() const {
-    return "SoftException";
-}
+std::string suPHP::SoftException::getName() const { return "SoftException"; }
 
-suPHP::SoftException::SoftException(std::string file, int line) : 
-    Exception(file, line) {}
+suPHP::SoftException::SoftException(std::string file, int line)
+    : Exception(file, line) {}
 
-suPHP::SoftException::SoftException(std::string message, std::string file, int line) :
-    Exception(message, file, line) {}
+suPHP::SoftException::SoftException(std::string message, std::string file,
+                                    int line)
+    : Exception(message, file, line) {}
 
-suPHP::SoftException::SoftException(Exception& cause, std::string file, int line) : 
-    Exception(cause, file, line) {}
+suPHP::SoftException::SoftException(Exception& cause, std::string file,
+                                    int line)
+    : Exception(cause, file, line) {}
 
-suPHP::SoftException::SoftException(std::string message, Exception& cause, std::string file, int line) : 
-    Exception(message, cause, file, line) {}
+suPHP::SoftException::SoftException(std::string message, Exception& cause,
+                                    std::string file, int line)
+    : Exception(message, cause, file, line) {}

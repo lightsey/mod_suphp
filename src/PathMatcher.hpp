@@ -21,44 +21,43 @@
 #ifndef SUPHP_PATHMATCHER_H
 
 namespace suPHP {
-    class PathMatcher;
+class PathMatcher;
 };
 
 #define SUPHP_PATHMATCHER_H
 
 #include <string>
 
-#include "UserInfo.hpp"
 #include "GroupInfo.hpp"
 #include "KeyNotFoundException.hpp"
 #include "ParsingException.hpp"
+#include "UserInfo.hpp"
 
 namespace suPHP {
-    class PathMatcher {
-    private:
-        UserInfo user;
-        GroupInfo group;
-        std::string lookupVariable(std::string str)
-            throw (KeyNotFoundException);
-        
-    public:
-        /**
-         * Contructor
-         */
-        PathMatcher(const UserInfo& user, const GroupInfo& group);
-        
-        /**
-         * Checks wheter a path matches a pattern
-         */
-        bool matches(std::string pattern, std::string path) 
-            throw (KeyNotFoundException, ParsingException);
-        
-        /**
-         * Resolves variables in a string
-         */
-        std::string resolveVariables(std::string str)
-            throw (KeyNotFoundException, ParsingException);
-    };
+class PathMatcher {
+ private:
+  UserInfo user;
+  GroupInfo group;
+  std::string lookupVariable(std::string str) throw(KeyNotFoundException);
+
+ public:
+  /**
+   * Contructor
+   */
+  PathMatcher(const UserInfo& user, const GroupInfo& group);
+
+  /**
+   * Checks wheter a path matches a pattern
+   */
+  bool matches(std::string pattern,
+               std::string path) throw(KeyNotFoundException, ParsingException);
+
+  /**
+   * Resolves variables in a string
+   */
+  std::string resolveVariables(std::string str) throw(KeyNotFoundException,
+                                                      ParsingException);
+};
 };
 
-#endif // SUPHP_PATHMATCHER_H
+#endif  // SUPHP_PATHMATCHER_H

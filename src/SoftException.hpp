@@ -21,46 +21,47 @@
 #ifndef SUPHP_SOFTEXCEPTION_H
 
 namespace suPHP {
-    class SoftException;
+class SoftException;
 };
 
 #define SUPHP_SOFTEXCEPTION_H
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "Exception.hpp"
 
 namespace suPHP {
-    /**
-     * Exception showing that an minor problem ocurred and the program
-     * should simply exit without logging anything
-     */
-    class SoftException : public Exception {
-    private:
-        std::string getName() const;
-    public:
-        /**
-         * Constructor without message.
-         */
-        SoftException(std::string file, int line);
+/**
+ * Exception showing that an minor problem ocurred and the program
+ * should simply exit without logging anything
+ */
+class SoftException : public Exception {
+ private:
+  std::string getName() const;
 
-        /**
-         * Constructor with message.
-         */
-        SoftException(std::string message, std::string file, int line);
-        
-        /**
-         * Constructor without message but with cause.
-         */
-        SoftException(Exception& cause, std::string file, int line);
-        
-        /**
-         * Constructor with message and cause.
-         */
-        SoftException(std::string message, Exception& cause, std::string file, int line);
-        
-    };
+ public:
+  /**
+   * Constructor without message.
+   */
+  SoftException(std::string file, int line);
+
+  /**
+   * Constructor with message.
+   */
+  SoftException(std::string message, std::string file, int line);
+
+  /**
+   * Constructor without message but with cause.
+   */
+  SoftException(Exception& cause, std::string file, int line);
+
+  /**
+   * Constructor with message and cause.
+   */
+  SoftException(std::string message, Exception& cause, std::string file,
+                int line);
+};
 };
 
-#endif // SUPHP_SOFTEXCEPTION_H
+#endif  // SUPHP_SOFTEXCEPTION_H

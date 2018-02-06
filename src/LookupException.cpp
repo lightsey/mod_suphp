@@ -23,18 +23,20 @@
 using namespace suPHP;
 
 std::string suPHP::LookupException::getName() const {
-    return "LookupException";
+  return "LookupException";
 }
 
+suPHP::LookupException::LookupException(std::string file, int line)
+    : Exception(file, line) {}
 
-suPHP::LookupException::LookupException(std::string file, int line) : 
-    Exception(file, line) {}
+suPHP::LookupException::LookupException(std::string message, std::string file,
+                                        int line)
+    : Exception(message, file, line) {}
 
-suPHP::LookupException::LookupException(std::string message, std::string file, int line) :
-    Exception(message, file, line) {}
+suPHP::LookupException::LookupException(Exception& cause, std::string file,
+                                        int line)
+    : Exception(cause, file, line) {}
 
-suPHP::LookupException::LookupException(Exception& cause, std::string file, int line) : 
-    Exception(cause, file, line) {}
-
-suPHP::LookupException::LookupException(std::string message, Exception& cause, std::string file, int line) : 
-    Exception(message, cause, file, line) {}
+suPHP::LookupException::LookupException(std::string message, Exception& cause,
+                                        std::string file, int line)
+    : Exception(message, cause, file, line) {}

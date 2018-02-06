@@ -21,45 +21,46 @@
 #ifndef SUPHP_PARSINGEXCEPTION_H
 
 namespace suPHP {
-    class ParsingException;
+class ParsingException;
 };
 
 #define SUPHP_PARSINGEXCEPTION_H
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "Exception.hpp"
 
 namespace suPHP {
-    /**
-     * Exception showing that an error ocurred while parsing some input
-     */
-    class ParsingException : public Exception {
-    private:
-        std::string getName() const;
-    public:
-        /**
-         * Constructor without message.
-         */
-        ParsingException(std::string file, int line);
+/**
+ * Exception showing that an error ocurred while parsing some input
+ */
+class ParsingException : public Exception {
+ private:
+  std::string getName() const;
 
-        /**
-         * Constructor with message.
-         */
-        ParsingException(std::string message, std::string file, int line);
-        
-        /**
-         * Constructor without message but with cause.
-         */
-        ParsingException(Exception& cause, std::string file, int line);
-        
-        /**
-         * Constructor with message and cause.
-         */
-        ParsingException(std::string message, Exception& cause, std::string file, int line);
-        
-    };
+ public:
+  /**
+   * Constructor without message.
+   */
+  ParsingException(std::string file, int line);
+
+  /**
+   * Constructor with message.
+   */
+  ParsingException(std::string message, std::string file, int line);
+
+  /**
+   * Constructor without message but with cause.
+   */
+  ParsingException(Exception& cause, std::string file, int line);
+
+  /**
+   * Constructor with message and cause.
+   */
+  ParsingException(std::string message, Exception& cause, std::string file,
+                   int line);
+};
 };
 
-#endif // SUPHP_PARSINGEXCEPTION_H
+#endif  // SUPHP_PARSINGEXCEPTION_H

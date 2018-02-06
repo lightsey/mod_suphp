@@ -21,7 +21,7 @@
 #ifndef SUPHP_API_HELPER_H
 
 namespace suPHP {
-    class API_Helper;
+class API_Helper;
 };
 
 #define SUPHP_API_HELPER_H
@@ -30,19 +30,19 @@ namespace suPHP {
 #include "API_Linux.hpp"
 
 namespace suPHP {
-    /**
-     * Class encapsulating system-specific API.
-     */
-    class API_Helper {
-    private:
-        static API_Linux api;
-        
-    public:
-        /**
-         * Get system API
-         */
-        static API& getSystemAPI();
-    };
+/**
+ * Class encapsulating system-specific API.
+ */
+class API_Helper {
+ private:
+  static API_Linux api;
+
+ public:
+  /**
+   * Get system API
+   */
+  static API& getSystemAPI();
+};
 };
 
-#endif // SUPHP_API_HELPER_H
+#endif  // SUPHP_API_HELPER_H

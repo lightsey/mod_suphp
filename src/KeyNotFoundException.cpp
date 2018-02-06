@@ -23,17 +23,21 @@
 using namespace suPHP;
 
 std::string suPHP::KeyNotFoundException::getName() const {
-    return "KeyNotFoundException";
+  return "KeyNotFoundException";
 }
 
-suPHP::KeyNotFoundException::KeyNotFoundException(std::string file, int line) : 
-    Exception(file, line) {}
+suPHP::KeyNotFoundException::KeyNotFoundException(std::string file, int line)
+    : Exception(file, line) {}
 
-suPHP::KeyNotFoundException::KeyNotFoundException(std::string message, std::string file, int line) :
-    Exception(message, file, line) {}
+suPHP::KeyNotFoundException::KeyNotFoundException(std::string message,
+                                                  std::string file, int line)
+    : Exception(message, file, line) {}
 
-suPHP::KeyNotFoundException::KeyNotFoundException(Exception& cause, std::string file, int line) : 
-    Exception(cause, file, line) {}
+suPHP::KeyNotFoundException::KeyNotFoundException(Exception& cause,
+                                                  std::string file, int line)
+    : Exception(cause, file, line) {}
 
-suPHP::KeyNotFoundException::KeyNotFoundException(std::string message, Exception& cause, std::string file, int line) : 
-    Exception(message, cause, file, line) {}
+suPHP::KeyNotFoundException::KeyNotFoundException(std::string message,
+                                                  Exception& cause,
+                                                  std::string file, int line)
+    : Exception(message, cause, file, line) {}

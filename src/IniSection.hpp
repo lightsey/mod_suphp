@@ -21,58 +21,59 @@
 #ifndef SUPHP_INISECTION_H
 
 namespace suPHP {
-    class IniSection;
+class IniSection;
 };
 
 #define SUPHP_INISECTION_H
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
-#include "KeyNotFoundException.hpp"
 #include "File.hpp"
 #include "IniFile.hpp"
+#include "KeyNotFoundException.hpp"
 
 namespace suPHP {
-    /**
-     * Class providing access to configuration in a INI file.
-     */
-    class IniSection {
-    private:
-        std::multimap<const std::string, const std::string> entries;
-        void putValue(const std::string key, const std::string value);
-        void removeValues(const std::string& key);
+/**
+ * Class providing access to configuration in a INI file.
+ */
+class IniSection {
+ private:
+  std::multimap<const std::string, const std::string> entries;
+  void putValue(const std::string key, const std::string value);
+  void removeValues(const std::string& key);
 
-    public:
-        /**
-         * Returns values corresponding to key
-         */
-        const std::vector<std::string> getValues(const std::string& key) const
-            throw (KeyNotFoundException);
+ public:
+  /**
+   * Returns values corresponding to key
+   */
+  const std::vector<std::string> getValues(const std::string& key) const
+      throw(KeyNotFoundException);
 
-        /**
-         * Returns first value corresponding to a key
-         */
-        std::string getValue(const std::string& key) const throw (KeyNotFoundException);
+  /**
+   * Returns first value corresponding to a key
+   */
+  std::string getValue(const std::string& key) const
+      throw(KeyNotFoundException);
 
-        /**
-         * Returns keys appearing in this section
-         */
-        const std::vector<std::string> getKeys() const;
-        /**
-         * Overloaded index operator, calls getValues()
-         */
-        const std::vector<std::string> operator[](const std::string& key) const
-            throw (KeyNotFoundException);
+  /**
+   * Returns keys appearing in this section
+   */
+  const std::vector<std::string> getKeys() const;
+  /**
+   * Overloaded index operator, calls getValues()
+   */
+  const std::vector<std::string> operator[](const std::string& key) const
+      throw(KeyNotFoundException);
 
-        friend class IniFile;
-        
-        /**
-         * Check wheter key is existing within section
-         */
-        bool hasKey(const std::string& name) const;
-    };
+  friend class IniFile;
+
+  /**
+   * Check wheter key is existing within section
+   */
+  bool hasKey(const std::string& name) const;
+};
 };
 
-#endif // SUPHP_INISECTION_H
+#endif  // SUPHP_INISECTION_H

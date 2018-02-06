@@ -24,50 +24,46 @@
 
 using namespace suPHP;
 
-std::string suPHP::Exception::getName() const {
-    return "Exception";
-}
+std::string suPHP::Exception::getName() const { return "Exception"; }
 
 suPHP::Exception::Exception(std::string file, int line) {
-    this->file = file;
-    this->line = line;
+  this->file = file;
+  this->line = line;
 }
 
 suPHP::Exception::Exception(std::string message, std::string file, int line) {
-    this->message = message;
-    this->file = file;
-    this->line = line;
+  this->message = message;
+  this->file = file;
+  this->line = line;
 }
 
 suPHP::Exception::Exception(Exception& cause, std::string file, int line) {
-    this->backtrace = cause.toString();
-    this->file = file;
-    this->line = line;
+  this->backtrace = cause.toString();
+  this->file = file;
+  this->line = line;
 }
 
-suPHP::Exception::Exception(std::string message, Exception& cause, std::string file, int line) {
-    this->message = message;
-    this->backtrace = cause.toString();
-    this->file = file;
-    this->line = line;
+suPHP::Exception::Exception(std::string message, Exception& cause,
+                            std::string file, int line) {
+  this->message = message;
+  this->backtrace = cause.toString();
+  this->file = file;
+  this->line = line;
 }
 
-std::string suPHP::Exception::getMessage() {
-    return this->message;
-}
+std::string suPHP::Exception::getMessage() { return this->message; }
 
 std::string suPHP::Exception::toString() const {
-    std::ostringstream ostr;
-    ostr << std::string(this->getName()) << " in " << this->file 
-         << ":" << this->line << ": "
-         << this->message << "\n";
-    if (this->backtrace.length() > 0) {
-        ostr << "Caused by " << this->backtrace;
-    }
-    return ostr.str();
+  std::ostringstream ostr;
+  ostr << std::string(this->getName()) << " in " << this->file << ":"
+       << this->line << ": " << this->message << "\n";
+  if (this->backtrace.length() > 0) {
+    ostr << "Caused by " << this->backtrace;
+  }
+  return ostr.str();
 }
 
 std::ostream& suPHP::operator<<(std::ostream& os, const Exception& e) {
-    os << e.toString();
-    return os;
+  os << e.toString();
+  return os;
 }

@@ -21,45 +21,46 @@
 #ifndef SUPHP_OUTOFRANGEEXCEPTION_H
 
 namespace suPHP {
-    class OutOfRangeException;
+class OutOfRangeException;
 };
 
 #define SUPHP_OUTOFRANGEEXCEPTION_H
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "Exception.hpp"
 
 namespace suPHP {
-    /**
-     * Exception showing that value is not in expected range.
-     */
-    class OutOfRangeException : public Exception {
-    private:
-        std::string getName() const;
-    public:
-        /**
-         * Constructor without message.
-         */
-        OutOfRangeException(std::string file, int line);
+/**
+ * Exception showing that value is not in expected range.
+ */
+class OutOfRangeException : public Exception {
+ private:
+  std::string getName() const;
 
-        /**
-         * Constructor with message.
-         */
-        OutOfRangeException(std::string message, std::string file, int line);
-        
-        /**
-         * Constructor without message but with cause.
-         */
-        OutOfRangeException(Exception& cause, std::string file, int line);
-        
-        /**
-         * Constructor with message and cause.
-         */
-        OutOfRangeException(std::string message, Exception& cause, std::string file, int line);
-        
-    };
+ public:
+  /**
+   * Constructor without message.
+   */
+  OutOfRangeException(std::string file, int line);
+
+  /**
+   * Constructor with message.
+   */
+  OutOfRangeException(std::string message, std::string file, int line);
+
+  /**
+   * Constructor without message but with cause.
+   */
+  OutOfRangeException(Exception& cause, std::string file, int line);
+
+  /**
+   * Constructor with message and cause.
+   */
+  OutOfRangeException(std::string message, Exception& cause, std::string file,
+                      int line);
+};
 };
 
-#endif // SUPHP_OUTOFRANGEEXCEPTION_H
+#endif  // SUPHP_OUTOFRANGEEXCEPTION_H

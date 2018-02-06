@@ -22,28 +22,23 @@
 
 using namespace suPHP;
 
-LogLevel suPHP::Logger::getLogLevel() {
-    return this->logLevel;
-}
+LogLevel suPHP::Logger::getLogLevel() { return this->logLevel; }
 
-void suPHP::Logger::setLogLevel(LogLevel level) {
-    this->logLevel = level;
-}
+void suPHP::Logger::setLogLevel(LogLevel level) { this->logLevel = level; }
 
 void suPHP::Logger::logInfo(const std::string& message) {
-    if (this->getLogLevel() == LOGLEVEL_INFO)
-        this->log("info", message);
+  if (this->getLogLevel() == LOGLEVEL_INFO) this->log("info", message);
 }
 
 void suPHP::Logger::logWarning(const std::string& message) {
-    if (this->getLogLevel() == LOGLEVEL_WARN 
-        || this->getLogLevel() == LOGLEVEL_INFO)
-        this->log("warn", message);
+  if (this->getLogLevel() == LOGLEVEL_WARN ||
+      this->getLogLevel() == LOGLEVEL_INFO)
+    this->log("warn", message);
 }
 
 void suPHP::Logger::logError(const std::string& message) {
-    if (this->getLogLevel() == LOGLEVEL_ERROR
-        || this->getLogLevel() == LOGLEVEL_WARN
-        || this->getLogLevel() == LOGLEVEL_INFO)
-        this->log("error", message);
+  if (this->getLogLevel() == LOGLEVEL_ERROR ||
+      this->getLogLevel() == LOGLEVEL_WARN ||
+      this->getLogLevel() == LOGLEVEL_INFO)
+    this->log("error", message);
 }

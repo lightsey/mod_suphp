@@ -23,17 +23,21 @@
 using namespace suPHP;
 
 std::string suPHP::SecurityException::getName() const {
-    return "SecurityException";
+  return "SecurityException";
 }
 
-suPHP::SecurityException::SecurityException(std::string file, int line) : 
-    Exception(file, line) {}
+suPHP::SecurityException::SecurityException(std::string file, int line)
+    : Exception(file, line) {}
 
-suPHP::SecurityException::SecurityException(std::string message, std::string file, int line) :
-    Exception(message, file, line) {}
+suPHP::SecurityException::SecurityException(std::string message,
+                                            std::string file, int line)
+    : Exception(message, file, line) {}
 
-suPHP::SecurityException::SecurityException(Exception& cause, std::string file, int line) : 
-    Exception(cause, file, line) {}
+suPHP::SecurityException::SecurityException(Exception& cause, std::string file,
+                                            int line)
+    : Exception(cause, file, line) {}
 
-suPHP::SecurityException::SecurityException(std::string message, Exception& cause, std::string file, int line) : 
-    Exception(message, cause, file, line) {}
+suPHP::SecurityException::SecurityException(std::string message,
+                                            Exception& cause, std::string file,
+                                            int line)
+    : Exception(message, cause, file, line) {}

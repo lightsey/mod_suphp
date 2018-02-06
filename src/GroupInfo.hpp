@@ -21,7 +21,7 @@
 #ifndef SUPHP_GROUPINFO_H
 
 namespace suPHP {
-    class GroupInfo;
+class GroupInfo;
 };
 
 #define SUPHP_GROUPINFO_H
@@ -32,45 +32,45 @@ namespace suPHP {
 #include "LookupException.hpp"
 
 namespace suPHP {
-    /**
-     * Class encapsulating group information.
-     */
-    class GroupInfo {
-    private:
-        int gid;
+/**
+ * Class encapsulating group information.
+ */
+class GroupInfo {
+ private:
+  int gid;
 
-    public:
-        /**
-         * Constructor without arguments.
-         * Does not create a "valid" object, since it has no well defined GID
-         */
-        GroupInfo();
+ public:
+  /**
+   * Constructor without arguments.
+   * Does not create a "valid" object, since it has no well defined GID
+   */
+  GroupInfo();
 
-        /**
-         * Contructor (creates group object from GID)
-         */
-        GroupInfo(int gid);
+  /**
+   * Contructor (creates group object from GID)
+   */
+  GroupInfo(int gid);
 
-        /**
-         * Returns groupname
-         */
-        std::string getGroupname() const throw (LookupException);
-        
-        /**
-         * Returns GID
-         */
-        int getGid() const;
+  /**
+   * Returns groupname
+   */
+  std::string getGroupname() const throw(LookupException);
 
-        /**
-         * Compares to GroupInfo objects for equality
-         */
-        bool operator==(const GroupInfo& ginfo) const;
-        
-        /**
-         * Overloaded operator !=
-         */
-        bool operator!=(const GroupInfo& ginfo) const; 
-    };
+  /**
+   * Returns GID
+   */
+  int getGid() const;
+
+  /**
+   * Compares to GroupInfo objects for equality
+   */
+  bool operator==(const GroupInfo& ginfo) const;
+
+  /**
+   * Overloaded operator !=
+   */
+  bool operator!=(const GroupInfo& ginfo) const;
+};
 };
 
-#endif // SUPHP_GROUPINFO_H
+#endif  // SUPHP_GROUPINFO_H

@@ -21,45 +21,46 @@
 #ifndef SUPHP_SECURITYEXCEPTION_H
 
 namespace suPHP {
-    class SecurityException;
+class SecurityException;
 };
 
 #define SUPHP_SECURITYEXCEPTION_H
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "Exception.hpp"
 
 namespace suPHP {
-    /**
-     * Exception showing a security relevant problem.
-     */
-    class SecurityException : public Exception {
-    private:
-        std::string getName() const;
-    public:
-        /**
-         * Constructor without message.
-         */
-        SecurityException(std::string file, int line);
+/**
+ * Exception showing a security relevant problem.
+ */
+class SecurityException : public Exception {
+ private:
+  std::string getName() const;
 
-        /**
-         * Constructor with message.
-         */
-        SecurityException(std::string message, std::string file, int line);
-        
-        /**
-         * Constructor without message but with cause.
-         */
-        SecurityException(Exception& cause, std::string file, int line);
-        
-        /**
-         * Constructor with message and cause.
-         */
-        SecurityException(std::string message, Exception& cause, std::string file, int line);
-        
-    };
+ public:
+  /**
+   * Constructor without message.
+   */
+  SecurityException(std::string file, int line);
+
+  /**
+   * Constructor with message.
+   */
+  SecurityException(std::string message, std::string file, int line);
+
+  /**
+   * Constructor without message but with cause.
+   */
+  SecurityException(Exception& cause, std::string file, int line);
+
+  /**
+   * Constructor with message and cause.
+   */
+  SecurityException(std::string message, Exception& cause, std::string file,
+                    int line);
+};
 };
 
-#endif // SUPHP_SECURITYEXCEPTION_H
+#endif  // SUPHP_SECURITYEXCEPTION_H

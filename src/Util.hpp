@@ -21,7 +21,7 @@
 #ifndef SUPHP_UTIL_H
 
 namespace suPHP {
-    class Util;
+class Util;
 };
 
 #define SUPHP_UTIL_H
@@ -29,16 +29,15 @@ namespace suPHP {
 #include <string>
 
 namespace suPHP {
-    /**
-     * Class containing useful utility functions
-     */
-    class Util {
-        
-    public:
-        static std::string intToStr(const int i);
-        static int strToInt(const std::string istr);
-        static int octalStrToInt(const std::string istr);
-    };
+/**
+ * Class containing useful utility functions
+ */
+class Util {
+ public:
+  static std::string intToStr(const int i);
+  static int strToInt(const std::string istr);
+  static int octalStrToInt(const std::string istr);
+};
 };
 
-#endif // SUPHP_UTIL_H
+#endif  // SUPHP_UTIL_H

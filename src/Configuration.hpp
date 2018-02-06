@@ -22,166 +22,165 @@
 #ifndef SUPHP_CONFIGURATION_H
 
 namespace suPHP {
-    class Configuration;
+class Configuration;
 };
 
 #define SUPHP_CONFIGURATION_H
 
-#include <string>
 #include <map>
+#include <string>
 #include <vector>
 
-#include "ParsingException.hpp"
-#include "IOException.hpp"
 #include "File.hpp"
+#include "IOException.hpp"
 #include "KeyNotFoundException.hpp"
 #include "Logger.hpp"
+#include "ParsingException.hpp"
 
 namespace suPHP {
-    /**
-     * Class encapsulating run-time configuration.
-     */
-    class Configuration {
-    private:
-        std::string logfile;
-        std::string webserver_user;
-        std::vector<std::string> docroots;
-        bool allow_file_group_writeable;
-        bool allow_directory_group_writeable;
-        bool allow_file_others_writeable;
-        bool allow_directory_others_writeable;
-        bool check_vhost_docroot;
-	bool userdir_overrides_usergroup;
-        bool errors_to_browser;
-        std::string env_path;
-        std::map<std::string, std::string> handlers;
-        LogLevel loglevel;
-        int min_uid;
-        int min_gid;
-        int umask;
-        std::string chroot_path;
-        bool full_php_process_display;
+/**
+ * Class encapsulating run-time configuration.
+ */
+class Configuration {
+ private:
+  std::string logfile;
+  std::string webserver_user;
+  std::vector<std::string> docroots;
+  bool allow_file_group_writeable;
+  bool allow_directory_group_writeable;
+  bool allow_file_others_writeable;
+  bool allow_directory_others_writeable;
+  bool check_vhost_docroot;
+  bool userdir_overrides_usergroup;
+  bool errors_to_browser;
+  std::string env_path;
+  std::map<std::string, std::string> handlers;
+  LogLevel loglevel;
+  int min_uid;
+  int min_gid;
+  int umask;
+  std::string chroot_path;
+  bool full_php_process_display;
 
-        /**
-         * Converts string to bool
-         */
-        bool strToBool(const std::string& str) const throw (ParsingException);
+  /**
+   * Converts string to bool
+   */
+  bool strToBool(const std::string& str) const throw(ParsingException);
 
-        /**
-         * Converts string to LogLevel
-         */
-        LogLevel strToLogLevel(const std::string& str) const
-            throw (ParsingException);
+  /**
+   * Converts string to LogLevel
+   */
+  LogLevel strToLogLevel(const std::string& str) const throw(ParsingException);
 
-    public:
-        /**
-         * Constructor, initializes configuration with default values.
-         */
-        Configuration();
-        
-        /**
-         * Reads values from INI file
-         */
-        void readFromFile(File& file) throw (IOException, ParsingException);
-        
-        /**
-         * Return path to logfile;
-         */
-        std::string getLogfile() const;
+ public:
+  /**
+   * Constructor, initializes configuration with default values.
+   */
+  Configuration();
 
-        /**
-           Return log level
-        */
-        LogLevel getLogLevel() const;
+  /**
+   * Reads values from INI file
+   */
+  void readFromFile(File& file) throw(IOException, ParsingException);
 
-        /**
-         * Return username of user the webserver is running as
-         */
-        std::string getWebserverUser() const;
+  /**
+   * Return path to logfile;
+   */
+  std::string getLogfile() const;
 
-        /**
-         * Return document root (list of directories, scripts may be within)
-         */
-        const std::vector<std::string>& getDocroots() const;
+  /**
+     Return log level
+  */
+  LogLevel getLogLevel() const;
 
-        /**
-         * Returns wheter suPHP should check if scripts in within the 
-         * document root of the VHost
-         */
-        bool getCheckVHostDocroot() const;
-        
-        /**
-         * Returns wheter suPHP should use the user and group provided
-         * by Apache on userdir requests in preference to suPHP_UserGroup 
-	 */
-	bool getUserdirOverridesUsergroup() const;
-	
-	/**
-         * Returns wheter suPHP should ignore the group write bit of
-         * the script file
-         */
-        bool getAllowFileGroupWriteable() const;
+  /**
+   * Return username of user the webserver is running as
+   */
+  std::string getWebserverUser() const;
 
-        /**
-         * Returns wheter suPHP should ignore the group write bit of
-         * the directory the is script in
-         */
-        bool getAllowDirectoryGroupWriteable() const;
+  /**
+   * Return document root (list of directories, scripts may be within)
+   */
+  const std::vector<std::string>& getDocroots() const;
 
-        /**
-         * Returns wheter suPHP should ignore the others write bit of the
-         * script file
-         */
-        bool getAllowFileOthersWriteable() const;
+  /**
+   * Returns wheter suPHP should check if scripts in within the
+   * document root of the VHost
+   */
+  bool getCheckVHostDocroot() const;
 
-        /**
-         * Returns wheter suPHP should ignore the others write bit of
-         * the directory the is script in
-         */
-        bool getAllowDirectoryOthersWriteable() const;
+  /**
+   * Returns wheter suPHP should use the user and group provided
+   * by Apache on userdir requests in preference to suPHP_UserGroup
+   */
+  bool getUserdirOverridesUsergroup() const;
 
-        /**
-         * Returns whether suPHP should include the SCRIPT_FILENAME in the
-         * command line arguments so that it is visible to ps.
-	     */
-        bool getFullPHPProcessDisplay() const;
+  /**
+   * Returns wheter suPHP should ignore the group write bit of
+   * the script file
+   */
+  bool getAllowFileGroupWriteable() const;
 
-        /**
-         * Returns whether (minor) error message should be sent to browser
-         */
-        bool getErrorsToBrowser() const;
+  /**
+   * Returns wheter suPHP should ignore the group write bit of
+   * the directory the is script in
+   */
+  bool getAllowDirectoryGroupWriteable() const;
 
-        /**
-         * Returns the content for the PATH environment variable
-         */
-        std::string getEnvPath() const;
+  /**
+   * Returns wheter suPHP should ignore the others write bit of the
+   * script file
+   */
+  bool getAllowFileOthersWriteable() const;
 
-        /**
-         * Returns interpreter string for specified handler
-         */
-        std::string getInterpreter(std::string handler) const
-            throw (KeyNotFoundException);
+  /**
+   * Returns wheter suPHP should ignore the others write bit of
+   * the directory the is script in
+   */
+  bool getAllowDirectoryOthersWriteable() const;
 
-        /**
-         * Returns minimum UID allowed for scripts
-         */
-        int getMinUid() const;
+  /**
+   * Returns whether suPHP should include the SCRIPT_FILENAME in the
+   * command line arguments so that it is visible to ps.
+       */
+  bool getFullPHPProcessDisplay() const;
 
-        /**
-         * Returns minimum GID allowed for scripts
-         */
-        int getMinGid() const;
+  /**
+   * Returns whether (minor) error message should be sent to browser
+   */
+  bool getErrorsToBrowser() const;
 
-        /**
-         * Returns umask to set
-         */
-        int getUmask() const;
+  /**
+   * Returns the content for the PATH environment variable
+   */
+  std::string getEnvPath() const;
 
-        /**
-         * Return chroot path
-         */
-        std::string getChrootPath() const;
-    };
+  /**
+   * Returns interpreter string for specified handler
+   */
+  std::string getInterpreter(std::string handler) const
+      throw(KeyNotFoundException);
+
+  /**
+   * Returns minimum UID allowed for scripts
+   */
+  int getMinUid() const;
+
+  /**
+   * Returns minimum GID allowed for scripts
+   */
+  int getMinGid() const;
+
+  /**
+   * Returns umask to set
+   */
+  int getUmask() const;
+
+  /**
+   * Return chroot path
+   */
+  std::string getChrootPath() const;
+};
 };
 
-#endif // SUPHP_CONFIGURATION_H
+#endif  // SUPHP_CONFIGURATION_H

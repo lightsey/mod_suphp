@@ -27,36 +27,24 @@
 
 using namespace suPHP;
 
+suPHP::GroupInfo::GroupInfo() { this->gid = -1; }
 
-suPHP::GroupInfo::GroupInfo() {
-    this->gid = -1;
+suPHP::GroupInfo::GroupInfo(int gid) { this->gid = gid; }
+
+std::string suPHP::GroupInfo::getGroupname() const throw(LookupException) {
+  API& api = API_Helper::getSystemAPI();
+  return api.GroupInfo_getGroupname(*this);
 }
 
-
-suPHP::GroupInfo::GroupInfo(int gid) {
-    this->gid = gid;
-}
-
-
-std::string suPHP::GroupInfo::getGroupname() const
-    throw (LookupException) {
-    API& api = API_Helper::getSystemAPI();
-    return api.GroupInfo_getGroupname(*this);
-}
-
-
-int suPHP::GroupInfo::getGid() const {
-    return this->gid;
-}
-
+int suPHP::GroupInfo::getGid() const { return this->gid; }
 
 bool suPHP::GroupInfo::operator==(const GroupInfo& ginfo) const {
-    if (this->getGid() == ginfo.getGid())
-        return true;
-    else
-        return false;
+  if (this->getGid() == ginfo.getGid())
+    return true;
+  else
+    return false;
 }
 
 bool suPHP::GroupInfo::operator!=(const GroupInfo& ginfo) const {
-    return !this->operator==(ginfo);
+  return !this->operator==(ginfo);
 }

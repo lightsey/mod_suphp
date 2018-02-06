@@ -23,4 +23,3 @@
 extern char **environ;
 
 using namespace suPHP;
-

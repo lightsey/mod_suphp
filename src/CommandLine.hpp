@@ -22,7 +22,7 @@
 #ifndef SUPHP_COMMANDLINE_H
 
 namespace suPHP {
-    class CommandLine;
+class CommandLine;
 };
 
 #define SUPHP_COMMANDLINE_H
@@ -33,54 +33,54 @@ namespace suPHP {
 #include "OutOfRangeException.hpp"
 
 namespace suPHP {
-    /**
-     * Class containing command-line arguments.
-     */
-    class CommandLine {
-    private:
-        std::vector<std::string> arguments;
+/**
+ * Class containing command-line arguments.
+ */
+class CommandLine {
+ private:
+  std::vector<std::string> arguments;
 
-    public:
-        /**
-         * Size typedef
-         */
-        typedef std::vector<std::string>::size_type size_type;
+ public:
+  /**
+   * Size typedef
+   */
+  typedef std::vector<std::string>::size_type size_type;
 
-        /**
-         * Constructer
-         */
-        CommandLine();
+  /**
+   * Constructer
+   */
+  CommandLine();
 
-        /**
-         * Return number of arguments
-         */
-        size_type count() const;
+  /**
+   * Return number of arguments
+   */
+  size_type count() const;
 
-        /**
-         * Returns (copy of) argument at at position
-         */
-        std::string getArgument(size_type pos) const throw (OutOfRangeException);
+  /**
+   * Returns (copy of) argument at at position
+   */
+  std::string getArgument(size_type pos) const throw(OutOfRangeException);
 
-        /**
-         * Set argument at position
-         */
-        void setArgument(size_type pos, std::string arg);
+  /**
+   * Set argument at position
+   */
+  void setArgument(size_type pos, std::string arg);
 
-        /**
-         * Add argument at the end of commandline
-         */
-        void putArgument(std::string arg);
+  /**
+   * Add argument at the end of commandline
+   */
+  void putArgument(std::string arg);
 
-        /**
-         * Returns reference to string at index
-         */
-        std::string& operator[](size_type index) throw (OutOfRangeException);
+  /**
+   * Returns reference to string at index
+   */
+  std::string& operator[](size_type index) throw(OutOfRangeException);
 
-        /**
-         * Returns number of elements
-         */
-        size_type size() const;
-    };
+  /**
+   * Returns number of elements
+   */
+  size_type size() const;
+};
 };
 
-#endif // SUPHP_COMMANDLINE_H
+#endif  // SUPHP_COMMANDLINE_H

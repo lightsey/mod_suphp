@@ -23,17 +23,20 @@
 using namespace suPHP;
 
 std::string suPHP::ParsingException::getName() const {
-    return "ParsingException";
+  return "ParsingException";
 }
 
-suPHP::ParsingException::ParsingException(std::string file, int line) : 
-    Exception(file, line) {}
+suPHP::ParsingException::ParsingException(std::string file, int line)
+    : Exception(file, line) {}
 
-suPHP::ParsingException::ParsingException(std::string message, std::string file, int line) :
-    Exception(message, file, line) {}
+suPHP::ParsingException::ParsingException(std::string message, std::string file,
+                                          int line)
+    : Exception(message, file, line) {}
 
-suPHP::ParsingException::ParsingException(Exception& cause, std::string file, int line) : 
-    Exception(cause, file, line) {}
+suPHP::ParsingException::ParsingException(Exception& cause, std::string file,
+                                          int line)
+    : Exception(cause, file, line) {}
 
-suPHP::ParsingException::ParsingException(std::string message, Exception& cause, std::string file, int line) : 
-    Exception(message, cause, file, line) {}
+suPHP::ParsingException::ParsingException(std::string message, Exception& cause,
+                                          std::string file, int line)
+    : Exception(message, cause, file, line) {}

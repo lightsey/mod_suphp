@@ -21,45 +21,46 @@
 #ifndef SUPHP_SYSTEMEXCEPTION_H
 
 namespace suPHP {
-    class SystemException;
+class SystemException;
 };
 
 #define SUPHP_SYSTEMEXCEPTION_H
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "Exception.hpp"
 
 namespace suPHP {
-    /**
-     * Exception showing that some system-call failed
-     */
-    class SystemException : public Exception {
-    private:
-        std::string getName() const;
-    public:
-        /**
-         * Constructor without message.
-         */
-        SystemException(std::string file, int line);
+/**
+ * Exception showing that some system-call failed
+ */
+class SystemException : public Exception {
+ private:
+  std::string getName() const;
 
-        /**
-         * Constructor with message.
-         */
-        SystemException(std::string message, std::string file, int line);
-        
-        /**
-         * Constructor without message but with cause.
-         */
-        SystemException(Exception& cause, std::string file, int line);
-        
-        /**
-         * Constructor with message and cause.
-         */
-        SystemException(std::string message, Exception& cause, std::string file, int line);
-        
-    };
+ public:
+  /**
+   * Constructor without message.
+   */
+  SystemException(std::string file, int line);
+
+  /**
+   * Constructor with message.
+   */
+  SystemException(std::string message, std::string file, int line);
+
+  /**
+   * Constructor without message but with cause.
+   */
+  SystemException(Exception& cause, std::string file, int line);
+
+  /**
+   * Constructor with message and cause.
+   */
+  SystemException(std::string message, Exception& cause, std::string file,
+                  int line);
+};
 };
 
-#endif // SUPHP_SYSTEMEXCEPTION_H
+#endif  // SUPHP_SYSTEMEXCEPTION_H
