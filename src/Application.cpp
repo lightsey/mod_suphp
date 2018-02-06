@@ -543,6 +543,9 @@ void suPHP::Application::executeScript(const std::string& scriptFilename,
             std::string interpreterPath = interpreter.substr(4);
             CommandLine cline;
             cline.putArgument(interpreterPath);
+            if ( config.getFullPHPProcessDisplay() ) {
+	        cline.putArgument(scriptFilename);
+            }
             API_Helper::getSystemAPI().execute(interpreterPath, cline, env);
         } else if (mode == TARGETMODE_SELFEXECUTE) {
             CommandLine cline;

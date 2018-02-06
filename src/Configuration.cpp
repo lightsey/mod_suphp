@@ -113,6 +113,7 @@ suPHP::Configuration::Configuration() {
 #endif
     this->umask = 0077;
     this->chroot_path = "";
+    this->full_php_process_display = false;
 }
 
 void suPHP::Configuration::readFromFile(File& file) 
@@ -160,6 +161,8 @@ void suPHP::Configuration::readFromFile(File& file)
                 this->umask = Util::octalStrToInt(value);
             else if (key == "chroot")
                 this->chroot_path = value;
+	    else if (key == "full_php_process_display")
+		this->full_php_process_display = this->strToBool(value);
             else 
                 throw ParsingException("Unknown option \"" + key + 
                                        "\" in section [global]", 
@@ -222,6 +225,10 @@ bool suPHP::Configuration::getAllowFileOthersWriteable() const {
 
 bool suPHP::Configuration::getAllowDirectoryOthersWriteable() const {
     return this->allow_directory_others_writeable;
+}
+
+bool suPHP::Configuration::getFullPHPProcessDisplay() const {
+    return this->full_php_process_display;
 }
 
 bool suPHP::Configuration::getErrorsToBrowser() const {

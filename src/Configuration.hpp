@@ -59,6 +59,7 @@ namespace suPHP {
         int min_gid;
         int umask;
         std::string chroot_path;
+        bool full_php_process_display;
 
         /**
          * Converts string to bool
@@ -125,7 +126,7 @@ namespace suPHP {
          * the directory the is script in
          */
         bool getAllowDirectoryGroupWriteable() const;
-        
+
         /**
          * Returns wheter suPHP should ignore the others write bit of the
          * script file
@@ -139,10 +140,16 @@ namespace suPHP {
         bool getAllowDirectoryOthersWriteable() const;
 
         /**
+         * Returns whether suPHP should include the SCRIPT_FILENAME in the
+         * command line arguments so that it is visible to ps.
+	     */
+        bool getFullPHPProcessDisplay() const;
+
+        /**
          * Returns whether (minor) error message should be sent to browser
          */
         bool getErrorsToBrowser() const;
-        
+
         /**
          * Returns the content for the PATH environment variable
          */
@@ -158,7 +165,7 @@ namespace suPHP {
          * Returns minimum UID allowed for scripts
          */
         int getMinUid() const;
-        
+
         /**
          * Returns minimum GID allowed for scripts
          */
