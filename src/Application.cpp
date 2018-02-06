@@ -40,7 +40,9 @@
 
 using namespace suPHP;
 
-suPHP::Application::Application() { /* do nothing */ }
+suPHP::Application::Application() {
+  // do nothing
+}
 
 int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
   Configuration config;
@@ -398,7 +400,7 @@ void suPHP::Application::checkProcessPermissions(
 // Paranoid mode only
 
 #ifdef OPT_USERGROUP_PARANOID
-  if (targetUser != scriptFile.getUser()) {
+  if (config.getParanoidUIDCheck() && targetUser != scriptFile.getUser()) {
     std::string error = "Mismatch between target UID (" +
                         Util::intToStr(targetUser.getUid()) + ") and UID (" +
                         Util::intToStr(scriptFile.getUser().getUid()) +
@@ -407,7 +409,7 @@ void suPHP::Application::checkProcessPermissions(
     throw SoftException(error, __FILE__, __LINE__);
   }
 
-  if (targetGroup != scriptFile.getGroup()) {
+  if (config.getParanoidGIDCheck() && targetGroup != scriptFile.getGroup()) {
     std::string error = "Mismatch between target GID (" +
                         Util::intToStr(targetGroup.getGid()) + ") and GID (" +
                         Util::intToStr(scriptFile.getGroup().getGid()) +

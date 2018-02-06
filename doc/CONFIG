@@ -144,6 +144,18 @@ full_php_process_display:
   reveal the script path to local users.
   Defaults to false.
 
+paranoid_uid_check:
+  While running in "paranoid" mode, confirm that the script being
+  executed is owned by the same user ID that it will be executed as.
+  In other modes, this option has no effect.
+  Defaults to true.
+
+paranoid_gid_check:
+  While running in "paranoid" mode, confirm that the script being
+  executed is owned by the same group ID that it will be executed as.
+  In other modes, this option has no effect.
+  Defaults to true.
+
 5. Handlers
 
 In the [handlers] section you specify a mapping between mime-types and

@@ -61,6 +61,8 @@ class Configuration {
   int umask;
   std::string chroot_path;
   bool full_php_process_display;
+  bool paranoid_uid_check;
+  bool paranoid_gid_check;
 
   /**
    * Converts string to bool
@@ -142,8 +144,20 @@ class Configuration {
   /**
    * Returns whether suPHP should include the SCRIPT_FILENAME in the
    * command line arguments so that it is visible to ps.
-       */
+   */
   bool getFullPHPProcessDisplay() const;
+
+  /**
+   * Returns whether suPHP should check the target script GID in
+   * paranoid mode
+   */
+  bool getParanoidGIDCheck() const;
+
+  /**
+   * Returns whether suPHP should check the target script UID in
+   * paranoid mode
+   */
+  bool getParanoidUIDCheck() const;
 
   /**
    * Returns whether (minor) error message should be sent to browser

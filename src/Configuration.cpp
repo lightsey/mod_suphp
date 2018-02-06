@@ -112,6 +112,8 @@ suPHP::Configuration::Configuration() {
   this->umask = 0077;
   this->chroot_path = "";
   this->full_php_process_display = false;
+  this->paranoid_uid_check = true;
+  this->paranoid_gid_check = true;
 }
 
 void suPHP::Configuration::readFromFile(File& file) throw(IOException,
@@ -160,6 +162,10 @@ void suPHP::Configuration::readFromFile(File& file) throw(IOException,
         this->chroot_path = value;
       else if (key == "full_php_process_display")
         this->full_php_process_display = this->strToBool(value);
+      else if (key == "paranoid_gid_check")
+        this->paranoid_gid_check = this->strToBool(value);
+      else if (key == "paranoid_uid_check")
+        this->paranoid_uid_check = this->strToBool(value);
       else
         throw ParsingException(
             "Unknown option \"" + key + "\" in section [global]", __FILE__,
@@ -221,6 +227,14 @@ bool suPHP::Configuration::getAllowDirectoryOthersWriteable() const {
 
 bool suPHP::Configuration::getFullPHPProcessDisplay() const {
   return this->full_php_process_display;
+}
+
+bool suPHP::Configuration::getParanoidUIDCheck() const {
+  return this->paranoid_uid_check;
+}
+
+bool suPHP::Configuration::getParanoidGIDCheck() const {
+  return this->paranoid_gid_check;
 }
 
 bool suPHP::Configuration::getErrorsToBrowser() const {
