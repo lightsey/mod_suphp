@@ -20,7 +20,7 @@ allow_file_others_writeable=false
 allow_directory_group_writeable=false
 allow_directory_others_writeable=false
 
-;Check wheter script is within DOCUMENT_ROOT
+;Check whether script is within DOCUMENT_ROOT
 check_vhost_docroot=true
 
 ;Send minor error messages to browser
@@ -38,6 +38,11 @@ min_uid=100
 ; Minimum GID
 min_gid=100
 
+;Ignore suPHP_UserGroup for userdir requests.
+;userdir_overrides_usergroup=true
+
+;Include script being executed in command arguments
+;full_php_process_display=false
 
 [handlers]
 ;Handler for php-scripts

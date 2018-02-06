@@ -131,6 +131,18 @@ min_gid:
   Minimum GID allowed to execute scripts.
   Defaults to compile-time value.
 
+userdir_overrides_usergroup:
+  When processing a userdir request that enters a context with
+  suPHP_UserGroup set, use the userdir user rather than the
+  suPHP_UserGroup setting.
+  Defaults to true.
+
+full_php_process_display:
+  Include the full PHP script path in the arguments to the PHP
+  interpreter so that it is visible in ps output. This can
+  help with determining which scripts are misbehaving but does
+  reveal the script path to local users.
+  Defaults to false.
 
 5. Handlers
 
@@ -158,6 +170,7 @@ At the moment two modes are supported:
 
 ===================================
 (c)2002-2013 by Sebastian Marsching
+(c)2018 by John Lightsey
 <sebastian@marsching.com>
 Please see LICENSE for
 additional information
