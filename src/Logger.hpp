@@ -1,5 +1,6 @@
 /*
     suPHP - (c)2002-2013 Sebastian Marsching <sebastian@marsching.com>
+            (c)2018 John Lightsey <john@nixnuts.net>
 
     This file is part of suPHP.
 
@@ -61,6 +62,11 @@ namespace suPHP {
         virtual void setLogLevel(LogLevel level);
 
     public:
+
+        /**
+         * Virtual destructor so that derived class destructors are invoked
+         */
+        virtual ~Logger() = default;
 
         /***
          * Get log level
