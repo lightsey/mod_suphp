@@ -97,6 +97,7 @@ suPHP::Configuration::Configuration() {
 #else
     this->check_vhost_docroot = true;
 #endif
+    this->userdir_overrides_usergroup = false;
     this->errors_to_browser = false;
     this->env_path = "/bin:/usr/bin";
     this->loglevel = LOGLEVEL_INFO;
@@ -143,6 +144,8 @@ void suPHP::Configuration::readFromFile(File& file)
                     this->strToBool(value);
             else if (key == "check_vhost_docroot")
                 this->check_vhost_docroot = this->strToBool(value);
+	    else if (key == "userdir_overrides_usergroup")
+		this->userdir_overrides_usergroup = this->strToBool(value);
             else if (key == "errors_to_browser")
                 this->errors_to_browser = this->strToBool(value);
             else if (key == "env_path")
@@ -199,6 +202,10 @@ const std::vector<std::string>& suPHP::Configuration::getDocroots() const {
 
 bool suPHP::Configuration::getCheckVHostDocroot() const {
     return this->check_vhost_docroot;
+}
+
+bool suPHP::Configuration::getUserdirOverridesUsergroup() const {
+    return this->userdir_overrides_usergroup;
 }
 
 bool suPHP::Configuration::getAllowFileGroupWriteable() const {

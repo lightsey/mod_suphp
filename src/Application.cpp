@@ -369,6 +369,17 @@ void suPHP::Application::checkProcessPermissions(
             __FILE__, __LINE__);
     }
 
+    if (config.getUserdirOverridesUsergroup() && environment.hasVar("SUPHP_USERDIR_USER") && environment.hasVar("SUPHP_USERDIR_GROUP")) {
+        try {
+	    targetUsername = environment.getVar("SUPHP_USERDIR_USER");
+	    targetGroupname = environment.getVar("SUPHP_USERDIR_GROUP");
+        } catch (KeyNotFoundException& e) {
+	    throw SecurityException(
+	        "Environment variable SUPHP_USERDIR_USER or SUPHP_USERDIR_GROUP not set", 
+	        __FILE__, __LINE__);
+        }
+    }
+
     if (targetUsername[0] == '#' && targetUsername.find_first_not_of(
             "0123456789", 1) == std::string::npos) {
         targetUser = api.getUserInfo(Util::strToInt(targetUsername.substr(1)));
@@ -450,6 +461,10 @@ Environment suPHP::Application::prepareEnvironment(
         env.deleteVar("SUPHP_USER");
     if (env.hasVar("SUPHP_GROUP"))
         env.deleteVar("SUPHP_GROUP");
+    if (env.hasVar("SUPHP_USERDIR_USER"))
+	env.deleteVar("SUPHP_USERDIR_USER");
+    if (env.hasVar("SUPHP_USERDIR_GROUP"))
+	env.deleteVar("SUPHP_USERDIR_GROUP");
     if (env.hasVar("SUPHP_HANDLER"))
         env.deleteVar("SUPHP_HANDLER");
     if (env.hasVar("SUPHP_AUTH_USER"))

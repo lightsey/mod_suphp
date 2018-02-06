@@ -754,6 +754,8 @@ static int suphp_script_handler(request_rec *r)
 #ifdef SUPHP_USE_USERGROUP
     char *ud_user = NULL;
     char *ud_group = NULL;
+    int ud_success = 0;
+    ap_unix_identity_t *userdir_id = NULL;
 #endif
 
     apr_bucket_brigade *bb;
@@ -803,21 +805,18 @@ static int suphp_script_handler(request_rec *r)
     }
 
 #ifdef SUPHP_USE_USERGROUP
-    if ((sconf->target_user == NULL || sconf->target_group == NULL)
-        && (dconf->target_user == NULL || dconf->target_group == NULL))
-    {
         /* Check for userdir request */
-        ap_unix_identity_t *userdir_id = NULL;
         userdir_id = ap_run_get_suexec_identity(r);
         if (userdir_id != NULL && userdir_id->userdir) {
             ud_user = apr_psprintf(r->pool, "#%ld", (long) userdir_id->uid);
             ud_group = apr_psprintf(r->pool, "#%ld", (long) userdir_id->gid);
-        } else {
+            ud_success = 1;
+        } else if ((sconf->target_user == NULL || sconf->target_group == NULL)
+                   && (dconf->target_user == NULL || dconf->target_group == NULL)) {
             ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
                           "No user or group set - set suPHP_UserGroup");
             return HTTP_INTERNAL_SERVER_ERROR;
         }
-    }
 #endif
 
     /* prepare argv for new process */
@@ -838,6 +837,8 @@ static int suphp_script_handler(request_rec *r)
 #ifdef SUPHP_USE_USERGROUP
     apr_table_unset(r->subprocess_env, "SUPHP_USER");
     apr_table_unset(r->subprocess_env, "SUPHP_GROUP");
+    apr_table_unset(r->subprocess_env, "SUPHP_USERDIR_USER");
+    apr_table_unset(r->subprocess_env, "SUPHP_USERDIR_GROUP");
 #endif
 
     if (dconf->php_config)
@@ -906,6 +907,13 @@ static int suphp_script_handler(request_rec *r)
     {
         apr_table_setn(r->subprocess_env, "SUPHP_GROUP",
                        apr_pstrdup(r->pool, ud_group));
+    }
+    if (ud_success)
+    {
+	apr_table_setn(r->subprocess_env, "SUPHP_USERDIR_USER",
+		       apr_pstrdup(r->pool, ud_user));
+	apr_table_setn(r->subprocess_env, "SUPHP_USERDIR_GROUP",
+		       apr_pstrdup(r->pool, ud_group));
     }
 #endif
 

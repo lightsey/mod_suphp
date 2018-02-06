@@ -50,6 +50,7 @@ namespace suPHP {
         bool allow_file_others_writeable;
         bool allow_directory_others_writeable;
         bool check_vhost_docroot;
+	bool userdir_overrides_usergroup;
         bool errors_to_browser;
         std::string env_path;
         std::map<std::string, std::string> handlers;
@@ -108,6 +109,12 @@ namespace suPHP {
         bool getCheckVHostDocroot() const;
         
         /**
+         * Returns wheter suPHP should use the user and group provided
+         * by Apache on userdir requests in preference to suPHP_UserGroup 
+	 */
+	bool getUserdirOverridesUsergroup() const;
+	
+	/**
          * Returns wheter suPHP should ignore the group write bit of
          * the script file
          */
