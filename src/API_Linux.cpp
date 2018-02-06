@@ -1,5 +1,6 @@
 /*
     suPHP - (c)2002-2013 Sebastian Marsching <sebastian@marsching.com>
+            (c)2018 John Lightsey <john@nixnuts.net>
 
     This file is part of suPHP.
 
@@ -407,7 +408,7 @@ void suPHP::API_Linux::execute(std::string program, const CommandLine& cline,
     char **p = NULL;
     char *sysProgram = NULL;
     std::map<std::string, std::string> map;
-    int i;
+    suPHP::CommandLine::size_type i;
 
 
     

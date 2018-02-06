@@ -1,5 +1,6 @@
 /*
     suPHP - (c)2002-2013 Sebastian Marsching <sebastian@marsching.com>
+            (c)2018 John Lightsey <john@nixnuts.net>
 
     This file is part of suPHP.
 
@@ -45,7 +46,6 @@ bool suPHP::IniFile::hasSection(const std::string& name) const {
     } else {
         return false;
     }
-    
 }
 
 const IniSection& suPHP::IniFile::operator[](const std::string& name) const
@@ -60,15 +60,14 @@ void suPHP::IniFile::parse(const File& file) throw (IOException, ParsingExceptio
     while (!is->eof() && !is->bad() && !is->fail()) {
         std::string line;
         std::string tstr;
-        char dummy;
-        int startpos = 0;
-        int endpos = 0;
-        
+        std::string::size_type startpos = 0;
+        std::string::size_type endpos = 0;
+
         // Read line from file
         getline(*is, line);
-        
+
         tstr = line;
-        
+
         // Find first char not being space or tab
         startpos = tstr.find_first_not_of(" \t");
         // Find last char not being space or tab
@@ -77,7 +76,7 @@ void suPHP::IniFile::parse(const File& file) throw (IOException, ParsingExceptio
         // Skip empty line, only containing whitespace
         if (startpos == std::string::npos)
             continue;
-        
+
         // Get trimmed string
         tstr = tstr.substr(startpos, endpos - startpos + 1);
 
@@ -85,7 +84,7 @@ void suPHP::IniFile::parse(const File& file) throw (IOException, ParsingExceptio
         if (tstr[0] == ';') {
             // Comments are not interessting => skip
             continue;
-       
+
         // Is line a section mark ("[section]")?
         } else if (tstr[0] == '[' && tstr[tstr.size()-1] == ']') {
             // Extract name of section
@@ -100,22 +99,22 @@ void suPHP::IniFile::parse(const File& file) throw (IOException, ParsingExceptio
             }
             // Set current section
             current_section = &(this->sections.find(name)->second);
-            
+
         // Is the line a key-value pair?
         } else if (tstr.find_first_of('=') != std::string::npos) {
             std::string name;
             std::vector<std::string> values;
             bool append_mode = false;
-            
-            int eqpos = 0;
-            
+
+            std::string::size_type eqpos = 0;
+
             // Check wheter we already have a section
             if (current_section == NULL) {
                 throw ParsingException("Option line \"" + tstr +
                                        "\" before first section", 
                                        __FILE__, __LINE__);
             }
-            
+
             // Extract name
             eqpos = tstr.find_first_of('=');
             if (eqpos == std::string::npos || eqpos < 1 || eqpos == tstr.length()-1) {
@@ -127,19 +126,19 @@ void suPHP::IniFile::parse(const File& file) throw (IOException, ParsingExceptio
             } else {
                 name = tstr.substr(0, eqpos);
             }
-            
-            int temppos;
+
+            std::string::size_type temppos;
             temppos = name.find_first_not_of(" \t");
             if (temppos == std::string::npos) {
                 throw ParsingException("Malformed line: " + tstr, __FILE__, __LINE__);
             }
             name = name.substr(0, name.find_last_not_of(" \t") + 1);
-            
+
             bool in_quotes = false;
             bool last_was_backslash = false;
-            int token_start = eqpos + 1;
-            
-            for (int i=eqpos+1; i<tstr.length(); i++) {
+            std::string::size_type token_start = eqpos + 1;
+
+            for (std::string::size_type i=eqpos+1; i<tstr.length(); i++) {
                 bool current_is_backslash = false;
                 if (tstr[i] == '"') {
                     if (!last_was_backslash) {
@@ -191,7 +190,7 @@ void suPHP::IniFile::parse(const File& file) throw (IOException, ParsingExceptio
             for (std::vector<std::string>::iterator i = values.begin(); i != values.end(); i++) {
                 current_section->putValue(name, *i);
             }
-            
+
         // Line is something we do not know
         } else {
             throw ParsingException("Malformed line \"" + tstr + "\"", 
@@ -206,9 +205,9 @@ std::string suPHP::IniFile::parseValue(const std::string& value) const throw (Pa
     bool last_was_backslash = false;
     std::string tempvalue;
     std::string output;
-    
-    int startpos = value.find_first_not_of(" \t");
-    int endpos = value.find_last_not_of(" \t");
+
+    std::string::size_type startpos = value.find_first_not_of(" \t");
+    std::string::size_type endpos = value.find_last_not_of(" \t");
     if (startpos == std::string::npos) {
         return "";
     }
@@ -217,10 +216,10 @@ std::string suPHP::IniFile::parseValue(const std::string& value) const throw (Pa
     } else {
         tempvalue = value.substr(startpos, endpos - startpos + 1);
     }
-    
-    for (int i=0; i<value.length(); i++) {
+
+    for (std::string::size_type i=0; i<value.length(); i++) {
         bool current_is_backslash = false;
-        
+
         if (tempvalue[i] == '"') {
             if (last_was_backslash) {
                 output.append("\"");
@@ -247,9 +246,9 @@ std::string suPHP::IniFile::parseValue(const std::string& value) const throw (Pa
             }
             output.append(tempvalue.substr(i, 1));
         }
-        
+
         last_was_backslash = current_is_backslash;
     }
-    
+
     return output;
 }

@@ -1,5 +1,6 @@
 /*
     suPHP - (c)2002-2013 Sebastian Marsching <sebastian@marsching.com>
+            (c)2018 John Lightsey <john@nixnuts.net>
 
     This file is part of suPHP.
 
@@ -31,11 +32,11 @@ suPHP::CommandLine::CommandLine() {
     /* do nothing */
 }
 
-int suPHP::CommandLine::count() const {
+suPHP::CommandLine::size_type suPHP::CommandLine::count() const {
     return this->arguments.size();
 }
 
-std::string suPHP::CommandLine::getArgument(int pos) const
+std::string suPHP::CommandLine::getArgument(suPHP::CommandLine::size_type pos) const
     throw (OutOfRangeException) {
     if (pos >= this->arguments.size() || pos < 0) {
         throw OutOfRangeException("Index out of range", __FILE__, __LINE__);
@@ -47,9 +48,9 @@ std::string suPHP::CommandLine::getArgument(int pos) const
     }
 }
 
-void suPHP::CommandLine::setArgument(int pos, std::string arg) {
+void suPHP::CommandLine::setArgument(suPHP::CommandLine::size_type pos, std::string arg) {
     if (pos >= this->arguments.size()) {
-        for (int i=0; i<(this->arguments.size() - pos); i++) {
+        for (suPHP::CommandLine::size_type i=0; i<(this->arguments.size() - pos); i++) {
             this->arguments.push_back(std::string(""));
         }
     }
@@ -60,9 +61,9 @@ void suPHP::CommandLine::putArgument(std::string arg) {
     this->arguments.push_back(arg);
 }
 
-std::string& suPHP::CommandLine::operator[](int index) 
+std::string& suPHP::CommandLine::operator[](suPHP::CommandLine::size_type index) 
     throw (OutOfRangeException) {
-    if (index >= this->arguments.size() || index < 0) {
+    if (index >= this->arguments.size()) {
         throw OutOfRangeException("Index out of range", __FILE__, __LINE__);
     }
     try {
@@ -73,6 +74,6 @@ std::string& suPHP::CommandLine::operator[](int index)
 }
 
 
-int suPHP::CommandLine::size() const {
+suPHP::CommandLine::size_type suPHP::CommandLine::size() const {
     return this->arguments.size();
 }

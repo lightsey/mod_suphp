@@ -1,5 +1,6 @@
 /*
     suPHP - (c)2002-2013 Sebastian Marsching <sebastian@marsching.com>
+            (c)2018 John Lightsey <john@nixnuts.net>
 
     This file is part of suPHP.
 
@@ -40,7 +41,7 @@ int suPHP::Util::strToInt(const std::string str) {
 
 int suPHP::Util::octalStrToInt(const std::string str) {
     int result = 0;
-    for (int i=0; i<str.length(); i++) {
+    for (std::string::size_type i=0; i<str.length(); i++) {
         int d;
         result *= 8;
         switch (str[i]) {
@@ -72,7 +73,7 @@ int suPHP::Util::octalStrToInt(const std::string str) {
             // Should not happen
             continue;
         }
-        result += d; 
+        result += d;
     }
     return result;
 }

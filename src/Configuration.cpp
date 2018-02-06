@@ -33,7 +33,7 @@ bool suPHP::Configuration::strToBool(const std::string& bstr) const
     throw (ParsingException) {
     std::string str = bstr;
     // Convert upper characters to lower characters
-    for (int i=0; i<str.size(); i++) {
+    for (std::string::size_type i=0; i<str.size(); i++) {
         if (str[i] >= 65 && str[i] <= 90)
             str[i] += 32;
     }
@@ -62,7 +62,6 @@ bool suPHP::Configuration::strToBool(const std::string& bstr) const
         throw ParsingException("\"" + str + "\" is not a valid boolean value",
                                __FILE__, __LINE__);
     }
-        
 }
 
 

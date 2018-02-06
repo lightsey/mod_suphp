@@ -1,5 +1,6 @@
 /*
     suPHP - (c)2002-2013 Sebastian Marsching <sebastian@marsching.com>
+            (c)2018 John Lightsey <john@nixnuts.net>
 
     This file is part of suPHP.
 
@@ -35,7 +36,7 @@ bool suPHP::PathMatcher::matches(std::string pattern, std::string path)
     
     while (remainingPath.length() > 0 && remainingPattern.length() > 0) {
         bool escapeNext = false;
-        for (int i = 0; i < remainingPattern.length(); i++) {
+        for (std::string::size_type i = 0; i < remainingPattern.length(); i++) {
             char c = remainingPattern.at(i);
             if (escapeNext) {
                 escapeNext = false;
@@ -67,7 +68,7 @@ bool suPHP::PathMatcher::matches(std::string pattern, std::string path)
                         return true;
                     }
                     std::string testPrefix;
-                    for (int j = 0; j < remainingPath.length(); j++) {
+                    for (std::string::size_type j = 0; j < remainingPath.length(); j++) {
                         char c2 = remainingPath.at(j);
                         if (c2 == '/') {
                             return false;
@@ -140,7 +141,7 @@ std::string suPHP::PathMatcher::lookupVariable(std::string str)
 std::string suPHP::PathMatcher::resolveVariables(std::string str) throw (KeyNotFoundException, ParsingException) {
     std::string out;
     bool escapeNext = false;
-    for (int i = 0; i < str.length(); i++) {
+    for (std::string::size_type i = 0; i < str.length(); i++) {
         char c = str.at(i);
         if (escapeNext) {
             escapeNext = false;

@@ -1,5 +1,6 @@
 /*
     suPHP - (c)2002-2013 Sebastian Marsching <sebastian@marsching.com>
+            (c)2018 John Lightsey <john@nixnuts.net>
 
     This file is part of suPHP.
 
@@ -38,42 +39,47 @@ namespace suPHP {
     class CommandLine {
     private:
         std::vector<std::string> arguments;
-        
+
     public:
+        /**
+         * Size typedef
+         */
+        typedef std::vector<std::string>::size_type size_type;
+
         /**
          * Constructer
          */
         CommandLine();
-        
+
         /**
          * Return number of arguments
          */
-        int count() const;
+        size_type count() const;
 
         /**
          * Returns (copy of) argument at at position
          */
-        std::string getArgument(int pos) const throw (OutOfRangeException);
+        std::string getArgument(size_type pos) const throw (OutOfRangeException);
 
         /**
          * Set argument at position
          */
-        void setArgument(int pos, std::string arg);
+        void setArgument(size_type pos, std::string arg);
 
         /**
          * Add argument at the end of commandline
          */
         void putArgument(std::string arg);
-        
+
         /**
          * Returns reference to string at index
          */
-        std::string& operator[](int index) throw (OutOfRangeException);
+        std::string& operator[](size_type index) throw (OutOfRangeException);
 
         /**
          * Returns number of elements
          */
-        int size() const;
+        size_type size() const;
     };
 };
 
