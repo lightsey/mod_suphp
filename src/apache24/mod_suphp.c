@@ -722,6 +722,7 @@ static int suphp_script_handler(request_rec *r) {
   char *tmpbuf;
   int nph = 0;
   int eos_reached = 0;
+  int child_stopped_reading = 0;
   char *auth_user = NULL;
   char *auth_pass = NULL;
 
@@ -945,7 +946,6 @@ static int suphp_script_handler(request_rec *r) {
          bucket = APR_BUCKET_NEXT(bucket)) {
       const char *data;
       apr_size_t len;
-      int child_stopped_reading = 0;
 
       if (APR_BUCKET_IS_EOS(bucket)) {
         eos_reached = 1;
