@@ -156,6 +156,9 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
                   << " </body>\n"
                   << "</html>\n";
     }
+
+    // Only reached on error
+    return 2;
 }
 
 
