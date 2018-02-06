@@ -39,7 +39,6 @@ bool suPHP::PathMatcher::matches(std::string pattern, std::string path)
         for (std::string::size_type i = 0; i < remainingPattern.length(); i++) {
             char c = remainingPattern.at(i);
             if (escapeNext) {
-                escapeNext = false;
                 if (c == '\\' || c == '*' || c == '$') {
                     // Backslash was used as an escape character
                     if (remainingPath.at(i-1) == c) {

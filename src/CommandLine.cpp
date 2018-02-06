@@ -38,7 +38,7 @@ suPHP::CommandLine::size_type suPHP::CommandLine::count() const {
 
 std::string suPHP::CommandLine::getArgument(suPHP::CommandLine::size_type pos) const
     throw (OutOfRangeException) {
-    if (pos >= this->arguments.size() || pos < 0) {
+    if (pos >= this->arguments.size()) {
         throw OutOfRangeException("Index out of range", __FILE__, __LINE__);
     }
     try {

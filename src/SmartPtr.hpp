@@ -1,5 +1,6 @@
 /*
     suPHP - (c)2002-2013 Sebastian Marsching <sebastian@marsching.com>
+            (c)2018 John Lightsey <john@nixnuts.net>
 
     This file is part of suPHP.
 
@@ -150,7 +151,7 @@ namespace suPHP {
     template<class T>
     const SmartPtr<T>& suPHP::SmartPtr<T>::operator=(
         const SmartPtr<T>& ref) {
-        this.reset(ref.ptr);
+        this->reset(ref.ptr);
         return *this;
     }
     
