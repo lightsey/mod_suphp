@@ -54,3 +54,7 @@ x-httpd-php="php:/usr/bin/php"
 
 ;Handler for CGI-scripts
 x-suphp-cgi="execute:!self"
+
+[phprc_paths]
+;Force a specific php.ini through PHPRC
+;x-httpd-php=/etc/php/php.ini

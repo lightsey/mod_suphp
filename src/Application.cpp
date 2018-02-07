@@ -56,6 +56,7 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
 #endif
 
   std::string interpreter;
+  std::string phprc_path;
   TargetMode targetMode;
   Environment newEnv;
 
@@ -112,6 +113,20 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
     this->changeProcessPermissions(config, targetUser, targetGroup);
 
     interpreter = this->getInterpreter(env, config);
+
+    phprc_path = this->getPHPRCPath(env, config);
+    if (!phprc_path.empty()) {
+      env.putVar("SUPHP_PHP_CONFIG", phprc_path);
+    } else {
+      if (targetMode == TARGETMODE_PHP) {
+        std::string phpPath = interpreter.substr(
+            4);  // copy w/out the TARGETMODE_PHP indicating prefix php:
+        std::string phpPrefix = phpPath.substr(0, phpPath.find("/usr/bin/"));
+        env.putVar("PHP_INI_SCAN_DIR",
+                   phpPrefix + "/etc:" + phpPrefix + "/etc/php.d:.");
+      }
+    }
+
     targetMode = this->getTargetMode(interpreter);
 
     // Prepare environment for new process
@@ -475,6 +490,18 @@ Environment suPHP::Application::prepareEnvironment(
   }
 
   return env;
+}
+
+std::string suPHP::Application::getPHPRCPath(
+    const Environment& env,
+    const Configuration& config) throw(SecurityException) {
+  if (!env.hasVar("SUPHP_HANDLER"))
+    throw SecurityException("Environment variable SUPHP_HANDLER not set",
+                            __FILE__, __LINE__);
+  std::string handler = env.getVar("SUPHP_HANDLER");
+
+  std::string phprc_path = config.getPHPRCPath(handler);
+  return phprc_path;
 }
 
 std::string suPHP::Application::getInterpreter(

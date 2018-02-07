@@ -187,6 +187,21 @@ void suPHP::Configuration::readFromFile(File& file) throw(IOException,
       this->handlers.insert(p);
     }
   }
+
+  // Get configured phprc_paths
+  if (ini.hasSection("phprc_paths")) {
+    IniSection sect = ini.getSection("phprc_paths");
+    std::vector<std::string> keys = sect.getKeys();
+    std::vector<std::string>::iterator i;
+    for (i = keys.begin(); i < keys.end(); i++) {
+      std::string key = *i;
+      std::string value = sect.getValue(key);
+      std::pair<std::string, std::string> p;
+      p.first = key;
+      p.second = value;
+      this->phprc_paths.insert(p);
+    }
+  }
 }
 
 std::string suPHP::Configuration::getLogfile() const { return this->logfile; }
@@ -250,6 +265,14 @@ std::string suPHP::Configuration::getInterpreter(std::string handler) const
   } else {
     throw KeyNotFoundException("Handler \"" + handler + "\" not found",
                                __FILE__, __LINE__);
+  }
+}
+
+std::string suPHP::Configuration::getPHPRCPath(std::string handler) const {
+  if (this->phprc_paths.find(handler) != this->phprc_paths.end()) {
+    return this->phprc_paths.find(handler)->second;
+  } else {
+    return std::string();
   }
 }
 

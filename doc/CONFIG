@@ -165,7 +165,7 @@ Example:
 x-httpd-php=php\:/usr/bin/php
 
 The "key" is the mime-type. The "value" consists of to parts seperated by a
-colon. This colon has to be escaped by a backslash if the value is not 
+colon. This colon has to be escaped by a backslash if the value is not
 enclosed by quotes.
 
 The first part is the "mode". The second part is the path to the
@@ -179,6 +179,15 @@ At the moment two modes are supported:
 "execute"-mode: Must be specified as "execute:!self". Does not take any
   interpreter as the script itself is executed. Use this option for
   CGI-scripts.
+
+6. PHPRC Paths
+
+In the [phprc_paths] section you specify an optional mapping between PHP
+mime-types and php.ini files that should be used via the PHPRC environmental
+variable.
+
+Example:
+x-httpd-php=/etc/php/php.ini
 
 ===================================
 (c)2002-2013 by Sebastian Marsching

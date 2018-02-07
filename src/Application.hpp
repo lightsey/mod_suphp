@@ -107,6 +107,13 @@ class Application {
                                  TargetMode mode) throw(KeyNotFoundException);
 
   /**
+   * Returns the php.ini path defined in the config for script being executed
+   */
+  std::string getPHPRCPath(
+      const Environment& env,
+      const Configuration& config) throw(SecurityException);
+
+  /**
    * Returns interpreter for script being executed
    */
   std::string getInterpreter(

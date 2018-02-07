@@ -55,6 +55,7 @@ class Configuration {
   bool errors_to_browser;
   std::string env_path;
   std::map<std::string, std::string> handlers;
+  std::map<std::string, std::string> phprc_paths;
   LogLevel loglevel;
   int min_uid;
   int min_gid;
@@ -168,6 +169,11 @@ class Configuration {
    * Returns the content for the PATH environment variable
    */
   std::string getEnvPath() const;
+
+  /**
+   * Returns phprc_path string for the specified handler
+   */
+  std::string getPHPRCPath(std::string handler) const;
 
   /**
    * Returns interpreter string for specified handler
