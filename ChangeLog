@@ -5,6 +5,8 @@
 - Fix compiler warnings.
 - Add support for "userdir_overrides_usergroup" option
 - Add support for "full_php_process_display" option
+- Add suphp.conf options to disable paranoid UID and GID checks
+- Add support for phprc_paths section in suphp.conf
 
 * Version 0.7.2 (20 May 2013)
 - Use empty environment when forking a process for PHP source rendering.
