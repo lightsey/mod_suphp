@@ -117,14 +117,6 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
     phprc_path = this->getPHPRCPath(env, config);
     if (!phprc_path.empty()) {
       env.putVar("SUPHP_PHP_CONFIG", phprc_path);
-    } else {
-      if (targetMode == TARGETMODE_PHP) {
-        std::string phpPath = interpreter.substr(
-            4);  // copy w/out the TARGETMODE_PHP indicating prefix php:
-        std::string phpPrefix = phpPath.substr(0, phpPath.find("/usr/bin/"));
-        env.putVar("PHP_INI_SCAN_DIR",
-                   phpPrefix + "/etc:" + phpPrefix + "/etc/php.d:.");
-      }
     }
 
     targetMode = this->getTargetMode(interpreter);
