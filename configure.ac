@@ -24,6 +24,7 @@ AC_PROG_INSTALL
 AC_PROG_CC
 AC_PROG_CXX
 AM_PROG_LIBTOOL
+AX_CXX_COMPILE_STDCXX_11(noext,mandatory)
 
 # Checks for header files.
 AC_HEADER_STDC
