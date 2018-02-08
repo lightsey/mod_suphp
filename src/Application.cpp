@@ -44,7 +44,7 @@ suPHP::Application::Application() {
   // do nothing
 }
 
-int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
+int suPHP::Application::run(CommandLine& cmdline, const Environment& env) {
   Configuration config;
   API& api = API_Helper::getSystemAPI();
   Logger& logger = api.getSystemLogger();
@@ -114,15 +114,15 @@ int suPHP::Application::run(CommandLine& cmdline, Environment& env) {
 
     interpreter = this->getInterpreter(env, config);
 
-    phprc_path = this->getPHPRCPath(env, config);
-    if (!phprc_path.empty()) {
-      env.putVar("SUPHP_PHP_CONFIG", phprc_path);
-    }
-
     targetMode = this->getTargetMode(interpreter);
 
     // Prepare environment for new process
     newEnv = this->prepareEnvironment(env, config, targetMode);
+
+    phprc_path = this->getPHPRCPath(env, config);
+    if (!phprc_path.empty()) {
+      newEnv.putVar("PHPRC", phprc_path);
+    }
 
     // Set PATH_TRANSLATED to SCRIPT_FILENAME, otherwise
     // the PHP interpreter will not be able to find the script
@@ -450,17 +450,17 @@ Environment suPHP::Application::prepareEnvironment(
   Environment env = sourceEnv;
 
   // Delete unwanted environment variables
-  if (env.hasVar("LD_PRELOAD")) env.deleteVar("LD_PRELOAD");
-  if (env.hasVar("LD_LIBRARY_PATH")) env.deleteVar("LD_LIBRARY_PATH");
-  if (env.hasVar("PHPRC")) env.deleteVar("PHPRC");
-  if (env.hasVar("SUPHP_USER")) env.deleteVar("SUPHP_USER");
-  if (env.hasVar("SUPHP_GROUP")) env.deleteVar("SUPHP_GROUP");
-  if (env.hasVar("SUPHP_USERDIR_USER")) env.deleteVar("SUPHP_USERDIR_USER");
-  if (env.hasVar("SUPHP_USERDIR_GROUP")) env.deleteVar("SUPHP_USERDIR_GROUP");
-  if (env.hasVar("SUPHP_HANDLER")) env.deleteVar("SUPHP_HANDLER");
-  if (env.hasVar("SUPHP_AUTH_USER")) env.deleteVar("SUPHP_AUTH_USER");
-  if (env.hasVar("SUPHP_AUTH_PW")) env.deleteVar("SUPHP_AUTH_PW");
-  if (env.hasVar("SUPHP_PHP_CONFIG")) env.deleteVar("SUPHP_PHP_CONFIG");
+  env.deleteVar("LD_PRELOAD");
+  env.deleteVar("LD_LIBRARY_PATH");
+  env.deleteVar("PHPRC");
+  env.deleteVar("SUPHP_USER");
+  env.deleteVar("SUPHP_GROUP");
+  env.deleteVar("SUPHP_USERDIR_USER");
+  env.deleteVar("SUPHP_USERDIR_GROUP");
+  env.deleteVar("SUPHP_HANDLER");
+  env.deleteVar("SUPHP_AUTH_USER");
+  env.deleteVar("SUPHP_AUTH_PW");
+  env.deleteVar("SUPHP_PHP_CONFIG");
 
   // Reset PATH
   env.putVar("PATH", config.getEnvPath());

@@ -60,12 +60,8 @@ void suPHP::Environment::putVar(const std::string name,
   }
 }
 
-void suPHP::Environment::deleteVar(const std::string& name) throw(
-    KeyNotFoundException) {
-  if (this->vars.erase(name) == 0) {
-    throw KeyNotFoundException("Key " + name + " not found", __FILE__,
-                               __LINE__);
-  }
+void suPHP::Environment::deleteVar(const std::string& name) {
+  this->vars.erase(name);
 }
 
 bool suPHP::Environment::hasVar(const std::string& name) const {

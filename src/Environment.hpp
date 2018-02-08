@@ -58,9 +58,9 @@ class Environment {
   void putVar(const std::string name, const std::string content);
 
   /**
-   * Deletes variable from environment
+   * Deletes variable from environment if it is set
    */
-  void deleteVar(const std::string& name) throw(KeyNotFoundException);
+  void deleteVar(const std::string& name);
 
   /**
    * Checks whether a variable is set

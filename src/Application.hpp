@@ -150,7 +150,7 @@ class Application {
   /**
    * Function called by the main() function
    */
-  int run(CommandLine& cmdline, Environment& env);
+  int run(CommandLine& cmdline, const Environment& env);
 };
 };
 
