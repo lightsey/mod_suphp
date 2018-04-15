@@ -32,7 +32,7 @@ AC_CHECK_HEADERS([fcntl.h stdlib.h string.h unistd.h])
 
 # Find apr-config
 
-APR_FIND_APR([], [], [1])
+APR_FIND_APR([], [], [1], [1])
 
 # Determine Apache version and find apxs
 
