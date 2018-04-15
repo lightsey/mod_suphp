@@ -24,7 +24,23 @@ AC_PROG_INSTALL
 AC_PROG_CC
 AC_PROG_CXX
 AM_PROG_LIBTOOL
-AX_CXX_COMPILE_STDCXX_11(noext,mandatory)
+
+AX_CXX_COMPILE_STDCXX_11(,optional)
+if test "$HAVE_CXX11" != "1"; then
+  # G++ 4.4 fails the full c++11 test but includes the features
+  # that are actually being used (auto and unique_ptr).
+  # The older autoconf STDCXX_0X will pass it.
+  AX_CXX_COMPILE_STDCXX_0X
+  if test "x$ax_cv_cxx_compile_cxx0x_native" != xyes; then
+    if test "x$ax_cv_cxx_compile_cxx0x_gxx" = xyes; then
+      CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+    elif test "x$ax_cv_cxx_compile_cxx0x_cxx" = xyes; then
+      CXXFLAGS="$CXXFLAGS -std=c++0x"
+    else
+      AC_MSG_ERROR([A compiler with C++11 or C++0x support is required to build mod_suphp])
+    fi
+  fi
+fi
 
 # Checks for header files.
 AC_HEADER_STDC
