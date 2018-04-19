@@ -2,30 +2,63 @@
 == suPHP                 ==
 ===========================
 
-    suPHP - (c)2002-2013 Sebastian Marsching <sebastian@marsching.com>
-            (c)2018 John Lightsey <john@nixnuts.net>
+What is it?
+-----------
 
-    suPHP is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+The suPHP project combines an Apache handler module and a setuid
+binary. Together, they allow PHP scripts to safely run as the script
+owner rather than the Apache webserver user.
 
-    suPHP is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with suPHP; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
-    USA
+suPHP validates that the requested PHP script has appropriate ownership
+and permissions. It also verifies that the filesystem paths leading to
+the PHP script have safe ownership and permissions.
 
 
-For help on installation see INSTALL in the "doc" directory.
+Documentation
+-------------
 
+Documentation for mod_suphp is available in the "doc" directory.
+
+The "doc/INSTALL" file details the installation process of mod_suphp.
+
+The "doc/CONFIG" file contains instructions for configuring the setuid
+suphp binary.
+
+The "doc/apache/CONFIG" file contains instructions for configuring
+the mod_suphp Apache handler module.
+
+
+Reporting Bugs
+--------------
+
+If you encounter bugs while using mod_suphp, please open an issue
+at the github repo:
+
+https://github.com/lightsey/mod_suphp
+
+If you believe you have found a security flaw in mod_suphp, please
+email the details directly to john@nixnuts.net
+
+
+License
+-------
+
+suPHP - (c)2002-2013 Sebastian Marsching <sebastian@marsching.com>
+        (c)2018 John Lightsey <john@nixnuts.net>
+
+suPHP is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+suPHP is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with suPHP; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
+USA
 
 ===================================
-(c)2002-2013 by Sebastian Marsching <sebastian@marsching.com>
-(c)2018 by John Lightsey <john@nixnuts.net>
-Please see COPYING for
-additional information
