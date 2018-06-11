@@ -326,18 +326,7 @@ void suPHP::Application::checkProcessPermissions(
   File realScriptFile = File(scriptFile.getRealPath());
   API& api = API_Helper::getSystemAPI();
   Logger& logger = api.getSystemLogger();
-
-// Make sure that exactly one mode is set
-
-#if !defined(OPT_USERGROUP_OWNER) && !defined(OPT_USERGROUP_FORCE) && \
-    !defined(OPT_USERGROUP_PARANOID)
-#error "No uid/gid change model specified"
-#endif
-#if (defined(OPT_USERGROUP_OWNER) && defined(OPT_USERGROUP_FORCE)) ||    \
-    (defined(OPT_USERGROUP_FORCE) && defined(OPT_USERGROUP_PARANOID)) || \
-    (defined(OPT_USERGROUP_OWNER) && defined(OPT_USERGROUP_PARANOID))
-#error "More than one uid/gid change model specified"
-#endif
+  SetidMode mode = config.getMode();
 
   // Common code (for all security modes)
 
@@ -355,9 +344,13 @@ void suPHP::Application::checkProcessPermissions(
     throw SoftException(error, __FILE__, __LINE__);
   }
 
-// Paranoid and force mode
-
-#if (defined(OPT_USERGROUP_PARANOID) || defined(OPT_USERGROUP_FORCE))
+  if (mode == OWNER_MODE) {
+    // owner mode
+    targetUser = scriptFile.getUser();
+    targetGroup = scriptFile.getGroup();
+    return;
+  }
+  // paranoid and force mode
   std::string targetUsername, targetGroupname;
   try {
     targetUsername = environment.getVar("SUPHP_USER");
@@ -395,36 +388,27 @@ void suPHP::Application::checkProcessPermissions(
   } else {
     targetGroup = api.getGroupInfo(targetGroupname);
   }
-#endif  // OPT_USERGROUP_PARANOID || OPT_USERGROUP_FORCE
 
-// Owner mode only
+  if (mode == PARANOID_MODE) {
+    // Paranoid mode only
+    if (config.getParanoidUIDCheck() && targetUser != scriptFile.getUser()) {
+      std::string error = "Mismatch between target UID (" +
+                          Util::intToStr(targetUser.getUid()) + ") and UID (" +
+                          Util::intToStr(scriptFile.getUser().getUid()) +
+                          ") of file \"" + scriptFile.getPath() + "\"";
+      logger.logWarning(error);
+      throw SoftException(error, __FILE__, __LINE__);
+    }
 
-#ifdef OPT_USERGROUP_OWNER
-  targetUser = scriptFile.getUser();
-  targetGroup = scriptFile.getGroup();
-#endif  // OPT_USERGROUP_OWNER
-
-// Paranoid mode only
-
-#ifdef OPT_USERGROUP_PARANOID
-  if (config.getParanoidUIDCheck() && targetUser != scriptFile.getUser()) {
-    std::string error = "Mismatch between target UID (" +
-                        Util::intToStr(targetUser.getUid()) + ") and UID (" +
-                        Util::intToStr(scriptFile.getUser().getUid()) +
-                        ") of file \"" + scriptFile.getPath() + "\"";
-    logger.logWarning(error);
-    throw SoftException(error, __FILE__, __LINE__);
+    if (config.getParanoidGIDCheck() && targetGroup != scriptFile.getGroup()) {
+      std::string error = "Mismatch between target GID (" +
+                          Util::intToStr(targetGroup.getGid()) + ") and GID (" +
+                          Util::intToStr(scriptFile.getGroup().getGid()) +
+                          ") of file \"" + scriptFile.getPath() + "\"";
+      logger.logWarning(error);
+      throw SoftException(error, __FILE__, __LINE__);
+    }
   }
-
-  if (config.getParanoidGIDCheck() && targetGroup != scriptFile.getGroup()) {
-    std::string error = "Mismatch between target GID (" +
-                        Util::intToStr(targetGroup.getGid()) + ") and GID (" +
-                        Util::intToStr(scriptFile.getGroup().getGid()) +
-                        ") of file \"" + scriptFile.getPath() + "\"";
-    logger.logWarning(error);
-    throw SoftException(error, __FILE__, __LINE__);
-  }
-#endif  // OPT_USERGROUP_PARANOID
 }
 
 void suPHP::Application::changeProcessPermissions(

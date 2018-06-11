@@ -78,6 +78,19 @@ LogLevel suPHP::Configuration::strToLogLevel(const std::string& str) const
                            __LINE__);
 }
 
+SetidMode suPHP::Configuration::strToMode(const std::string& str) const
+    throw(ParsingException) {
+  if (str == "owner")
+    return OWNER_MODE;
+  else if (str == "force")
+    return FORCE_MODE;
+  else if (str == "paranoid")
+    return PARANOID_MODE;
+  else
+    throw ParsingException("\"" + str + "\" is not a valid mode", __FILE__,
+                           __LINE__);
+}
+
 suPHP::Configuration::Configuration() {
   this->logfile = "/var/log/suphp.log";
 #ifdef OPT_APACHE_USER
@@ -112,6 +125,13 @@ suPHP::Configuration::Configuration() {
   this->umask = 0077;
   this->chroot_path = "";
   this->full_php_process_display = false;
+#if defined OPT_USERGROUP_OWNER
+  this->mode = OWNER_MODE;
+#elif defined OPT_USERGROUP_FORCE
+  this->mode = FORCE_MODE;
+#else
+  this->mode = PARANOID_MODE;
+#endif
   this->paranoid_uid_check = true;
   this->paranoid_gid_check = true;
 }
@@ -162,6 +182,8 @@ void suPHP::Configuration::readFromFile(File& file) throw(IOException,
         this->chroot_path = value;
       else if (key == "full_php_process_display")
         this->full_php_process_display = this->strToBool(value);
+      else if (key == "mode")
+        this->mode = this->strToMode(value);
       else if (key == "paranoid_gid_check")
         this->paranoid_gid_check = this->strToBool(value);
       else if (key == "paranoid_uid_check")
@@ -243,6 +265,8 @@ bool suPHP::Configuration::getAllowDirectoryOthersWriteable() const {
 bool suPHP::Configuration::getFullPHPProcessDisplay() const {
   return this->full_php_process_display;
 }
+
+SetidMode suPHP::Configuration::getMode() const { return this->mode; }
 
 bool suPHP::Configuration::getParanoidUIDCheck() const {
   return this->paranoid_uid_check;

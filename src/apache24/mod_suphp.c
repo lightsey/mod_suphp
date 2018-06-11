@@ -118,10 +118,8 @@ typedef struct {
   int engine;  // Status of suPHP_Engine
   char *php_config;
   int cmode;  // Server of directory configuration?
-#ifdef SUPHP_USE_USERGROUP
   char *target_user;
   char *target_group;
-#endif
   apr_table_t *handlers;
   char *php_path;
 } suphp_conf;
@@ -133,11 +131,8 @@ static void *suphp_create_dir_config(apr_pool_t *p, char *dir) {
   cfg->engine = SUPHP_ENGINE_UNDEFINED;
   cfg->php_path = NULL;
   cfg->cmode = SUPHP_CONFIG_MODE_DIRECTORY;
-
-#ifdef SUPHP_USE_USERGROUP
   cfg->target_user = NULL;
   cfg->target_group = NULL;
-#endif
 
   /* Create table with 0 initial elements */
   /* This size may be increased for performance reasons */
@@ -166,7 +161,6 @@ static void *suphp_merge_dir_config(apr_pool_t *p, void *base,
   else
     merged->engine = parent->engine;
 
-#ifdef SUPHP_USE_USERGROUP
   if (child->target_user)
     merged->target_user = apr_pstrdup(p, child->target_user);
   else if (parent->target_user)
@@ -180,7 +174,6 @@ static void *suphp_merge_dir_config(apr_pool_t *p, void *base,
     merged->target_group = apr_pstrdup(p, parent->target_group);
   else
     merged->target_group = NULL;
-#endif
 
   merged->handlers = apr_table_overlay(p, child->handlers, parent->handlers);
 
@@ -217,7 +210,6 @@ static void *suphp_merge_server_config(apr_pool_t *p, void *base,
   else
     merged->php_path = apr_pstrdup(p, parent->php_path);
 
-#ifdef SUPHP_USE_USERGROUP
   if (child->target_user)
     merged->target_user = apr_pstrdup(p, child->target_user);
   else if (parent->target_user)
@@ -231,7 +223,6 @@ static void *suphp_merge_server_config(apr_pool_t *p, void *base,
     merged->target_group = apr_pstrdup(p, parent->target_group);
   else
     merged->target_group = NULL;
-#endif
 
   merged->handlers = apr_table_overlay(p, child->handlers, parent->handlers);
 
@@ -275,7 +266,6 @@ static const char *suphp_handle_cmd_config(cmd_parms *cmd, void *mconfig,
   return NULL;
 }
 
-#ifdef SUPHP_USE_USERGROUP
 static const char *suphp_handle_cmd_user_group(cmd_parms *cmd, void *mconfig,
                                                const char *arg1,
                                                const char *arg2) {
@@ -286,7 +276,6 @@ static const char *suphp_handle_cmd_user_group(cmd_parms *cmd, void *mconfig,
 
   return NULL;
 }
-#endif
 
 static const char *suphp_handle_cmd_add_handler(cmd_parms *cmd, void *mconfig,
                                                 const char *arg) {
@@ -337,11 +326,9 @@ static const command_rec suphp_cmds[] = {
                  "Whether suPHP is on or off, default is off"),
     AP_INIT_TAKE1("suPHP_ConfigPath", suphp_handle_cmd_config, NULL, OR_OPTIONS,
                   "Wheres the php.ini resides, default is the PHP default"),
-#ifdef SUPHP_USE_USERGROUP
     AP_INIT_TAKE2("suPHP_UserGroup", suphp_handle_cmd_user_group, NULL,
                   RSRC_CONF | ACCESS_CONF,
                   "User and group scripts shall be run as"),
-#endif
     AP_INIT_ITERATE("suPHP_AddHandler", suphp_handle_cmd_add_handler, NULL,
                     RSRC_CONF | ACCESS_CONF,
                     "Tells mod_suphp to handle these MIME-types"),
@@ -726,12 +713,10 @@ static int suphp_script_handler(request_rec *r) {
   char *auth_user = NULL;
   char *auth_pass = NULL;
 
-#ifdef SUPHP_USE_USERGROUP
   char *ud_user = NULL;
   char *ud_group = NULL;
   int ud_success = 0;
   ap_unix_identity_t *userdir_id = NULL;
-#endif
 
   apr_bucket_brigade *bb;
   apr_bucket *b;
@@ -778,20 +763,13 @@ static int suphp_script_handler(request_rec *r) {
     return HTTP_FORBIDDEN;
   }
 
-#ifdef SUPHP_USE_USERGROUP
   /* Check for userdir request */
   userdir_id = ap_run_get_suexec_identity(r);
   if (userdir_id != NULL && userdir_id->userdir) {
     ud_user = apr_psprintf(r->pool, "#%ld", (long)userdir_id->uid);
     ud_group = apr_psprintf(r->pool, "#%ld", (long)userdir_id->gid);
     ud_success = 1;
-  } else if ((sconf->target_user == NULL || sconf->target_group == NULL) &&
-             (dconf->target_user == NULL || dconf->target_group == NULL)) {
-    ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
-                  "No user or group set - set suPHP_UserGroup");
-    return HTTP_INTERNAL_SERVER_ERROR;
   }
-#endif
 
   /* prepare argv for new process */
 
@@ -807,13 +785,10 @@ static int suphp_script_handler(request_rec *r) {
   apr_table_unset(r->subprocess_env, "SUPHP_PHP_CONFIG");
   apr_table_unset(r->subprocess_env, "SUPHP_AUTH_USER");
   apr_table_unset(r->subprocess_env, "SUPHP_AUTH_PW");
-
-#ifdef SUPHP_USE_USERGROUP
   apr_table_unset(r->subprocess_env, "SUPHP_USER");
   apr_table_unset(r->subprocess_env, "SUPHP_GROUP");
   apr_table_unset(r->subprocess_env, "SUPHP_USERDIR_USER");
   apr_table_unset(r->subprocess_env, "SUPHP_USERDIR_GROUP");
-#endif
 
   if (dconf->php_config) {
     apr_table_setn(r->subprocess_env, "SUPHP_PHP_CONFIG",
@@ -845,16 +820,12 @@ static int suphp_script_handler(request_rec *r) {
     apr_table_setn(r->subprocess_env, "SUPHP_AUTH_PW", auth_pass);
   }
 
-#ifdef SUPHP_USE_USERGROUP
   if (dconf->target_user) {
     apr_table_setn(r->subprocess_env, "SUPHP_USER",
                    apr_pstrdup(r->pool, dconf->target_user));
   } else if (sconf->target_user) {
     apr_table_setn(r->subprocess_env, "SUPHP_USER",
                    apr_pstrdup(r->pool, sconf->target_user));
-  } else {
-    apr_table_setn(r->subprocess_env, "SUPHP_USER",
-                   apr_pstrdup(r->pool, ud_user));
   }
 
   if (dconf->target_group) {
@@ -863,17 +834,14 @@ static int suphp_script_handler(request_rec *r) {
   } else if (sconf->target_group) {
     apr_table_setn(r->subprocess_env, "SUPHP_GROUP",
                    apr_pstrdup(r->pool, sconf->target_group));
-  } else {
-    apr_table_setn(r->subprocess_env, "SUPHP_GROUP",
-                   apr_pstrdup(r->pool, ud_group));
   }
+
   if (ud_success) {
     apr_table_setn(r->subprocess_env, "SUPHP_USERDIR_USER",
                    apr_pstrdup(r->pool, ud_user));
     apr_table_setn(r->subprocess_env, "SUPHP_USERDIR_GROUP",
                    apr_pstrdup(r->pool, ud_group));
   }
-#endif
 
   env = ap_create_environment(p, r->subprocess_env);
 

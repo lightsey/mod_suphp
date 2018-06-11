@@ -38,6 +38,9 @@ class Configuration;
 #include "ParsingException.hpp"
 
 namespace suPHP {
+
+enum SetidMode { OWNER_MODE, FORCE_MODE, PARANOID_MODE };
+
 /**
  * Class encapsulating run-time configuration.
  */
@@ -62,6 +65,7 @@ class Configuration {
   int umask;
   std::string chroot_path;
   bool full_php_process_display;
+  SetidMode mode;
   bool paranoid_uid_check;
   bool paranoid_gid_check;
 
@@ -74,6 +78,11 @@ class Configuration {
    * Converts string to LogLevel
    */
   LogLevel strToLogLevel(const std::string& str) const throw(ParsingException);
+
+  /**
+   * Converts string to SetidMode
+   */
+  SetidMode strToMode(const std::string& str) const throw(ParsingException);
 
  public:
   /**
@@ -147,6 +156,12 @@ class Configuration {
    * command line arguments so that it is visible to ps.
    */
   bool getFullPHPProcessDisplay() const;
+
+  /**
+   * Returns the configured mode for UID/GID determination and
+   * ownership checks
+   */
+  SetidMode getMode() const;
 
   /**
    * Returns whether suPHP should check the target script GID in
