@@ -447,6 +447,9 @@ static apr_status_t suphp_bucket_read(apr_bucket *b, const char **str,
   apr_status_t rv;
   int gotdata = 0;
 
+  /* Some modules check the length rather than the returned status */
+  *len = 0;
+
   timeout = (block == APR_NONBLOCK_READ) ? 0 : data->r->server->timeout;
 
   do {
