@@ -86,23 +86,12 @@ if test -n "$APXS"; then
                     | cut -f1 -d" "`
     major_version=`echo $APACHE_VERSION|cut -f1,2 -d.`
     if test "$major_version" = "2.4"; then
-      APACHE_VERSION_2_4=true
-      APACHE_VERSION_2=false
+      APXS_EXTRA_CFLAGS=`$APXS -q CFLAGS`
     else
-      APACHE_VERSION_2=true
-      APACHE_VERSION_2_4=false
-    fi
-    AC_SUBST(APACHE_VERSION_2_4)
-    AC_SUBST(APACHE_VERSION_2)
-    
-    APXS_INCLUDEDIR=`$APXS -q INCLUDEDIR`
-    APXS_LIBEXECDIR=`$APXS -q LIBEXECDIR`
-    if test x"${APACHE_VERSION_2}" = xtrue ; then \
       APXS_EXTRA_CFLAGS=`$APXS -q EXTRA_CFLAGS`
     fi
-    if test x"${APACHE_VERSION_2_4}" = xtrue; then \
-      APXS_EXTRA_CFLAGS=`$APXS -q CFLAGS`
-    fi
+    APXS_INCLUDEDIR=`$APXS -q INCLUDEDIR`
+    APXS_LIBEXECDIR=`$APXS -q LIBEXECDIR`
     AC_SUBST([APXS_INCLUDEDIR])
     AC_SUBST([APXS_LIBEXECDIR])
     AC_SUBST([APXS_EXTRA_CFLAGS])
@@ -251,14 +240,10 @@ path to logfile])
             ])
 
 
-# Conditional building of Apache module
-AM_CONDITIONAL([COND_AP20], [test x"$APACHE_VERSION_2" = xtrue])
-AM_CONDITIONAL([COND_AP24], [test x"$APACHE_VERSION_2_4" = xtrue])
-
 # Conditionally include UserGroup support
 AM_CONDITIONAL([COND_APUSERGROUP], [test \( x"$SETID_MODE" = xparanoid \) -o \( x"$SETID_MODE" = xforce \) ])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/apache2/Makefile src/apache24/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile src/apache2/Makefile])
 AC_OUTPUT
 
 if test "$APXS" = "/notfound/"; then

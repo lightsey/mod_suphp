@@ -33,6 +33,10 @@
 #include "http_core.h"
 #include "http_log.h"
 
+#if AP_SERVER_MINORVERSION_NUMBER >= 4
+#include "http_request.h"
+#endif
+
 #include "util_filter.h"
 #include "util_script.h"
 
@@ -356,7 +360,6 @@ static apr_bucket *suphp_bucket_create(request_rec *r, apr_file_t *out,
                                        apr_file_t *err,
                                        apr_bucket_alloc_t *list) {
   apr_bucket *b = apr_bucket_alloc(sizeof(*b), list);
-  apr_status_t rv;
   apr_pollfd_t fd;
   struct suphp_bucket_data *data = apr_palloc(r->pool, sizeof(*data));
 
@@ -368,21 +371,18 @@ static apr_bucket *suphp_bucket_create(request_rec *r, apr_file_t *out,
   b->start = (-1);
 
   /* Create the pollset */
-  rv = apr_pollset_create(&data->pollset, 2, r->pool, 0);
-  AP_DEBUG_ASSERT(rv == APR_SUCCESS);
+  apr_pollset_create(&data->pollset, 2, r->pool, 0);
 
   fd.desc_type = APR_POLL_FILE;
   fd.reqevents = APR_POLLIN;
   fd.p = r->pool;
   fd.desc.f = out; /* script's stdout */
   fd.client_data = (void *)1;
-  rv = apr_pollset_add(data->pollset, &fd);
-  AP_DEBUG_ASSERT(rv == APR_SUCCESS);
+  apr_pollset_add(data->pollset, &fd);
 
   fd.desc.f = err; /* script's stderr */
   fd.client_data = (void *)2;
-  rv = apr_pollset_add(data->pollset, &fd);
-  AP_DEBUG_ASSERT(rv == APR_SUCCESS);
+  apr_pollset_add(data->pollset, &fd);
 
   data->r = r;
   b->data = data;
@@ -703,7 +703,6 @@ static int suphp_script_handler(request_rec *r) {
   char **argv;
   char **env;
   apr_status_t rv;
-  int len = 0;
 #if MAX_STRING_LEN < 1024
   char strbuf[1024];
 #else
