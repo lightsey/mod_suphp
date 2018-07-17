@@ -210,19 +210,27 @@ AC_ARG_WITH([min-gid],
 
 
 # Webserver user
-
 AC_ARG_WITH([apache-user],
             AC_HELP_STRING([--with-apache-user=USERNAME],
                            [Name of the user Apache is running as
-(default is "wwwrun"]),
+(default is "www-data" on Debian, "apache" on RedHat, and "wwwrun" on other systems)]),
             [
              if test "$withval" -a ! "$withval" = "yes" ; then
-               AC_DEFINE_UNQUOTED(OPT_APACHE_USER, "$withval", [Defines the username of the Apache user])
+               webserver_user = "$withval"
              fi
-            ],
-            [
-             AC_DEFINE_UNQUOTED(OPT_APACHE_USER, "wwwrun", [Defines the username of the Apache user])
             ])
+
+if test -z "$webserver_user"; then
+    if test -e "/etc/redhat-release" ; then
+        webserver_user="apache"
+    elif test -e "/etc/debian_version" ; then
+        webserver_user="www-data"
+    else
+        webserver_user="wwwrun"
+    fi
+fi
+
+AC_DEFINE_UNQUOTED(OPT_APACHE_USER, "$webserver_user", [Defines the username of the Apache user])
 
 # Path to logfile
 
