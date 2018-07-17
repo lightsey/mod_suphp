@@ -91,50 +91,49 @@ SetidMode suPHP::Configuration::strToMode(const std::string& str) const
                            __LINE__);
 }
 
-suPHP::Configuration::Configuration() {
-  this->logfile = "/var/log/suphp.log";
+suPHP::Configuration::Configuration()
+    : logfile{"/var/log/suphp.log"},
 #ifdef OPT_APACHE_USER
-  this->webserver_user = OPT_APACHE_USER;
+      webserver_user{OPT_APACHE_USER},
 #else
-  this->webserver_user = "wwwrun";
+      webserver_user{"wwwrun"},
 #endif
-  this->docroots.push_back("/");
-  this->allow_file_group_writeable = false;
-  this->allow_directory_group_writeable = false;
-  this->allow_file_others_writeable = false;
-  this->allow_directory_others_writeable = false;
+      docroots(1, "/"),
+      allow_file_group_writeable{false},
+      allow_directory_group_writeable{false},
+      allow_file_others_writeable{false},
+      allow_directory_others_writeable{false},
 #ifdef OPT_DISABLE_CHECKPATH
-  this->check_vhost_docroot = false;
+      check_vhost_docroot{false},
 #else
-  this->check_vhost_docroot = true;
+      check_vhost_docroot{true},
 #endif
-  this->userdir_overrides_usergroup = false;
-  this->errors_to_browser = false;
-  this->env_path = "/bin:/usr/bin";
-  this->loglevel = LOGLEVEL_INFO;
+      userdir_overrides_usergroup{false},
+      errors_to_browser{false},
+      env_path{"/bin:/usr/bin"},
+      loglevel{LOGLEVEL_INFO},
 #ifdef OPT_MIN_UID
-  this->min_uid = OPT_MIN_UID;
+      min_uid{OPT_MIN_UID},
 #else
-  this->min_uid = 1;
+      min_uid{1},
 #endif
 #ifdef OPT_MIN_GID
-  this->min_gid = OPT_MIN_GID;
+      min_gid{OPT_MIN_GID},
 #else
-  this->min_gid = 1;
+      min_gid{1},
 #endif
-  this->umask = 0077;
-  this->chroot_path = "";
-  this->full_php_process_display = false;
+      umask{0077},
+      chroot_path{""},
+      full_php_process_display{false},
 #if defined OPT_USERGROUP_OWNER
-  this->mode = OWNER_MODE;
+      mode{OWNER_MODE},
 #elif defined OPT_USERGROUP_FORCE
-  this->mode = FORCE_MODE;
+      mode{FORCE_MODE},
 #else
-  this->mode = PARANOID_MODE;
+      mode{PARANOID_MODE},
 #endif
-  this->paranoid_uid_check = true;
-  this->paranoid_gid_check = true;
-}
+      paranoid_uid_check{true},
+      paranoid_gid_check{true} {};
 
 void suPHP::Configuration::readFromFile(File& file) throw(IOException,
                                                           ParsingException) {
