@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_API_LINUX_H
-
-namespace suPHP {
-class API_Linux;
-};
-
 #define SUPHP_API_LINUX_H
 
 #include <string>
@@ -203,6 +198,6 @@ class API_Linux : public API {
    */
   virtual void chroot(const std::string& dir) const throw(SystemException);
 };
-};
+}
 
 #endif  // SUPHP_API_LINUX_H

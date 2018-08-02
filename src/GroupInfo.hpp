@@ -23,7 +23,7 @@
 
 namespace suPHP {
 class GroupInfo;
-};
+}
 
 #define SUPHP_GROUPINFO_H
 
@@ -72,6 +72,6 @@ class GroupInfo {
    */
   bool operator!=(const GroupInfo& ginfo) const;
 };
-};
+}
 
 #endif  // SUPHP_GROUPINFO_H

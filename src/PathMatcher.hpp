@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_PATHMATCHER_H
-
-namespace suPHP {
-class PathMatcher;
-};
-
 #define SUPHP_PATHMATCHER_H
 
 #include <string>
@@ -59,6 +54,6 @@ class PathMatcher {
   std::string resolveVariables(std::string str) throw(KeyNotFoundException,
                                                       ParsingException);
 };
-};
+}
 
 #endif  // SUPHP_PATHMATCHER_H

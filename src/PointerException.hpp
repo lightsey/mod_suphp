@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_POINTEREXCEPTION_H
-
-namespace suPHP {
-class PointerException;
-};
-
 #define SUPHP_POINTEREXCEPTION_H
 
 #include <iostream>
@@ -63,6 +58,6 @@ class PointerException : public Exception {
   PointerException(std::string message, Exception& cause, std::string file,
                    int line);
 };
-};
+}
 
 #endif  // SUPHP_POINTEREXCEPTION_H

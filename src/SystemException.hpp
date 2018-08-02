@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_SYSTEMEXCEPTION_H
-
-namespace suPHP {
-class SystemException;
-};
-
 #define SUPHP_SYSTEMEXCEPTION_H
 
 #include <iostream>
@@ -62,6 +57,6 @@ class SystemException : public Exception {
   SystemException(std::string message, Exception& cause, std::string file,
                   int line);
 };
-};
+}
 
 #endif  // SUPHP_SYSTEMEXCEPTION_H

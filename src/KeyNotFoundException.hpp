@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_KEYNOTFOUNDEXCEPTION_H
-
-namespace suPHP {
-class KeyNotFoundException;
-};
-
 #define SUPHP_KEYNOTFOUNDEXCEPTION_H
 
 #include <iostream>
@@ -62,6 +57,6 @@ class KeyNotFoundException : public Exception {
   KeyNotFoundException(std::string message, Exception& cause, std::string file,
                        int line);
 };
-};
+}
 
 #endif  // SUPHP_KEYNOTFOUNDEXCEPTION_H

@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_SOFTEXCEPTION_H
-
-namespace suPHP {
-class SoftException;
-};
-
 #define SUPHP_SOFTEXCEPTION_H
 
 #include <iostream>
@@ -63,6 +58,6 @@ class SoftException : public Exception {
   SoftException(std::string message, Exception& cause, std::string file,
                 int line);
 };
-};
+}
 
 #endif  // SUPHP_SOFTEXCEPTION_H

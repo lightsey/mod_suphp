@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_OUTOFRANGEEXCEPTION_H
-
-namespace suPHP {
-class OutOfRangeException;
-};
-
 #define SUPHP_OUTOFRANGEEXCEPTION_H
 
 #include <iostream>
@@ -62,6 +57,6 @@ class OutOfRangeException : public Exception {
   OutOfRangeException(std::string message, Exception& cause, std::string file,
                       int line);
 };
-};
+}
 
 #endif  // SUPHP_OUTOFRANGEEXCEPTION_H

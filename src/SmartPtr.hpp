@@ -23,7 +23,7 @@
 
 namespace suPHP {
 class Environment;
-};
+}
 
 #define SUPHP_SMARTPTR_H
 
@@ -232,6 +232,6 @@ bool suPHP::SmartPtr<T>::operator==(const SmartPtr<T>& ref) {
   else
     return false;
 }
-};
+}
 
 #endif  // SUPHP_SMARTPTR_H

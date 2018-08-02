@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_LOOKUPEXCEPTION_H
-
-namespace suPHP {
-class LookupException;
-};
-
 #define SUPHP_LOOKUPEXCEPTION_H
 
 #include <iostream>
@@ -63,6 +58,6 @@ class LookupException : public Exception {
   LookupException(std::string message, Exception& cause, std::string file,
                   int line);
 };
-};
+}
 
 #endif  // SUPHP_LOOKUPEXCEPTION_H

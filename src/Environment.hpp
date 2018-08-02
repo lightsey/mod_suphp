@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_ENVIRONMENT_H
-
-namespace suPHP {
-class Environment;
-};
-
 #define SUPHP_ENVIRONMENT_H
 
 #include <map>
@@ -77,6 +72,6 @@ class Environment {
    */
   const std::map<std::string, std::string>& getBackendMap() const;
 };
-};
+}
 
 #endif  // SUPHP_ENVIRONMENT_H

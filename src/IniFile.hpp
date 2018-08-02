@@ -20,17 +20,13 @@
 */
 
 #ifndef SUPHP_INIFILE_H
-
-namespace suPHP {
-class IniFile;
-};
-
 #define SUPHP_INIFILE_H
 
 #include <map>
 #include <string>
 #include <vector>
 
+#include "File.hpp"
 #include "IOException.hpp"
 #include "IniSection.hpp"
 #include "KeyNotFoundException.hpp"
@@ -75,6 +71,6 @@ class IniFile {
    */
   bool hasSection(const std::string& name) const;
 };
-};
+}
 
 #endif  // SUPHP_INIFILE_H

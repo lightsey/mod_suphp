@@ -25,12 +25,11 @@ namespace suPHP {
 class Logger;
 
 enum LogLevel { LOGLEVEL_NONE, LOGLEVEL_ERROR, LOGLEVEL_WARN, LOGLEVEL_INFO };
-};
+}
 
 #define SUPHP_LOGGER_H
 
 #include "Configuration.hpp"
-//#include "API_Helper.hpp"
 
 namespace suPHP {
 /**
@@ -92,6 +91,6 @@ class Logger {
    */
   virtual void logError(const std::string& message);
 };
-};
+}
 
 #endif  // SUPHP_LOGGER_H

@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_UTIL_H
-
-namespace suPHP {
-class Util;
-};
-
 #define SUPHP_UTIL_H
 
 #include <string>
@@ -39,6 +34,6 @@ class Util {
   static int strToInt(const std::string istr);
   static int octalStrToInt(const std::string istr);
 };
-};
+}
 
 #endif  // SUPHP_UTIL_H

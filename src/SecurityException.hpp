@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_SECURITYEXCEPTION_H
-
-namespace suPHP {
-class SecurityException;
-};
-
 #define SUPHP_SECURITYEXCEPTION_H
 
 #include <iostream>
@@ -62,6 +57,6 @@ class SecurityException : public Exception {
   SecurityException(std::string message, Exception& cause, std::string file,
                     int line);
 };
-};
+}
 
 #endif  // SUPHP_SECURITYEXCEPTION_H

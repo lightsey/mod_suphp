@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_IOEXCEPTION_H
-
-namespace suPHP {
-class IOException;
-};
-
 #define SUPHP_IOEXCEPTION_H
 
 #include <iostream>
@@ -62,6 +57,6 @@ class IOException : public Exception {
   IOException(std::string message, Exception& cause, std::string file,
               int line);
 };
-};
+}
 
 #endif  // SUPHP_IOEXCEPTION_H

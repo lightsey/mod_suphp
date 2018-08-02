@@ -20,13 +20,6 @@
 */
 
 #ifndef SUPHP_APPLICATION_H
-
-namespace suPHP {
-class Application;
-};
-
-enum TargetMode { TARGETMODE_PHP, TARGETMODE_SELFEXECUTE };
-
 #define SUPHP_APPLICATION_H
 
 #include <iostream>
@@ -41,6 +34,9 @@ enum TargetMode { TARGETMODE_PHP, TARGETMODE_SELFEXECUTE };
 #include "UserInfo.hpp"
 
 namespace suPHP {
+
+enum TargetMode { TARGETMODE_PHP, TARGETMODE_SELFEXECUTE };
+
 /**
  * Main application class.
  * Contains the main() function.
@@ -152,7 +148,7 @@ class Application {
    */
   int run(CommandLine& cmdline, const Environment& env);
 };
-};
+}
 
 int main(int argc, char** argv);
 

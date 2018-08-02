@@ -133,7 +133,8 @@ suPHP::Configuration::Configuration()
       mode{PARANOID_MODE},
 #endif
       paranoid_uid_check{true},
-      paranoid_gid_check{true} {};
+      paranoid_gid_check{true} {
+}
 
 void suPHP::Configuration::readFromFile(File& file) throw(IOException,
                                                           ParsingException) {

@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_PARSINGEXCEPTION_H
-
-namespace suPHP {
-class ParsingException;
-};
-
 #define SUPHP_PARSINGEXCEPTION_H
 
 #include <iostream>
@@ -62,6 +57,6 @@ class ParsingException : public Exception {
   ParsingException(std::string message, Exception& cause, std::string file,
                    int line);
 };
-};
+}
 
 #endif  // SUPHP_PARSINGEXCEPTION_H

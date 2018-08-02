@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_COMMANDLINE_H
-
-namespace suPHP {
-class CommandLine;
-};
-
 #define SUPHP_COMMANDLINE_H
 
 #include <string>
@@ -81,6 +76,6 @@ class CommandLine {
    */
   size_type size() const;
 };
-};
+}
 
 #endif  // SUPHP_COMMANDLINE_H

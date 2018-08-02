@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_EXCEPTION_H
-
-namespace suPHP {
-class Exception;
-};
-
 #define SUPHP_EXCEPTION_H
 
 #include <iostream>
@@ -76,6 +71,6 @@ class Exception {
 };
 
 std::ostream& operator<<(std::ostream& os, const Exception& e);
-};
+}
 
 #endif  // SUPHP_EXCEPTION_H

@@ -23,7 +23,7 @@
 
 namespace suPHP {
 class API;
-};
+}
 
 #define SUPHP_API_H
 
@@ -195,6 +195,6 @@ class API {
    */
   virtual void chroot(const std::string& dir) const throw(SystemException) = 0;
 };
-};
+}
 
 #endif  // SUPHP_API_H

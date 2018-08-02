@@ -35,7 +35,7 @@ enum FileMode {
   FILEMODE_OTHERS_WRITE,
   FILEMODE_OTHERS_EXEC
 };
-};
+}
 
 #define SUPHP_FILE_H
 
@@ -149,6 +149,6 @@ class File {
    */
   bool isSymlink() const throw(SystemException);
 };
-};
+}
 
 #endif  // SUPHP_FILE_H

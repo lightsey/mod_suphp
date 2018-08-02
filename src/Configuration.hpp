@@ -23,7 +23,7 @@
 
 namespace suPHP {
 class Configuration;
-};
+}
 
 #define SUPHP_CONFIGURATION_H
 
@@ -216,6 +216,6 @@ class Configuration {
    */
   std::string getChrootPath() const;
 };
-};
+}
 
 #endif  // SUPHP_CONFIGURATION_H

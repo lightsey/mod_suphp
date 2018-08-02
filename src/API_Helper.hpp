@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_API_HELPER_H
-
-namespace suPHP {
-class API_Helper;
-};
-
 #define SUPHP_API_HELPER_H
 
 #include "API.hpp"
@@ -44,6 +39,6 @@ class API_Helper {
    */
   static API& getSystemAPI();
 };
-};
+}
 
 #endif  // SUPHP_API_HELPER_H

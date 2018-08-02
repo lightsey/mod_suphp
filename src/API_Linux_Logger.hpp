@@ -20,11 +20,6 @@
 */
 
 #ifndef SUPHP_API_LINUX_LOGGER_H
-
-namespace suPHP {
-class API_Linux_Logger;
-};
-
 #define SUPHP_API_LINUX_LOGGER_H
 
 #include "Logger.hpp"
@@ -60,6 +55,6 @@ class API_Linux_Logger : public Logger {
    */
   virtual bool isInitialized();
 };
-};
+}
 
 #endif  // SUPHP_API_LINUX_LOGGER_H

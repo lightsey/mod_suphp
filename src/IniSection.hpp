@@ -20,22 +20,18 @@
 */
 
 #ifndef SUPHP_INISECTION_H
-
-namespace suPHP {
-class IniSection;
-};
-
 #define SUPHP_INISECTION_H
 
 #include <map>
 #include <string>
 #include <vector>
 
-#include "File.hpp"
-#include "IniFile.hpp"
 #include "KeyNotFoundException.hpp"
 
 namespace suPHP {
+
+class IniFile;
+
 /**
  * Class providing access to configuration in a INI file.
  */
@@ -75,6 +71,6 @@ class IniSection {
    */
   bool hasKey(const std::string& name) const;
 };
-};
+}
 
 #endif  // SUPHP_INISECTION_H

@@ -23,7 +23,7 @@
 
 namespace suPHP {
 class UserInfo;
-};
+}
 
 #define SUPHP_USERINFO_H
 
@@ -88,6 +88,6 @@ class UserInfo {
    */
   bool operator!=(const UserInfo& uinfo) const;
 };
-};
+}
 
 #endif  // SUPHP_USERINFO_H
