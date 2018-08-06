@@ -1,8 +1,9 @@
 debian9_build:
   image: debian:stable
   script:
+    - apt-get update
     - apt-get -y install build-essential autoconf automake libtool apache2 apache2-dev
-    - autoreconf
+    - autoreconf -i
     - CFLAGS="-Wpedantic -Werror" CXXFLAGS="-Wpedantic -Werror" ./configure
     - make
 
@@ -11,7 +12,7 @@ centos6_build:
   script:
     - yum makecache fast
     - yum -y install autoconf automake libtool gcc gcc-c++ httpd-devel
-    - autoreconf
+    - autoreconf -i
     - CFLAGS="-Wpedantic -Werror" CXXFLAGS="-Wpedantic -Werror" ./configure
     - make
 
@@ -20,6 +21,6 @@ centos7_build:
   script:
     - yum makecache fast
     - yum -y install autoconf automake libtool gcc gcc-c++ httpd-devel
-    - autoreconf
+    - autoreconf -i
     - CFLAGS="-Wpedantic -Werror" CXXFLAGS="-Wpedantic -Werror" ./configure
     - make
