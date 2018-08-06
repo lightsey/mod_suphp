@@ -11,7 +11,7 @@ centos6_build:
   image: centos:6
   script:
     - yum makecache fast
-    - yum -y install autoconf automake libtool gcc gcc-c++ httpd-devel
+    - yum -y install autoconf automake libtool gcc gcc-c++ httpd-devel which
     - autoreconf -i
     - CFLAGS="-Wpedantic -Werror" CXXFLAGS="-Wpedantic -Werror" ./configure
     - make
@@ -20,7 +20,7 @@ centos7_build:
   image: centos:7
   script:
     - yum makecache fast
-    - yum -y install autoconf automake libtool gcc gcc-c++ httpd-devel
+    - yum -y install autoconf automake libtool gcc gcc-c++ httpd-devel which
     - autoreconf -i
     - CFLAGS="-Wpedantic -Werror" CXXFLAGS="-Wpedantic -Werror" ./configure
     - make

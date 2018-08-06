@@ -5,7 +5,7 @@ AC_INIT([suPHP], [0.8.0-pre], [john@nixnuts.net], [suphp])
 
 # Auxiliary tools
 AC_CONFIG_AUX_DIR([config])
-AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_MACRO_DIR([m4])
 
 # Check for right directory
 AC_CONFIG_SRCDIR([src/Application.cpp])
