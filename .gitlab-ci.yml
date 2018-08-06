@@ -13,7 +13,7 @@ centos6_build:
     - yum makecache fast
     - yum -y install autoconf automake libtool make gcc gcc-c++ httpd-devel which
     - autoreconf -i
-    - CFLAGS="-Wpedantic -Werror" CXXFLAGS="-Wpedantic -Werror" ./configure
+    - CFLAGS="-pedantic -Werror" CXXFLAGS="-pedantic -Werror" ./configure
     - make
 
 centos7_build:
