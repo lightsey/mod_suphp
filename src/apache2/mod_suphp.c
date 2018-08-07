@@ -33,7 +33,7 @@
 #include "http_core.h"
 #include "http_log.h"
 
-#if AP_SERVER_MAJORVERSION_NUMBER >= 2 && AP_SERVER_MINORVERSION_NUMBER >= 4
+#if HTTP_VERSION(AP_SERVER_MAJORVERSION_NUMBER, AP_SERVER_MINORVERSION_NUMBER) >= 2002
 #include "http_request.h"
 #endif
 

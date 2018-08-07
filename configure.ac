@@ -85,11 +85,12 @@ if test -n "$APXS"; then
                     | cut -f2 -d":" \
                     | cut -f2 -d"/" \
                     | cut -f1 -d" "`
-    major_version=`echo $APACHE_VERSION|cut -f1,2 -d.`
-    if test "$major_version" = "2.4"; then
+    major_version=`echo $APACHE_VERSION|cut -f1 -d.`
+    minor_version=`echo $APACHE_VERSION|cut -f2 -d.`
+    if test "$major_version" -ge "2" -a "$minor_version" -ge "2"; then
       APXS_EXTRA_CFLAGS=`$APXS -q CFLAGS`
     else
-      APXS_EXTRA_CFLAGS=`$APXS -q EXTRA_CFLAGS`
+      AC_MSG_ERROR([Apache must be version 2.2 or later])
     fi
     APXS_INCLUDEDIR=`$APXS -q INCLUDEDIR`
     APXS_LIBEXECDIR=`$APXS -q LIBEXECDIR`
