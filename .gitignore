@@ -1,6 +1,7 @@
 # Autotools generated files
 Makefile.in
 src/config.h.in
+src/config.h.in~
 configure
 autom4te.cache/
 config/
@@ -22,6 +23,9 @@ src/stamp-h1
 *.lo
 .libs
 src/suphp
+tests/test
+tests/*.log
+tests/*.trs
 
 # Tarballs
 *.tar.gz

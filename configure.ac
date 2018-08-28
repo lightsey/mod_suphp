@@ -12,7 +12,7 @@ AC_CONFIG_SRCDIR([src/Application.cpp])
 # Config headers for automake
 AM_CONFIG_HEADER([src/config.h])
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([-Wall -Werror subdir-objects])
 
 # Build time sanity check
 AM_SANITY_CHECK
@@ -24,6 +24,7 @@ AC_PROG_INSTALL
 AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_CXX
+AM_PROG_AR
 AM_PROG_LIBTOOL
 
 AX_CXX_COMPILE_STDCXX_11(,optional)
@@ -253,7 +254,13 @@ path to logfile])
 # Conditionally include UserGroup support
 AM_CONDITIONAL([COND_APUSERGROUP], [test \( x"$SETID_MODE" = xparanoid \) -o \( x"$SETID_MODE" = xforce \) ])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/apache2/Makefile])
+# Verify submodules are installed when building from a git checkout
+AM_CONDITIONAL([SUBMODULES_INSTALLED], [test -e googletest/googletest/src/gtest-all.cc])
+
+AM_COND_IF([SUBMODULES_INSTALLED],,[AC_MSG_WARN([The "check" target uses submodules. The unit tests will not function until you run "git submodule update".])])
+
+AC_CONFIG_FILES([Makefile src/Makefile src/apache2/Makefile tests/Makefile])
+
 AC_OUTPUT
 
 if test "$APXS" = "/notfound/"; then
