@@ -35,9 +35,11 @@ if test "$HAVE_CXX11" != "1"; then
   AX_CXX_COMPILE_STDCXX_0X
   if test "x$ax_cv_cxx_compile_cxx0x_native" != xyes; then
     if test "x$ax_cv_cxx_compile_cxx0x_gxx" = xyes; then
-      CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+      CXX+=" -std=gnu++0x -DGTEST_LANG_CXX11=0"
+      CXXCPP+=" -std=gnu++0x -DGTEST_LANG_CXX11=0"
     elif test "x$ax_cv_cxx_compile_cxx0x_cxx" = xyes; then
-      CXXFLAGS="$CXXFLAGS -std=c++0x"
+      CXX+=" -std=c++0x -DGTEST_LANG_CXX11=0"
+      CXXCPP+=" -std=c++0x -DGTEST_LANG_CXX11=0"
     else
       AC_MSG_ERROR([A compiler with C++11 or C++0x support is required to build mod_suphp])
     fi

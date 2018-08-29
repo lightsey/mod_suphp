@@ -1,11 +1,15 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+
 debian9_build:
   image: debian:stable
   script:
     - apt-get update
     - apt-get -y install build-essential autoconf automake libtool apache2 apache2-dev
     - autoreconf -i
-    - CFLAGS="-Wpedantic -Werror" CXXFLAGS="-Wpedantic -Werror" ./configure
+    - CFLAGS="-Wall -Wpedantic -Werror" CXXFLAGS="-Wall -Wpedantic -Werror" ./configure
     - make
+    - make check
 
 centos6_build:
   image: centos:6
@@ -13,8 +17,9 @@ centos6_build:
     - yum makecache fast
     - yum -y install autoconf automake libtool make gcc gcc-c++ httpd-devel which
     - autoreconf -i
-    - CFLAGS="-pedantic -Werror" CXXFLAGS="-pedantic -Werror" ./configure
+    - CFLAGS="-Wall -pedantic -Werror" CXXFLAGS="-Wall -pedantic -Werror" ./configure
     - make
+    - make CXXFLAGS="-Wall -Werror" check
 
 centos7_build:
   image: centos:7
@@ -22,5 +27,6 @@ centos7_build:
     - yum makecache fast
     - yum -y install autoconf automake libtool make gcc gcc-c++ httpd-devel which
     - autoreconf -i
-    - CFLAGS="-Wpedantic -Werror" CXXFLAGS="-Wpedantic -Werror" ./configure
+    - CFLAGS="-std=gnu99 -Wall -Wpedantic -Werror" CXXFLAGS="-Wall -Wpedantic -Werror" ./configure
     - make
+    - make check
