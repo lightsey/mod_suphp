@@ -24,8 +24,6 @@ AC_PROG_INSTALL
 AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_CXX
-AM_PROG_AR
-AM_PROG_LIBTOOL
 
 AX_CXX_COMPILE_STDCXX_11(,optional)
 if test "$HAVE_CXX11" != "1"; then
@@ -45,6 +43,10 @@ if test "$HAVE_CXX11" != "1"; then
     fi
   fi
 fi
+
+# Libtool
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+AM_PROG_LIBTOOL
 
 # Checks for header files.
 AC_HEADER_STDC
