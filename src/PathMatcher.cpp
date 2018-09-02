@@ -55,7 +55,9 @@ bool PathMatcher<TUserInfo, TGroupInfo>::matches(
           }
         }
       } else {
-        if (c == '\\') {
+        if (i >= remainingPath.length()) {
+          return false;
+        } else if (c == '\\' && remainingPattern.length() > i + 1) {
           escapeNext = true;
         } else if (c == '*') {
           remainingPattern = remainingPattern.substr(i + 1);
@@ -94,30 +96,35 @@ bool PathMatcher<TUserInfo, TGroupInfo>::matches(
                 "Incorrect use of $ in pattern \"" + pattern + "\".", __FILE__,
                 __LINE__);
           }
-          std::string varName =
-              remainingPattern.substr(i + 2, closingBrace - i - 2);
-          remainingPattern = lookupVariable(varName) +
-                             remainingPattern.substr(closingBrace + 1);
-          break;
-        } else {
-          if (i >= remainingPath.length() || c != remainingPath.at(i)) {
-            return false;
+          std::string varValue = lookupVariable(
+              remainingPattern.substr(i + 2, closingBrace - i - 2));
+          if (remainingPath.compare(i, varValue.length(), varValue) == 0) {
+            remainingPattern = remainingPattern.substr(closingBrace + 1);
+            remainingPath = remainingPath.substr(varValue.length() + i);
+            break;
           }
-          if (i == remainingPattern.length() - 1) {
-            if (c == '/' || (i + 1 < remainingPath.length() &&
-                             remainingPath.at(i + 1) == '/')) {
-              // Path represents file in subdirectory
-              return true;
-            } else if (remainingPath.length() == remainingPattern.length()) {
-              // Exact match
-              return true;
-            } else {
-              return false;
-            }
+          return false;
+        } else if (c != remainingPath.at(i)) {
+          return false;
+        } else if (i == remainingPattern.length() - 1) {
+          if (c == '/' || (i + 1 < remainingPath.length() &&
+                           remainingPath.at(i + 1) == '/')) {
+            // Path represents file in subdirectory
+            return true;
+          } else if (remainingPath.length() == remainingPattern.length()) {
+            // Exact match
+            return true;
+          } else {
+            return false;
           }
         }
       }
     }
+  }
+  if (remainingPattern.length() == 0 &&
+      (remainingPath.length() == 0 || remainingPath.at(0) == '/')) {
+    // Pattern was empty or ended with an escape sequence, glob or variable
+    return true;
   }
   return false;
 }

@@ -42,7 +42,7 @@ class PathMatcher {
   /**
    * Contructor
    */
-    PathMatcher(const TUserInfo& cuser, const TGroupInfo& cgroup) : user{cuser}, group{cgroup} {};
+    PathMatcher(const TUserInfo& cuser, const TGroupInfo& cgroup) : user(cuser), group(cgroup) {};
 
   /**
    * Checks wheter a path matches a pattern
