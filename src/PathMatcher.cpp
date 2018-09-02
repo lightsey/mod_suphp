@@ -22,16 +22,12 @@
 #include "PathMatcher.hpp"
 #include "Util.hpp"
 
-using namespace suPHP;
+namespace suPHP {
 
-suPHP::PathMatcher::PathMatcher(const UserInfo& user, const GroupInfo& group) {
-  this->user = user;
-  this->group = group;
-}
-
-bool suPHP::PathMatcher::matches(std::string pattern,
-                                 std::string path) throw(KeyNotFoundException,
-                                                         ParsingException) {
+template <class TUserInfo, class TGroupInfo>
+bool PathMatcher<TUserInfo, TGroupInfo>::matches(
+    std::string pattern, std::string path) throw(KeyNotFoundException,
+                                                 ParsingException) {
   std::string remainingPath = path;
   std::string remainingPattern = pattern;
 
@@ -126,8 +122,9 @@ bool suPHP::PathMatcher::matches(std::string pattern,
   return false;
 }
 
-std::string suPHP::PathMatcher::lookupVariable(std::string str) throw(
-    KeyNotFoundException) {
+template <class TUserInfo, class TGroupInfo>
+std::string PathMatcher<TUserInfo, TGroupInfo>::lookupVariable(
+    std::string str) throw(KeyNotFoundException) {
   std::string rv;
   if (str == "USERNAME") {
     rv = user.getUsername();
@@ -147,8 +144,9 @@ std::string suPHP::PathMatcher::lookupVariable(std::string str) throw(
   return rv;
 }
 
-std::string suPHP::PathMatcher::resolveVariables(std::string str) throw(
-    KeyNotFoundException, ParsingException) {
+template <class TUserInfo, class TGroupInfo>
+std::string PathMatcher<TUserInfo, TGroupInfo>::resolveVariables(
+    std::string str) throw(KeyNotFoundException, ParsingException) {
   std::string out;
   bool escapeNext = false;
   for (std::string::size_type i = 0; i < str.length(); i++) {
@@ -191,4 +189,7 @@ std::string suPHP::PathMatcher::resolveVariables(std::string str) throw(
     }
   }
   return out;
+}
+
+template class PathMatcher<UserInfo, GroupInfo>;
 }

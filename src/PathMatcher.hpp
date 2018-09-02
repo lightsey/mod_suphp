@@ -30,17 +30,19 @@
 #include "UserInfo.hpp"
 
 namespace suPHP {
+
+template <class TUserInfo = UserInfo, class TGroupInfo = GroupInfo>
 class PathMatcher {
  private:
-  UserInfo user;
-  GroupInfo group;
+  const TUserInfo& user;
+  const TGroupInfo& group;
   std::string lookupVariable(std::string str) throw(KeyNotFoundException);
 
  public:
   /**
    * Contructor
    */
-  PathMatcher(const UserInfo& user, const GroupInfo& group);
+    PathMatcher(const TUserInfo& cuser, const TGroupInfo& cgroup) : user{cuser}, group{cgroup} {};
 
   /**
    * Checks wheter a path matches a pattern
@@ -54,6 +56,7 @@ class PathMatcher {
   std::string resolveVariables(std::string str) throw(KeyNotFoundException,
                                                       ParsingException);
 };
+
 }
 
 #endif  // SUPHP_PATHMATCHER_H

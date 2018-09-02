@@ -104,7 +104,7 @@ int suPHP::Application::run(CommandLine& cmdline, const Environment& env) {
     // Root privileges are needed for chroot()
     // so do this before changing process permissions
     if (config.getChrootPath().length() > 0) {
-      PathMatcher pathMatcher = PathMatcher(targetUser, targetGroup);
+      auto pathMatcher = PathMatcher<>(targetUser, targetGroup);
       std::string chrootPath =
           pathMatcher.resolveVariables(config.getChrootPath());
       api.chroot(chrootPath);
@@ -273,7 +273,7 @@ void suPHP::Application::checkScriptFileStage2(
     const GroupInfo& targetGroup) const throw(SystemException, SoftException) {
   Logger& logger = API_Helper::getSystemAPI().getSystemLogger();
   File scriptFile = File(scriptFilename);
-  PathMatcher pathMatcher = PathMatcher(targetUser, targetGroup);
+  auto pathMatcher = PathMatcher<>(targetUser, targetGroup);
 
   // Get full path to script file
   File realScriptFile = File(scriptFile.getRealPath());
