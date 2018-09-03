@@ -19,6 +19,7 @@
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
+#include <fnmatch.h>
 #include "PathMatcher.hpp"
 #include "Util.hpp"
 
@@ -28,102 +29,15 @@ template <class TUserInfo, class TGroupInfo>
 bool PathMatcher<TUserInfo, TGroupInfo>::matches(
     std::string pattern, std::string path) throw(KeyNotFoundException,
                                                  ParsingException) {
-  std::string remainingPath = path;
-  std::string remainingPattern = pattern;
-
-  while (remainingPath.length() > 0 && remainingPattern.length() > 0) {
-    bool escapeNext = false;
-    for (std::string::size_type i = 0; i < remainingPattern.length(); i++) {
-      char c = remainingPattern.at(i);
-      if (escapeNext) {
-        if (c == '\\' || c == '*' || c == '$') {
-          // Backslash was used as an escape character
-          if (remainingPath.at(i - 1) == c) {
-            remainingPattern = remainingPattern.substr(i + 1);
-            remainingPath = remainingPath.substr(i);
-            break;
-          } else {
-            return false;
-          }
-        } else {
-          if (remainingPath.at(i - 1) == '\\') {
-            remainingPattern = remainingPattern.substr(i);
-            remainingPath = remainingPath.substr(i);
-            break;
-          } else {
-            return false;
-          }
-        }
-      } else {
-        if (i >= remainingPath.length()) {
-          return false;
-        } else if (c == '\\' && remainingPattern.length() > i + 1) {
-          escapeNext = true;
-        } else if (c == '*') {
-          remainingPattern = remainingPattern.substr(i + 1);
-          remainingPath = remainingPath.substr(i);
-          if (matches(remainingPattern, remainingPath)) {
-            return true;
-          }
-          std::string testPrefix;
-          for (std::string::size_type j = 0; j < remainingPath.length(); j++) {
-            char c2 = remainingPath.at(j);
-            if (c2 == '/') {
-              return false;
-            }
-            if (c2 == '\\' || c2 == '*' || c2 == '$') {
-              testPrefix += "\\";
-            }
-            testPrefix += c2;
-            if (matches(testPrefix + remainingPattern, remainingPath)) {
-              return true;
-            }
-          }
-        } else if (c == '$') {
-          if (remainingPattern.length() < i + 3) {
-            throw ParsingException(
-                "Incorrect use of $ in pattern \"" + pattern + "\".", __FILE__,
-                __LINE__);
-          }
-          if (remainingPattern.at(i + 1) != '{') {
-            throw ParsingException(
-                "Incorrect use of $ in pattern \"" + pattern + "\".", __FILE__,
-                __LINE__);
-          }
-          std::string::size_type closingBrace = remainingPattern.find('}', i);
-          if (closingBrace == std::string::npos) {
-            throw ParsingException(
-                "Incorrect use of $ in pattern \"" + pattern + "\".", __FILE__,
-                __LINE__);
-          }
-          std::string varValue = lookupVariable(
-              remainingPattern.substr(i + 2, closingBrace - i - 2));
-          if (remainingPath.compare(i, varValue.length(), varValue) == 0) {
-            remainingPattern = remainingPattern.substr(closingBrace + 1);
-            remainingPath = remainingPath.substr(varValue.length() + i);
-            break;
-          }
-          return false;
-        } else if (c != remainingPath.at(i)) {
-          return false;
-        } else if (i == remainingPattern.length() - 1) {
-          if (c == '/' || (i + 1 < remainingPath.length() &&
-                           remainingPath.at(i + 1) == '/')) {
-            // Path represents file in subdirectory
-            return true;
-          } else if (remainingPath.length() == remainingPattern.length()) {
-            // Exact match
-            return true;
-          } else {
-            return false;
-          }
-        }
-      }
-    }
+  std::string interpolatedPattern = resolveVariables(pattern, false);
+  if (interpolatedPattern.length() == 0) {
+    return true;
   }
-  if (remainingPattern.length() == 0 &&
-      (remainingPath.length() == 0 || remainingPath.at(0) == '/')) {
-    // Pattern was empty or ended with an escape sequence, glob or variable
+  if (interpolatedPattern.at(interpolatedPattern.length() - 1) == '/') {
+    interpolatedPattern.append("*");
+  }
+  if (fnmatch(interpolatedPattern.c_str(), path.c_str(),
+              FNM_FILE_NAME | FNM_LEADING_DIR) == 0) {
     return true;
   }
   return false;
@@ -153,14 +67,15 @@ std::string PathMatcher<TUserInfo, TGroupInfo>::lookupVariable(
 
 template <class TUserInfo, class TGroupInfo>
 std::string PathMatcher<TUserInfo, TGroupInfo>::resolveVariables(
-    std::string str) throw(KeyNotFoundException, ParsingException) {
+    std::string str, bool unescape) throw(KeyNotFoundException,
+                                          ParsingException) {
   std::string out;
   bool escapeNext = false;
   for (std::string::size_type i = 0; i < str.length(); i++) {
     char c = str.at(i);
     if (escapeNext) {
       escapeNext = false;
-      if (c == '\\' || c == '$') {
+      if (unescape && (c == '\\' || c == '$')) {
         // Backslash was used as an escape character
         out += c;
       } else {

@@ -38,12 +38,22 @@ TEST_F(PathMatcherTest, StaticPathsEndingSlash) {
   ASSERT_TRUE(path_matcher.matches("/", "/home/foo"));
   ASSERT_TRUE(path_matcher.matches("/home/", "/home/foo"));
   ASSERT_TRUE(path_matcher.matches("/home/", "/home/bar"));
+  ASSERT_TRUE(path_matcher.matches("/home/", "/home/foo/bar/baz"));
 }
 
+TEST_F(PathMatcherTest, StaticPathsEmptyPattern) {
+  ASSERT_TRUE(path_matcher.matches("", ""));
+  ASSERT_TRUE(path_matcher.matches("", "/home/foo"));
+  ASSERT_TRUE(path_matcher.matches("", "abcd"));
+}
+TEST_F(PathMatcherTest, StaticPathsEmptyPath) {
+  ASSERT_TRUE(path_matcher.matches("", ""));
+  ASSERT_TRUE(path_matcher.matches("*", ""));
+  ASSERT_FALSE(path_matcher.matches("/", ""));
+}
 TEST_F(PathMatcherTest, StaticPathsImplicitPatternSlash) {
   // A pattern that does not end in '/' can match either a file
   // or directory of the same name.
-  ASSERT_TRUE(path_matcher.matches("", "/home/foo"));
   ASSERT_TRUE(path_matcher.matches("/xyzzy", "/xyzzy"));
   ASSERT_TRUE(path_matcher.matches("/xyzzy", "/xyzzy/"));
   ASSERT_TRUE(path_matcher.matches("/xyzzy", "/xyzzy/abcde"));
@@ -53,6 +63,7 @@ TEST_F(PathMatcherTest, StaticPathsImplicitPatternSlash) {
 
 TEST_F(PathMatcherTest, StaticPathsImplicitPathSlash) {
   // A path that does not end in '/' is treated as a filename
+  ASSERT_FALSE(path_matcher.matches("/", ""));
   ASSERT_FALSE(path_matcher.matches("/home/", "/home"));
   ASSERT_FALSE(path_matcher.matches("/./", "/."));
 }
@@ -75,11 +86,13 @@ TEST_F(PathMatcherTest, EscapedPatternImplicitSlash) {
 }
 
 TEST_F(PathMatcherTest, FaultyEscapes) {
-  // A faulty escape sequence is handled as a plain backslash
-  ASSERT_FALSE(path_matcher.matches("/home/\\a", "/home/a/bc"));
-  ASSERT_TRUE(path_matcher.matches("/home/\\a", "/home/\\a/bc"));
+  // Backslash in an invalid escape sequence is discarded
+  ASSERT_TRUE(path_matcher.matches("/home/\\a", "/home/a/bc"));
+  ASSERT_FALSE(path_matcher.matches("/home/\\a", "/home/\\a/bc"));
   ASSERT_FALSE(path_matcher.matches("/home/\\b", "/home/"));
+  // At the end of the match expression it counts as a literal
   ASSERT_TRUE(path_matcher.matches("/home/\\", "/home/\\/"));
+  ASSERT_FALSE(path_matcher.matches("/home/\\/", "/home/\\/"));
 
   // No support for printf style escape sequences
   ASSERT_FALSE(path_matcher.matches("/home/\\ndef/", "/home/\ndef/"));
@@ -126,6 +139,6 @@ TEST_F(PathMatcherTest, WildCards) {
   ASSERT_TRUE(path_matcher.matches("/home/*\\*", "/home/*/bar"));
   ASSERT_TRUE(path_matcher.matches("/home/*\\*/", "/home/*/bar"));
   // PathMatcher can't handle simple path traversal
-  //ASSERT_FALSE(path_matcher.matches("/home/*/", "/home/./"));
+  // ASSERT_FALSE(path_matcher.matches("/home/*/", "/home/./"));
 }
 }

@@ -42,7 +42,8 @@ class PathMatcher {
   /**
    * Contructor
    */
-    PathMatcher(const TUserInfo& cuser, const TGroupInfo& cgroup) : user(cuser), group(cgroup) {};
+  PathMatcher(const TUserInfo& cuser, const TGroupInfo& cgroup)
+      : user(cuser), group(cgroup){};
 
   /**
    * Checks wheter a path matches a pattern
@@ -53,10 +54,10 @@ class PathMatcher {
   /**
    * Resolves variables in a string
    */
-  std::string resolveVariables(std::string str) throw(KeyNotFoundException,
-                                                      ParsingException);
+  std::string resolveVariables(std::string str,
+                               bool unescape = true) throw(KeyNotFoundException,
+                                                           ParsingException);
 };
-
 }
 
 #endif  // SUPHP_PATHMATCHER_H
