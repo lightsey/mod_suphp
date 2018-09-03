@@ -104,4 +104,28 @@ TEST_F(PathMatcherTest, DoubleInterpolation) {
   ASSERT_TRUE(path_matcher.matches("/home/${USERNAME}", "/home/${UID}/"));
   ASSERT_TRUE(path_matcher.matches("/home/${USERNAME}/", "/home/${UID}/"));
 }
+
+TEST_F(PathMatcherTest, WildCards) {
+  EXPECT_CALL(mock_userinfo, getUsername())
+      .Times(3)
+      .WillRepeatedly(Return("foo"));
+  ASSERT_TRUE(path_matcher.matches("/*/${USERNAME}", "/home/foo/"));
+  ASSERT_TRUE(path_matcher.matches("/home/${USERNAME}/*", "/home/foo/bar/"));
+  ASSERT_TRUE(path_matcher.matches("/home/${USERNAME}/*", "/home/foo/bar"));
+  ASSERT_TRUE(path_matcher.matches("/home/f*o/*", "/home/foo/bar"));
+  ASSERT_TRUE(path_matcher.matches("/home/*o/*", "/home/foo/bar"));
+  ASSERT_TRUE(path_matcher.matches("/home/f*/*", "/home/foo/bar"));
+  ASSERT_FALSE(path_matcher.matches("/home/f*/z*", "/home/foo/bar"));
+  ASSERT_FALSE(path_matcher.matches("/home/*z*/*", "/home/foo/bar"));
+  ASSERT_TRUE(path_matcher.matches("/home/*\\*", "/home/foo*/bar"));
+  ASSERT_TRUE(path_matcher.matches("/home/*\\*/", "/home/foo*/bar"));
+  ASSERT_TRUE(path_matcher.matches("/home/\\**", "/home/*foo/bar"));
+  ASSERT_TRUE(path_matcher.matches("/home/\\**/", "/home/*foo/bar"));
+  ASSERT_TRUE(path_matcher.matches("/home/\\**", "/home/*/bar"));
+  ASSERT_TRUE(path_matcher.matches("/home/\\**/", "/home/*/bar"));
+  ASSERT_TRUE(path_matcher.matches("/home/*\\*", "/home/*/bar"));
+  ASSERT_TRUE(path_matcher.matches("/home/*\\*/", "/home/*/bar"));
+  // PathMatcher can't handle simple path traversal
+  //ASSERT_FALSE(path_matcher.matches("/home/*/", "/home/./"));
+}
 }
