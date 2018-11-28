@@ -223,7 +223,7 @@ AC_ARG_WITH([apache-user],
 (default is "www-data" on Debian, "apache" on RedHat, and "wwwrun" on other systems)]),
             [
              if test "$withval" -a ! "$withval" = "yes" ; then
-               webserver_user = "$withval"
+               webserver_user="$withval"
              fi
             ])
 
