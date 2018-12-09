@@ -42,10 +42,10 @@ enum FileMode {
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <memory>
 
 #include "GroupInfo.hpp"
 #include "IOException.hpp"
-#include "SmartPtr.hpp"
 #include "SystemException.hpp"
 #include "UserInfo.hpp"
 
@@ -72,7 +72,7 @@ class File {
   /**
    * Returns input stream to read from file
    */
-  SmartPtr<std::ifstream> getInputStream() const throw(IOException);
+  std::unique_ptr<std::ifstream> getInputStream() const throw(IOException);
 
   /**
    * Does file exists?

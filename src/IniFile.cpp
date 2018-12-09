@@ -29,8 +29,9 @@
 #include "IniFile.hpp"
 
 using namespace suPHP;
+using namespace std;
 
-const IniSection& suPHP::IniFile::getSection(const std::string& name) const
+const IniSection& suPHP::IniFile::getSection(const string& name) const
     throw(KeyNotFoundException) {
   if (this->sections.find(name) != this->sections.end()) {
     return this->sections.find(name)->second;
@@ -40,7 +41,7 @@ const IniSection& suPHP::IniFile::getSection(const std::string& name) const
   }
 }
 
-bool suPHP::IniFile::hasSection(const std::string& name) const {
+bool suPHP::IniFile::hasSection(const string& name) const {
   if (this->sections.find(name) != this->sections.end()) {
     return true;
   } else {
@@ -48,20 +49,20 @@ bool suPHP::IniFile::hasSection(const std::string& name) const {
   }
 }
 
-const IniSection& suPHP::IniFile::operator[](const std::string& name) const
+const IniSection& suPHP::IniFile::operator[](const string& name) const
     throw(KeyNotFoundException) {
   return this->getSection(name);
 }
 
 void suPHP::IniFile::parse(const File& file) throw(IOException,
                                                    ParsingException) {
-  SmartPtr<std::ifstream> is = file.getInputStream();
+  auto is = file.getInputStream();
   IniSection* current_section = NULL;
-  while (!is->eof() && !is->bad() && !is->fail()) {
-    std::string line;
-    std::string tstr;
-    std::string::size_type startpos = 0;
-    std::string::size_type endpos = 0;
+  while (!is->eof() && !is->fail()) {
+    string line;
+    string tstr;
+    string::size_type startpos = 0;
+    string::size_type endpos = 0;
 
     // Read line from file
     getline(*is, line);
@@ -74,7 +75,7 @@ void suPHP::IniFile::parse(const File& file) throw(IOException,
     endpos = tstr.find_last_not_of(" \t");
 
     // Skip empty line, only containing whitespace
-    if (startpos == std::string::npos) continue;
+    if (startpos == string::npos) continue;
 
     // Get trimmed string
     tstr = tstr.substr(startpos, endpos - startpos + 1);
@@ -87,10 +88,10 @@ void suPHP::IniFile::parse(const File& file) throw(IOException,
       // Is line a section mark ("[section]")?
     } else if (tstr[0] == '[' && tstr[tstr.size() - 1] == ']') {
       // Extract name of section
-      std::string name = tstr.substr(1, tstr.size() - 2);
+      string name = tstr.substr(1, tstr.size() - 2);
       // If section is not yet existing, create it
       if (!this->hasSection(name)) {
-        std::pair<std::string, IniSection> p;
+        pair<string, IniSection> p;
         IniSection sect;
         p.first = name;
         p.second = sect;
@@ -100,12 +101,12 @@ void suPHP::IniFile::parse(const File& file) throw(IOException,
       current_section = &(this->sections.find(name)->second);
 
       // Is the line a key-value pair?
-    } else if (tstr.find_first_of('=') != std::string::npos) {
-      std::string name;
-      std::vector<std::string> values;
+    } else if (tstr.find_first_of('=') != string::npos) {
+      string name;
+      vector<string> values;
       bool append_mode = false;
 
-      std::string::size_type eqpos = 0;
+      string::size_type eqpos = 0;
 
       // Check wheter we already have a section
       if (current_section == NULL) {
@@ -116,8 +117,7 @@ void suPHP::IniFile::parse(const File& file) throw(IOException,
 
       // Extract name
       eqpos = tstr.find_first_of('=');
-      if (eqpos == std::string::npos || eqpos < 1 ||
-          eqpos == tstr.length() - 1) {
+      if (eqpos == string::npos || eqpos < 1 || eqpos == tstr.length() - 1) {
         throw ParsingException("Malformed line: " + tstr, __FILE__, __LINE__);
       }
       if (tstr[eqpos - 1] == '+') {
@@ -127,18 +127,18 @@ void suPHP::IniFile::parse(const File& file) throw(IOException,
         name = tstr.substr(0, eqpos);
       }
 
-      std::string::size_type temppos;
+      string::size_type temppos;
       temppos = name.find_first_not_of(" \t");
-      if (temppos == std::string::npos) {
+      if (temppos == string::npos) {
         throw ParsingException("Malformed line: " + tstr, __FILE__, __LINE__);
       }
       name = name.substr(0, name.find_last_not_of(" \t") + 1);
 
       bool in_quotes = false;
       bool last_was_backslash = false;
-      std::string::size_type token_start = eqpos + 1;
+      string::size_type token_start = eqpos + 1;
 
-      for (std::string::size_type i = eqpos + 1; i < tstr.length(); i++) {
+      for (string::size_type i = eqpos + 1; i < tstr.length(); i++) {
         bool current_is_backslash = false;
         if (tstr[i] == '"') {
           if (!last_was_backslash) {
@@ -151,7 +151,7 @@ void suPHP::IniFile::parse(const File& file) throw(IOException,
         } else if (tstr[i] == ':') {
           if (!in_quotes && !last_was_backslash) {
             // Save token and begin new one
-            std::string token = tstr.substr(token_start, i - token_start);
+            string token = tstr.substr(token_start, i - token_start);
             try {
               token = parseValue(token);
             } catch (ParsingException e) {
@@ -175,7 +175,7 @@ void suPHP::IniFile::parse(const File& file) throw(IOException,
                 "Multiline values are not supported in line: " + tstr, __FILE__,
                 __LINE__);
           }
-          std::string token = tstr.substr(token_start, i + 1 - token_start);
+          string token = tstr.substr(token_start, i + 1 - token_start);
           try {
             token = parseValue(token);
           } catch (ParsingException e) {
@@ -194,8 +194,7 @@ void suPHP::IniFile::parse(const File& file) throw(IOException,
       if (!append_mode) {
         current_section->removeValues(name);
       }
-      for (std::vector<std::string>::iterator i = values.begin();
-           i != values.end(); i++) {
+      for (auto i = values.begin(); i != values.end(); i++) {
         current_section->putValue(name, *i);
       }
 
@@ -208,25 +207,25 @@ void suPHP::IniFile::parse(const File& file) throw(IOException,
   is->close();
 }
 
-std::string suPHP::IniFile::parseValue(const std::string& value) const
+string suPHP::IniFile::parseValue(const string& value) const
     throw(ParsingException) {
   bool in_quotes = false;
   bool last_was_backslash = false;
-  std::string tempvalue;
-  std::string output;
+  string tempvalue;
+  string output;
 
-  std::string::size_type startpos = value.find_first_not_of(" \t");
-  std::string::size_type endpos = value.find_last_not_of(" \t");
-  if (startpos == std::string::npos) {
+  string::size_type startpos = value.find_first_not_of(" \t");
+  string::size_type endpos = value.find_last_not_of(" \t");
+  if (startpos == string::npos) {
     return "";
   }
-  if (endpos == std::string::npos) {
+  if (endpos == string::npos) {
     tempvalue = value;
   } else {
     tempvalue = value.substr(startpos, endpos - startpos + 1);
   }
 
-  for (std::string::size_type i = 0; i < value.length(); i++) {
+  for (string::size_type i = 0; i < value.length(); i++) {
     bool current_is_backslash = false;
 
     if (tempvalue[i] == '"') {

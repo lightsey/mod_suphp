@@ -28,7 +28,6 @@
 #include "API_Linux_Logger.hpp"
 #include "Environment.hpp"
 #include "File.hpp"
-#include "SmartPtr.hpp"
 
 namespace suPHP {
 /**
@@ -36,7 +35,6 @@ namespace suPHP {
  */
 class API_Linux : public API {
  private:
-  static SmartPtr<API_Linux_Logger> logger;
   /**
    * Internal function for checking wheter path
    * points to a symlink

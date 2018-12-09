@@ -43,8 +43,6 @@ extern char** environ;
 
 using namespace suPHP;
 
-SmartPtr<API_Linux_Logger> suPHP::API_Linux::logger;
-
 bool suPHP::API_Linux::isSymlink(const std::string path) const
     throw(SystemException) {
   struct stat temp;
@@ -133,10 +131,9 @@ GroupInfo suPHP::API_Linux::getRealProcessGroup() {
 }
 
 Logger& suPHP::API_Linux::getSystemLogger() {
-  if (suPHP::API_Linux::logger.get() == NULL) {
-    suPHP::API_Linux::logger.reset(new API_Linux_Logger());
-  }
-  return *(suPHP::API_Linux::logger);
+  static API_Linux_Logger loggersingleton;
+
+  return loggersingleton;
 }
 
 void suPHP::API_Linux::setProcessUser(const UserInfo& user) const

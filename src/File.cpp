@@ -24,35 +24,35 @@
 #include "File.hpp"
 
 using namespace suPHP;
+using namespace std;
 
 bool suPHP::File::hasPermissionBit(FileMode perm) const throw(SystemException) {
   return API_Helper::getSystemAPI().File_hasPermissionBit(*this, perm);
 }
 
-suPHP::File::File(std::string path) { this->path = path; }
+suPHP::File::File(string path) { this->path = path; }
 
-std::string suPHP::File::getPath() const { return this->path; }
+string suPHP::File::getPath() const { return this->path; }
 
-SmartPtr<std::ifstream> suPHP::File::getInputStream() const throw(IOException) {
-  std::ifstream* infile = new std::ifstream();
-  infile->open(this->path.c_str());
-  if (infile->bad() || infile->fail()) {
+unique_ptr<ifstream> suPHP::File::getInputStream() const throw(IOException) {
+  unique_ptr<ifstream> infile(new ifstream(this->path.c_str()));
+  if (infile->fail()) {
     throw IOException("Could not open file " + this->path + " for reading",
                       __FILE__, __LINE__);
   }
-  return SmartPtr<std::ifstream>(infile);
+  return infile;
 }
 
 bool suPHP::File::exists() const {
   return API_Helper::getSystemAPI().File_exists(*this);
 }
 
-std::string suPHP::File::getRealPath() const throw(SystemException) {
+string suPHP::File::getRealPath() const throw(SystemException) {
   return API_Helper::getSystemAPI().File_getRealPath(*this);
 }
 
 File suPHP::File::getParentDirectory() const {
-  std::string path = this->getPath();
+  string path = this->getPath();
   path = path.substr(0, path.rfind('/'));
   if (path.length() == 0) {
     path = "/";
