@@ -90,16 +90,19 @@ int suPHP::Application::run(CommandLine& cmdline, const Environment& env) {
       return 1;
     }
 
+    File scriptFile(scriptFilename);
+    File realScriptFile(scriptFile.getRealPath());
+
     // Do checks that do not need target user info
-    this->checkScriptFileStage1(scriptFilename, config, env);
+    this->checkScriptFileStage1(scriptFile, realScriptFile, config, env);
 
     // Find out target user
-    this->checkProcessPermissions(scriptFilename, config, env, targetUser,
-                                  targetGroup);
+    this->checkProcessPermissions(scriptFile, realScriptFile, config, env,
+                                  targetUser, targetGroup);
 
     // Now do checks that might require user info
-    this->checkScriptFileStage2(scriptFilename, config, env, targetUser,
-                                targetGroup);
+    this->checkScriptFileStage2(scriptFile, realScriptFile, config, env,
+                                targetUser, targetGroup);
 
     // Root privileges are needed for chroot()
     // so do this before changing process permissions
@@ -190,12 +193,10 @@ void suPHP::Application::checkProcessPermissions(Configuration& config) throw(
 }
 
 void suPHP::Application::checkScriptFileStage1(
-    const std::string& scriptFilename, const Configuration& config,
-    const Environment& environment) const
+    const File& scriptFile, const File& realScriptFile,
+    const Configuration& config, const Environment& environment) const
     throw(SystemException, SoftException) {
   Logger& logger = API_Helper::getSystemAPI().getSystemLogger();
-  File scriptFile = File(scriptFilename);
-  File realScriptFile = File(scriptFile.getRealPath());
 
   // Check wheter file exists
   if (!scriptFile.exists()) {
@@ -268,15 +269,12 @@ void suPHP::Application::checkScriptFileStage1(
 }
 
 void suPHP::Application::checkScriptFileStage2(
-    const std::string& scriptFilename, const Configuration& config,
-    const Environment& environment, const UserInfo& targetUser,
-    const GroupInfo& targetGroup) const throw(SystemException, SoftException) {
+    const File& scriptFile, const File& realScriptFile,
+    const Configuration& config, const Environment& environment,
+    const UserInfo& targetUser, const GroupInfo& targetGroup) const
+    throw(SystemException, SoftException) {
   Logger& logger = API_Helper::getSystemAPI().getSystemLogger();
-  File scriptFile = File(scriptFilename);
   auto pathMatcher = PathMatcher<>(targetUser, targetGroup);
-
-  // Get full path to script file
-  File realScriptFile = File(scriptFile.getRealPath());
 
   // Check wheter script is in one of the defined docroots
   bool file_in_docroot = false;
@@ -317,13 +315,13 @@ void suPHP::Application::checkScriptFileStage2(
   checkParentDirectories(scriptFile, targetUser, config);
 }
 
-void suPHP::Application::checkProcessPermissions(
-    const std::string& scriptFilename, const Configuration& config,
-    const Environment& environment, UserInfo& targetUser,
-    GroupInfo& targetGroup) const
+void suPHP::Application::checkProcessPermissions(const File& scriptFile,
+                                                 const File& realScriptFile,
+                                                 const Configuration& config,
+                                                 const Environment& environment,
+                                                 UserInfo& targetUser,
+                                                 GroupInfo& targetGroup) const
     throw(SystemException, SoftException, SecurityException) {
-  File scriptFile = File(scriptFilename);
-  File realScriptFile = File(scriptFile.getRealPath());
   API& api = API_Helper::getSystemAPI();
   Logger& logger = api.getSystemLogger();
   SetidMode mode = config.getMode();
@@ -332,14 +330,14 @@ void suPHP::Application::checkProcessPermissions(
 
   // Check UID/GID of script
   if (scriptFile.getUser().getUid() < config.getMinUid()) {
-    std::string error =
-        "UID of script \"" + scriptFilename + "\" is smaller than min_uid";
+    std::string error = "UID of script \"" + scriptFile.getPath() +
+                        "\" is smaller than min_uid";
     logger.logWarning(error);
     throw SoftException(error, __FILE__, __LINE__);
   }
   if (scriptFile.getGroup().getGid() < config.getMinGid()) {
-    std::string error =
-        "GID of script \"" + scriptFilename + "\" is smaller than min_gid";
+    std::string error = "GID of script \"" + scriptFile.getPath() +
+                        "\" is smaller than min_gid";
     logger.logWarning(error);
     throw SoftException(error, __FILE__, __LINE__);
   }

@@ -59,7 +59,7 @@ class Application {
    * Checks scriptfile (first stage).
    * Includes check for VHost docroot, symbollink and permissions.
    */
-  void checkScriptFileStage1(const std::string& scriptFilename,
+  void checkScriptFileStage1(const File& scriptFile, const File& realScriptFile,
                              const Configuration& config,
                              const Environment& environment) const
       throw(SystemException, SoftException);
@@ -68,7 +68,7 @@ class Application {
    * Checks scriptfile.
    * Includes check for paths which might be user specific
    */
-  void checkScriptFileStage2(const std::string& scriptFilename,
+  void checkScriptFileStage2(const File& scriptFile, const File& realScriptFile,
                              const Configuration& config,
                              const Environment& environment,
                              const UserInfo& targetUser,
@@ -79,7 +79,8 @@ class Application {
    * Determines target user and group that is to be used for script execution.
    * Uses preprocessor macros to distinguish between modes
    */
-  void checkProcessPermissions(const std::string& scriptFilename,
+  void checkProcessPermissions(const File& scriptFile,
+                               const File& realScriptFile,
                                const Configuration& config,
                                const Environment& environment,
                                UserInfo& targetUser,
