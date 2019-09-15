@@ -1,8 +1,18 @@
 variables:
   GIT_SUBMODULE_STRATEGY: normal
 
+debian10_build:
+  image: debian:10
+  script:
+    - apt-get update
+    - apt-get -y install build-essential autoconf automake libtool apache2 apache2-dev
+    - autoreconf -i
+    - CFLAGS="-Wall -Wpedantic -Werror" CXXFLAGS="-Wall -Wpedantic -Werror" ./configure
+    - make
+    - make check
+
 debian9_build:
-  image: debian:stable
+  image: debian:9
   script:
     - apt-get update
     - apt-get -y install build-essential autoconf automake libtool apache2 apache2-dev
