@@ -89,7 +89,12 @@ SetidMode suPHP::Configuration::strToMode(const std::string& str) const {
 }
 
 suPHP::Configuration::Configuration()
-    : logfile{"/var/log/suphp.log"},
+    :
+#ifdef OPT_LOGFILE
+      logfile{OPT_LOGFILE},
+#else
+      logfile{"/var/log/suphp.log"},
+#endif
 #ifdef OPT_APACHE_USER
       webserver_user{OPT_APACHE_USER},
 #else

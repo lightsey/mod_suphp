@@ -31,6 +31,7 @@ class Configuration;
 #include <string>
 #include <vector>
 
+#include "config.h"
 #include "File.hpp"
 #include "IOException.hpp"
 #include "KeyNotFoundException.hpp"

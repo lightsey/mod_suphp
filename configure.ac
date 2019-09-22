@@ -243,7 +243,7 @@ AC_DEFINE_UNQUOTED(OPT_APACHE_USER, "$webserver_user", [Defines the username of 
 
 AC_ARG_WITH([logfile],
             AC_HELP_STRING([--with-logfile=FILE],
-                           [Path to suPHP logfile (default is "/var/log/httpd/suphp_log"]),
+                           [Path to suPHP logfile (default is "/var/log/suphp.log"]),
             [
              if test "$withval" -a ! "$withval" = "yes" ; then
                AC_DEFINE_UNQUOTED(OPT_LOGFILE, "$withval", [Defines
@@ -251,7 +251,7 @@ path to logfile])
              fi
             ],
             [
-             AC_DEFINE_UNQUOTED(OPT_LOGFILE, "/var/log/httpd/suphp_log", [Defines path to logfile])
+             AC_DEFINE_UNQUOTED(OPT_LOGFILE, "/var/log/suphp.log", [Defines path to logfile])
             ])
 
 
