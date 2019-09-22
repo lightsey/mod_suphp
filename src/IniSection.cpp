@@ -36,7 +36,7 @@ void suPHP::IniSection::putValue(const std::string key,
 }
 
 const std::vector<std::string> suPHP::IniSection::getValues(
-    const std::string& key) const throw(KeyNotFoundException) {
+    const std::string& key) const {
   std::vector<std::string> values;
   std::pair<std::multimap<const std::string, const std::string>::const_iterator,
             std::multimap<const std::string, const std::string>::const_iterator>
@@ -53,8 +53,7 @@ const std::vector<std::string> suPHP::IniSection::getValues(
   return values;
 }
 
-std::string suPHP::IniSection::getValue(const std::string& key) const
-    throw(KeyNotFoundException) {
+std::string suPHP::IniSection::getValue(const std::string& key) const {
   std::vector<std::string> values;
   if (this->entries.find(key) != this->entries.end()) {
     return this->entries.find(key)->second;
@@ -83,7 +82,7 @@ bool suPHP::IniSection::hasKey(const std::string& key) const {
 }
 
 const std::vector<std::string> suPHP::IniSection::operator[](
-    const std::string& key) const throw(KeyNotFoundException) {
+    const std::string& key) const {
   return this->getValues(key);
 }
 

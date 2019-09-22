@@ -40,26 +40,23 @@ class IniFile {
  private:
   std::map<std::string, IniSection> sections;
 
-  std::string parseValue(const std::string& value) const
-      throw(ParsingException);
+  std::string parseValue(const std::string& value) const;
 
  public:
   /**
    * Reads values from INI file
    */
-  void parse(const File& file) throw(IOException, ParsingException);
+  void parse(const File& file);
 
   /**
    * Returns section
    */
-  const IniSection& getSection(const std::string& name) const
-      throw(KeyNotFoundException);
+  const IniSection& getSection(const std::string& name) const;
 
   /**
    * Index operator
    */
-  const IniSection& operator[](const std::string& name) const
-      throw(KeyNotFoundException);
+  const IniSection& operator[](const std::string& name) const;
 
   /**
    * Returns vector containing names of all sections
@@ -71,6 +68,6 @@ class IniFile {
    */
   bool hasSection(const std::string& name) const;
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_INIFILE_H

@@ -37,19 +37,19 @@ suPHP::UserInfo::UserInfo() { this->uid = -1; }
 
 suPHP::UserInfo::UserInfo(int uid) { this->uid = uid; }
 
-std::string suPHP::UserInfo::getUsername() const throw(LookupException) {
+std::string suPHP::UserInfo::getUsername() const {
   API& api = API_Helper::getSystemAPI();
   return api.UserInfo_getUsername(*this);
 }
 
 int suPHP::UserInfo::getUid() const { return this->uid; }
 
-GroupInfo suPHP::UserInfo::getGroupInfo() const throw(LookupException) {
+GroupInfo suPHP::UserInfo::getGroupInfo() const {
   API& api = API_Helper::getSystemAPI();
   return api.UserInfo_getGroupInfo(*this);
 }
 
-std::string suPHP::UserInfo::getHomeDirectory() const throw(LookupException) {
+std::string suPHP::UserInfo::getHomeDirectory() const {
   API& api = API_Helper::getSystemAPI();
   return api.UserInfo_getHomeDirectory(*this);
 }

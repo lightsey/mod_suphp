@@ -49,12 +49,12 @@ class API_Linux_Logger : public Logger {
   /**
    * Initialize (open logfile) - implementation
    */
-  virtual void init(const Configuration& config) throw(IOException);
+  virtual void init(const Configuration& config);
   /**
    * Is Logger initialized?
    */
   virtual bool isInitialized();
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_API_LINUX_LOGGER_H

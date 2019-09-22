@@ -55,7 +55,7 @@ class GroupInfo {
   /**
    * Returns groupname
    */
-  std::string getGroupname() const throw(LookupException);
+  std::string getGroupname() const;
 
   /**
    * Returns GID
@@ -72,6 +72,6 @@ class GroupInfo {
    */
   bool operator!=(const GroupInfo& ginfo) const;
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_GROUPINFO_H

@@ -72,17 +72,17 @@ class Configuration {
   /**
    * Converts string to bool
    */
-  bool strToBool(const std::string& str) const throw(ParsingException);
+  bool strToBool(const std::string& str) const;
 
   /**
    * Converts string to LogLevel
    */
-  LogLevel strToLogLevel(const std::string& str) const throw(ParsingException);
+  LogLevel strToLogLevel(const std::string& str) const;
 
   /**
    * Converts string to SetidMode
    */
-  SetidMode strToMode(const std::string& str) const throw(ParsingException);
+  SetidMode strToMode(const std::string& str) const;
 
  public:
   /**
@@ -93,7 +93,7 @@ class Configuration {
   /**
    * Reads values from INI file
    */
-  void readFromFile(File& file) throw(IOException, ParsingException);
+  void readFromFile(File& file);
 
   /**
    * Return path to logfile;
@@ -193,8 +193,7 @@ class Configuration {
   /**
    * Returns interpreter string for specified handler
    */
-  std::string getInterpreter(std::string handler) const
-      throw(KeyNotFoundException);
+  std::string getInterpreter(std::string handler) const;
 
   /**
    * Returns minimum UID allowed for scripts
@@ -216,6 +215,6 @@ class Configuration {
    */
   std::string getChrootPath() const;
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_CONFIGURATION_H

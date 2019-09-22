@@ -39,12 +39,12 @@ class API_Linux : public API {
    * Internal function for checking wheter path
    * points to a symlink
    */
-  bool isSymlink(const std::string path) const throw(SystemException);
+  bool isSymlink(const std::string path) const;
 
   /**
    * Internal function to read the target of a symlink
    */
-  std::string readSymlink(const std::string path) const throw(SystemException);
+  std::string readSymlink(const std::string path) const;
 
  public:
   /**
@@ -55,8 +55,7 @@ class API_Linux : public API {
   /**
    * Get UserInfo from username
    */
-  virtual UserInfo getUserInfo(const std::string username) throw(
-      LookupException);
+  virtual UserInfo getUserInfo(const std::string username);
 
   /**
    * Get UserInfo from UID
@@ -66,8 +65,7 @@ class API_Linux : public API {
   /**
    * Get GroupInfo from groupname
    */
-  virtual GroupInfo getGroupInfo(const std::string groupname) throw(
-      LookupException);
+  virtual GroupInfo getGroupInfo(const std::string groupname);
 
   /**
    * Get GroupInfo from GID
@@ -99,32 +97,27 @@ class API_Linux : public API {
   /**
    * Set UID of current process
    */
-  virtual void setProcessUser(const UserInfo& user) const
-      throw(SystemException);
+  virtual void setProcessUser(const UserInfo& user) const;
 
   /**
    * Set GID of current process
    */
-  virtual void setProcessGroup(const GroupInfo& group) const
-      throw(SystemException);
+  virtual void setProcessGroup(const GroupInfo& group) const;
 
   /**
    * Returns username from UserInfo
    */
-  virtual std::string UserInfo_getUsername(const UserInfo& uinfo) const
-      throw(LookupException);
+  virtual std::string UserInfo_getUsername(const UserInfo& uinfo) const;
 
   /**
    * Returns group from UserInfo
    */
-  virtual GroupInfo UserInfo_getGroupInfo(const UserInfo& uinfo) const
-      throw(LookupException);
+  virtual GroupInfo UserInfo_getGroupInfo(const UserInfo& uinfo) const;
 
   /**
    * Returns home directory from UserInfo
    */
-  virtual std::string UserInfo_getHomeDirectory(const UserInfo& uinfo) const
-      throw(LookupException);
+  virtual std::string UserInfo_getHomeDirectory(const UserInfo& uinfo) const;
 
   /**
    * Checks whether UserInfo objects represents the super-user
@@ -134,8 +127,7 @@ class API_Linux : public API {
   /**
    * Returns groupname from GroupInfo
    */
-  std::string GroupInfo_getGroupname(const GroupInfo& ginfo) const
-      throw(LookupException);
+  std::string GroupInfo_getGroupname(const GroupInfo& ginfo) const;
 
   /**
    * Checks whether file exists
@@ -145,57 +137,54 @@ class API_Linux : public API {
   /**
    * Returns real path to file
    */
-  virtual std::string File_getRealPath(const File& file) const
-      throw(SystemException);
+  virtual std::string File_getRealPath(const File& file) const;
 
   /**
    * Checks for a permission bit
    */
-  virtual bool File_hasPermissionBit(const File& file, FileMode perm) const
-      throw(SystemException);
+  virtual bool File_hasPermissionBit(const File& file, FileMode perm) const;
 
   /**
    * Returns UID of file
    */
-  virtual UserInfo File_getUser(const File& file) const throw(SystemException);
+  virtual UserInfo File_getUser(const File& file) const;
 
   /**
    * Returns GID of file
    */
-  virtual GroupInfo File_getGroup(const File& file) const
-      throw(SystemException);
+  virtual GroupInfo File_getGroup(const File& file) const;
 
   /**
    * Checks whether a file is a symlink
    */
-  virtual bool File_isSymlink(const File& file) const throw(SystemException);
+  virtual bool File_isSymlink(const File& file) const;
 
   /**
    * Runs another program (replaces current process)
    */
   virtual void execute(std::string program, const CommandLine& cline,
-                       const Environment& env) const throw(SystemException);
+                       const Environment& env) const;
 
   /**
    * Returns current working directory
    */
-  virtual std::string getCwd() const throw(SystemException);
+  virtual std::string getCwd() const;
 
   /**
    * Sets current working directory
    */
-  virtual void setCwd(const std::string& dir) const throw(SystemException);
+  virtual void setCwd(const std::string& dir) const;
 
   /**
    * Sets umask
    */
-  virtual void setUmask(int umask) const throw(SystemException);
+  virtual void setUmask(int umask) const;
 
   /**
    * Sets new root directory for current process
    */
-  virtual void chroot(const std::string& dir) const throw(SystemException);
+  virtual void chroot(const std::string& dir) const;
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_API_LINUX_H

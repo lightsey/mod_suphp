@@ -25,7 +25,7 @@ namespace suPHP {
 class Logger;
 
 enum LogLevel { LOGLEVEL_NONE, LOGLEVEL_ERROR, LOGLEVEL_WARN, LOGLEVEL_INFO };
-}
+}  // namespace suPHP
 
 #define SUPHP_LOGGER_H
 
@@ -69,7 +69,7 @@ class Logger {
   /**
    * Initialize (open logfile)
    */
-  virtual void init(const Configuration& config) throw(IOException) = 0;
+  virtual void init(const Configuration& config) = 0;
 
   /**
    * Check wheter Logger has been initialized
@@ -91,6 +91,6 @@ class Logger {
    */
   virtual void logError(const std::string& message);
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_LOGGER_H

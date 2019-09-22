@@ -36,7 +36,7 @@ class PathMatcher {
  private:
   const TUserInfo& user;
   const TGroupInfo& group;
-  std::string lookupVariable(std::string str) throw(KeyNotFoundException);
+  std::string lookupVariable(std::string str);
 
  public:
   /**
@@ -48,16 +48,13 @@ class PathMatcher {
   /**
    * Checks wheter a path matches a pattern
    */
-  bool matches(std::string pattern,
-               std::string path) throw(KeyNotFoundException, ParsingException);
+  bool matches(std::string pattern, std::string path);
 
   /**
    * Resolves variables in a string
    */
-  std::string resolveVariables(std::string str,
-                               bool unescape = true) throw(KeyNotFoundException,
-                                                           ParsingException);
+  std::string resolveVariables(std::string str, bool unescape = true);
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_PATHMATCHER_H

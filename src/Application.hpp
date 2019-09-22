@@ -52,8 +52,7 @@ class Application {
    * Checks wheter process has root privileges
    * and calling user is webserver user
    */
-  void checkProcessPermissions(Configuration& config) throw(SecurityException,
-                                                            LookupException);
+  void checkProcessPermissions(Configuration& config);
 
   /**
    * Checks scriptfile (first stage).
@@ -61,8 +60,7 @@ class Application {
    */
   void checkScriptFileStage1(const File& scriptFile, const File& realScriptFile,
                              const Configuration& config,
-                             const Environment& environment) const
-      throw(SystemException, SoftException);
+                             const Environment& environment) const;
 
   /**
    * Checks scriptfile.
@@ -72,8 +70,7 @@ class Application {
                              const Configuration& config,
                              const Environment& environment,
                              const UserInfo& targetUser,
-                             const GroupInfo& targetGroup) const
-      throw(SystemException, SoftException);
+                             const GroupInfo& targetGroup) const;
 
   /**
    * Determines target user and group that is to be used for script execution.
@@ -84,8 +81,7 @@ class Application {
                                const Configuration& config,
                                const Environment& environment,
                                UserInfo& targetUser,
-                               GroupInfo& targetGroup) const
-      throw(SystemException, SoftException, SecurityException);
+                               GroupInfo& targetGroup) const;
 
   /**
    * Changes process permission (user and group).
@@ -93,50 +89,42 @@ class Application {
    */
   void changeProcessPermissions(const Configuration& config,
                                 const UserInfo& targetUser,
-                                const GroupInfo& targetGroup) const
-      throw(SystemException, SoftException, SecurityException);
+                                const GroupInfo& targetGroup) const;
 
   /**
    * Prepares the environment before invoking the script
    */
   Environment prepareEnvironment(const Environment& sourceEnv,
-                                 const Configuration& config,
-                                 TargetMode mode) throw(KeyNotFoundException);
+                                 const Configuration& config, TargetMode mode);
 
   /**
    * Returns the php.ini path defined in the config for script being executed
    */
-  std::string getPHPRCPath(
-      const Environment& env,
-      const Configuration& config) throw(SecurityException);
+  std::string getPHPRCPath(const Environment& env, const Configuration& config);
 
   /**
    * Returns interpreter for script being executed
    */
-  std::string getInterpreter(
-      const Environment& env,
-      const Configuration& config) throw(SecurityException);
+  std::string getInterpreter(const Environment& env,
+                             const Configuration& config);
 
   /**
    * Returns mode interpreter is using
    */
-  TargetMode getTargetMode(const std::string& interpreter) throw(
-      SecurityException);
+  TargetMode getTargetMode(const std::string& interpreter);
 
   /**
    * Runs script
    */
   void executeScript(const std::string& scriptFilename,
                      const std::string& interpreter, TargetMode mode,
-                     const Environment& env, const Configuration& config) const
-      throw(SoftException);
+                     const Environment& env, const Configuration& config) const;
 
   /**
    * Checks ownership and permissions for parent directories
    */
   void checkParentDirectories(const File& file, const UserInfo& owner,
-                              const Configuration& config) const
-      throw(SoftException);
+                              const Configuration& config) const;
 
  public:
   /**
@@ -149,7 +137,7 @@ class Application {
    */
   int run(CommandLine& cmdline, const Environment& env);
 };
-}
+}  // namespace suPHP
 
 int main(int argc, char** argv);
 

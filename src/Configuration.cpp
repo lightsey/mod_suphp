@@ -29,8 +29,7 @@
 
 using namespace suPHP;
 
-bool suPHP::Configuration::strToBool(const std::string& bstr) const
-    throw(ParsingException) {
+bool suPHP::Configuration::strToBool(const std::string& bstr) const {
   std::string str = bstr;
   // Convert upper characters to lower characters
   for (std::string::size_type i = 0; i < str.size(); i++) {
@@ -63,8 +62,7 @@ bool suPHP::Configuration::strToBool(const std::string& bstr) const
   }
 }
 
-LogLevel suPHP::Configuration::strToLogLevel(const std::string& str) const
-    throw(ParsingException) {
+LogLevel suPHP::Configuration::strToLogLevel(const std::string& str) const {
   if (str == "none")
     return LOGLEVEL_NONE;
   else if (str == "error")
@@ -78,8 +76,7 @@ LogLevel suPHP::Configuration::strToLogLevel(const std::string& str) const
                            __LINE__);
 }
 
-SetidMode suPHP::Configuration::strToMode(const std::string& str) const
-    throw(ParsingException) {
+SetidMode suPHP::Configuration::strToMode(const std::string& str) const {
   if (str == "owner")
     return OWNER_MODE;
   else if (str == "force")
@@ -136,8 +133,7 @@ suPHP::Configuration::Configuration()
       paranoid_gid_check{true} {
 }
 
-void suPHP::Configuration::readFromFile(File& file) throw(IOException,
-                                                          ParsingException) {
+void suPHP::Configuration::readFromFile(File& file) {
   IniFile ini;
   ini.parse(file);
   if (ini.hasSection("global")) {
@@ -282,8 +278,7 @@ bool suPHP::Configuration::getErrorsToBrowser() const {
 
 std::string suPHP::Configuration::getEnvPath() const { return this->env_path; }
 
-std::string suPHP::Configuration::getInterpreter(std::string handler) const
-    throw(KeyNotFoundException) {
+std::string suPHP::Configuration::getInterpreter(std::string handler) const {
   if (this->handlers.find(handler) != this->handlers.end()) {
     return this->handlers.find(handler)->second;
   } else {

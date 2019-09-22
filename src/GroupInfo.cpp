@@ -32,7 +32,7 @@ suPHP::GroupInfo::GroupInfo() { this->gid = -1; }
 
 suPHP::GroupInfo::GroupInfo(int gid) { this->gid = gid; }
 
-std::string suPHP::GroupInfo::getGroupname() const throw(LookupException) {
+std::string suPHP::GroupInfo::getGroupname() const {
   API& api = API_Helper::getSystemAPI();
   return api.GroupInfo_getGroupname(*this);
 }

@@ -27,8 +27,7 @@ namespace suPHP {
 
 template <class TUserInfo, class TGroupInfo>
 bool PathMatcher<TUserInfo, TGroupInfo>::matches(
-    std::string pattern, std::string path) throw(KeyNotFoundException,
-                                                 ParsingException) {
+    std::string pattern, std::string path) {
   std::string interpolatedPattern = resolveVariables(pattern, false);
   if (interpolatedPattern.length() == 0) {
     return true;
@@ -45,7 +44,7 @@ bool PathMatcher<TUserInfo, TGroupInfo>::matches(
 
 template <class TUserInfo, class TGroupInfo>
 std::string PathMatcher<TUserInfo, TGroupInfo>::lookupVariable(
-    std::string str) throw(KeyNotFoundException) {
+    std::string str) {
   std::string rv;
   if (str == "USERNAME") {
     rv = user.getUsername();
@@ -67,8 +66,7 @@ std::string PathMatcher<TUserInfo, TGroupInfo>::lookupVariable(
 
 template <class TUserInfo, class TGroupInfo>
 std::string PathMatcher<TUserInfo, TGroupInfo>::resolveVariables(
-    std::string str, bool unescape) throw(KeyNotFoundException,
-                                          ParsingException) {
+    std::string str, bool unescape) {
   std::string out;
   bool escapeNext = false;
   for (std::string::size_type i = 0; i < str.length(); i++) {

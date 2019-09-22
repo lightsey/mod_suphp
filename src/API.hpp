@@ -49,8 +49,7 @@ class API {
   /**
    * Get UserInfo from username
    */
-  virtual UserInfo getUserInfo(const std::string username) throw(
-      LookupException) = 0;
+  virtual UserInfo getUserInfo(const std::string username) = 0;
 
   /**
    * Get UserInfo from UID
@@ -60,8 +59,7 @@ class API {
   /**
    * Get GroupInfo from groupname
    */
-  virtual GroupInfo getGroupInfo(const std::string groupname) throw(
-      LookupException) = 0;
+  virtual GroupInfo getGroupInfo(const std::string groupname) = 0;
 
   /**
    * Get GroupInfo from GID
@@ -96,32 +94,28 @@ class API {
   /**
    * Set UID of current process
    */
-  virtual void setProcessUser(const UserInfo& user) const
-      throw(SystemException) = 0;
+  virtual void setProcessUser(const UserInfo& user) const = 0;
 
   /**
    * Set GID of current process
    */
-  virtual void setProcessGroup(const GroupInfo& group) const
-      throw(SystemException) = 0;
+  virtual void setProcessGroup(const GroupInfo& group) const = 0;
 
   /**
    * Returns username from UserInfo
    */
-  virtual std::string UserInfo_getUsername(const UserInfo& uinfo) const
-      throw(LookupException) = 0;
+  virtual std::string UserInfo_getUsername(const UserInfo& uinfo) const = 0;
 
   /**
    * Returns group from UserInfo
    */
-  virtual GroupInfo UserInfo_getGroupInfo(const UserInfo& uinfo) const
-      throw(LookupException) = 0;
+  virtual GroupInfo UserInfo_getGroupInfo(const UserInfo& uinfo) const = 0;
 
   /**
    * Returns home directory from UserInfo
    */
-  virtual std::string UserInfo_getHomeDirectory(const UserInfo& uinfo) const
-      throw(LookupException) = 0;
+  virtual std::string UserInfo_getHomeDirectory(
+      const UserInfo& uinfo) const = 0;
 
   /**
    * Checks whether UserInfo objects represents the super-user
@@ -131,8 +125,7 @@ class API {
   /**
    * Returns groupname from GroupInfo
    */
-  virtual std::string GroupInfo_getGroupname(const GroupInfo& ginfo) const
-      throw(LookupException) = 0;
+  virtual std::string GroupInfo_getGroupname(const GroupInfo& ginfo) const = 0;
 
   /**
    * Checks whether file exists
@@ -142,59 +135,54 @@ class API {
   /**
    * Returns real path to file
    */
-  virtual std::string File_getRealPath(const File& file) const
-      throw(SystemException) = 0;
+  virtual std::string File_getRealPath(const File& file) const = 0;
 
   /**
    * Checks for a permission bit
    */
-  virtual bool File_hasPermissionBit(const File& file, FileMode perm) const
-      throw(SystemException) = 0;
+  virtual bool File_hasPermissionBit(const File& file, FileMode perm) const = 0;
 
   /**
    * Returns UID of file
    */
-  virtual UserInfo File_getUser(const File& file) const
-      throw(SystemException) = 0;
+  virtual UserInfo File_getUser(const File& file) const = 0;
 
   /**
    * Returns GID of file
    */
-  virtual GroupInfo File_getGroup(const File& file) const
-      throw(SystemException) = 0;
+  virtual GroupInfo File_getGroup(const File& file) const = 0;
 
   /**
    * Checks whether a file is a symlink
    */
-  virtual bool File_isSymlink(const File& file) const
-      throw(SystemException) = 0;
+  virtual bool File_isSymlink(const File& file) const = 0;
 
   /**
    * Runs another program (replaces current process)
    */
   virtual void execute(std::string program, const CommandLine& cline,
-                       const Environment& env) const throw(SystemException) = 0;
+                       const Environment& env) const = 0;
 
   /**
    * Returns current working directory
    */
-  virtual std::string getCwd() const throw(SystemException) = 0;
+  virtual std::string getCwd() const = 0;
 
   /**
    * Sets current working directory
    */
-  virtual void setCwd(const std::string& dir) const throw(SystemException) = 0;
+  virtual void setCwd(const std::string& dir) const = 0;
 
   /**
    * Sets umask
    */
-  virtual void setUmask(int umask) const throw(SystemException) = 0;
+  virtual void setUmask(int umask) const = 0;
 
   /**
    * Changes root directory for the current process
    */
-  virtual void chroot(const std::string& dir) const throw(SystemException) = 0;
+  virtual void chroot(const std::string& dir) const = 0;
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_API_H

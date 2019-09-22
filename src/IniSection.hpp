@@ -45,14 +45,12 @@ class IniSection {
   /**
    * Returns values corresponding to key
    */
-  const std::vector<std::string> getValues(const std::string& key) const
-      throw(KeyNotFoundException);
+  const std::vector<std::string> getValues(const std::string& key) const;
 
   /**
    * Returns first value corresponding to a key
    */
-  std::string getValue(const std::string& key) const
-      throw(KeyNotFoundException);
+  std::string getValue(const std::string& key) const;
 
   /**
    * Returns keys appearing in this section
@@ -61,8 +59,7 @@ class IniSection {
   /**
    * Overloaded index operator, calls getValues()
    */
-  const std::vector<std::string> operator[](const std::string& key) const
-      throw(KeyNotFoundException);
+  const std::vector<std::string> operator[](const std::string& key) const;
 
   friend class IniFile;
 
@@ -71,6 +68,6 @@ class IniSection {
    */
   bool hasKey(const std::string& name) const;
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_INISECTION_H

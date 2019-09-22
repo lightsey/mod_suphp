@@ -56,7 +56,7 @@ class UserInfo {
   /**
    * Returns username
    */
-  std::string getUsername() const throw(LookupException);
+  std::string getUsername() const;
 
   /**
    * Returns UID
@@ -66,12 +66,12 @@ class UserInfo {
   /**
    * Returns primary group
    */
-  GroupInfo getGroupInfo() const throw(LookupException);
+  GroupInfo getGroupInfo() const;
 
   /**
    * Returns home directory
    */
-  std::string getHomeDirectory() const throw(LookupException);
+  std::string getHomeDirectory() const;
 
   /**
    * Checks wheter user is super-user
@@ -88,6 +88,6 @@ class UserInfo {
    */
   bool operator!=(const UserInfo& uinfo) const;
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_USERINFO_H

@@ -177,8 +177,7 @@ void suPHP::Application::printAboutMessage() {
   std::cerr << "suPHP has to be called by mod_suphp to work." << std::endl;
 }
 
-void suPHP::Application::checkProcessPermissions(Configuration& config) throw(
-    SecurityException, LookupException) {
+void suPHP::Application::checkProcessPermissions(Configuration& config) {
   API& api = API_Helper::getSystemAPI();
   if (api.getRealProcessUser() != api.getUserInfo(config.getWebserverUser())) {
     throw SecurityException("Calling user is not webserver user!", __FILE__,
@@ -194,8 +193,7 @@ void suPHP::Application::checkProcessPermissions(Configuration& config) throw(
 
 void suPHP::Application::checkScriptFileStage1(
     const File& scriptFile, const File& realScriptFile,
-    const Configuration& config, const Environment& environment) const
-    throw(SystemException, SoftException) {
+    const Configuration& config, const Environment& environment) const {
   Logger& logger = API_Helper::getSystemAPI().getSystemLogger();
 
   // Check wheter file exists
@@ -271,8 +269,7 @@ void suPHP::Application::checkScriptFileStage1(
 void suPHP::Application::checkScriptFileStage2(
     const File& scriptFile, const File& realScriptFile,
     const Configuration& config, const Environment& environment,
-    const UserInfo& targetUser, const GroupInfo& targetGroup) const
-    throw(SystemException, SoftException) {
+    const UserInfo& targetUser, const GroupInfo& targetGroup) const {
   Logger& logger = API_Helper::getSystemAPI().getSystemLogger();
   auto pathMatcher = PathMatcher<>(targetUser, targetGroup);
 
@@ -320,8 +317,7 @@ void suPHP::Application::checkProcessPermissions(const File& scriptFile,
                                                  const Configuration& config,
                                                  const Environment& environment,
                                                  UserInfo& targetUser,
-                                                 GroupInfo& targetGroup) const
-    throw(SystemException, SoftException, SecurityException) {
+                                                 GroupInfo& targetGroup) const {
   API& api = API_Helper::getSystemAPI();
   Logger& logger = api.getSystemLogger();
   SetidMode mode = config.getMode();
@@ -411,8 +407,7 @@ void suPHP::Application::checkProcessPermissions(const File& scriptFile,
 
 void suPHP::Application::changeProcessPermissions(
     const Configuration& config, const UserInfo& targetUser,
-    const GroupInfo& targetGroup) const
-    throw(SystemException, SoftException, SecurityException) {
+    const GroupInfo& targetGroup) const {
   API& api = API_Helper::getSystemAPI();
 
   // Set new group first, because we still need super-user privileges
@@ -427,7 +422,7 @@ void suPHP::Application::changeProcessPermissions(
 
 Environment suPHP::Application::prepareEnvironment(
     const Environment& sourceEnv, const Configuration& config,
-    TargetMode mode) throw(KeyNotFoundException) {
+    TargetMode mode) {
   // Create environment for new process from old environment
   Environment env = sourceEnv;
 
@@ -466,9 +461,8 @@ Environment suPHP::Application::prepareEnvironment(
   return env;
 }
 
-std::string suPHP::Application::getPHPRCPath(
-    const Environment& env,
-    const Configuration& config) throw(SecurityException) {
+std::string suPHP::Application::getPHPRCPath(const Environment& env,
+                                             const Configuration& config) {
   if (!env.hasVar("SUPHP_HANDLER"))
     throw SecurityException("Environment variable SUPHP_HANDLER not set",
                             __FILE__, __LINE__);
@@ -480,7 +474,7 @@ std::string suPHP::Application::getPHPRCPath(
 
 std::string suPHP::Application::getInterpreter(
     const Environment& env,
-    const Configuration& config) throw(SecurityException) {
+    const Configuration& config) {
   if (!env.hasVar("SUPHP_HANDLER"))
     throw SecurityException("Environment variable SUPHP_HANDLER not set",
                             __FILE__, __LINE__);
@@ -497,8 +491,7 @@ std::string suPHP::Application::getInterpreter(
   return interpreter;
 }
 
-TargetMode suPHP::Application::getTargetMode(
-    const std::string& interpreter) throw(SecurityException) {
+TargetMode suPHP::Application::getTargetMode(const std::string& interpreter) {
   if (interpreter.substr(0, 4) == "php:")
     return TARGETMODE_PHP;
   else if (interpreter == "execute:!self")
@@ -511,8 +504,7 @@ TargetMode suPHP::Application::getTargetMode(
 void suPHP::Application::executeScript(const std::string& scriptFilename,
                                        const std::string& interpreter,
                                        TargetMode mode, const Environment& env,
-                                       const Configuration& config) const
-    throw(SoftException) {
+                                       const Configuration& config) const {
   try {
     // Change working directory to script path
     API_Helper::getSystemAPI().setCwd(
@@ -537,8 +529,8 @@ void suPHP::Application::executeScript(const std::string& scriptFilename,
 }
 
 void suPHP::Application::checkParentDirectories(
-    const File& file, const UserInfo& owner, const Configuration& config) const
-    throw(SoftException) {
+    const File& file, const UserInfo& owner,
+    const Configuration& config) const {
   File directory = file;
   Logger& logger = API_Helper::getSystemAPI().getSystemLogger();
   do {

@@ -28,14 +28,15 @@
 
 using namespace suPHP;
 
-suPHP::CommandLine::CommandLine() { /* do nothing */ }
+suPHP::CommandLine::CommandLine() { /* do nothing */
+}
 
 suPHP::CommandLine::size_type suPHP::CommandLine::count() const {
   return this->arguments.size();
 }
 
 std::string suPHP::CommandLine::getArgument(
-    suPHP::CommandLine::size_type pos) const throw(OutOfRangeException) {
+    suPHP::CommandLine::size_type pos) const {
   if (pos >= this->arguments.size()) {
     throw OutOfRangeException("Index out of range", __FILE__, __LINE__);
   }
@@ -62,7 +63,7 @@ void suPHP::CommandLine::putArgument(std::string arg) {
 }
 
 std::string& suPHP::CommandLine::operator[](
-    suPHP::CommandLine::size_type index) throw(OutOfRangeException) {
+    suPHP::CommandLine::size_type index) {
   if (index >= this->arguments.size()) {
     throw OutOfRangeException("Index out of range", __FILE__, __LINE__);
   }

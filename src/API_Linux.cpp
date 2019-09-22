@@ -43,8 +43,7 @@ extern char** environ;
 
 using namespace suPHP;
 
-bool suPHP::API_Linux::isSymlink(const std::string path) const
-    throw(SystemException) {
+bool suPHP::API_Linux::isSymlink(const std::string path) const {
   struct stat temp;
   if (lstat(path.c_str(), &temp) == -1) {
     throw SystemException(
@@ -57,8 +56,7 @@ bool suPHP::API_Linux::isSymlink(const std::string path) const
     return false;
   }
 }
-std::string suPHP::API_Linux::readSymlink(const std::string path) const
-    throw(SystemException) {
+std::string suPHP::API_Linux::readSymlink(const std::string path) const {
   char buf[1024] = {0};
   if (::readlink(path.c_str(), buf, 1023) == -1) {
     throw SystemException(std::string("Could not read symlink \"") + path +
@@ -88,8 +86,7 @@ Environment suPHP::API_Linux::getProcessEnvironment() {
   return env;
 }
 
-UserInfo suPHP::API_Linux::getUserInfo(const std::string username) throw(
-    LookupException) {
+UserInfo suPHP::API_Linux::getUserInfo(const std::string username) {
   struct passwd* tmpuser = ::getpwnam(username.c_str());
   if (tmpuser == NULL) {
     throw LookupException(
@@ -101,8 +98,7 @@ UserInfo suPHP::API_Linux::getUserInfo(const std::string username) throw(
 
 UserInfo suPHP::API_Linux::getUserInfo(const int uid) { return UserInfo(uid); }
 
-GroupInfo suPHP::API_Linux::getGroupInfo(const std::string groupname) throw(
-    LookupException) {
+GroupInfo suPHP::API_Linux::getGroupInfo(const std::string groupname) {
   struct group* tmpgroup = ::getgrnam(groupname.c_str());
   if (tmpgroup == NULL) {
     throw LookupException(
@@ -136,8 +132,7 @@ Logger& suPHP::API_Linux::getSystemLogger() {
   return loggersingleton;
 }
 
-void suPHP::API_Linux::setProcessUser(const UserInfo& user) const
-    throw(SystemException) {
+void suPHP::API_Linux::setProcessUser(const UserInfo& user) const {
   // Reset supplementary groups
   if (::setgroups(0, NULL) == -1) {
     throw SystemException(
@@ -164,16 +159,15 @@ void suPHP::API_Linux::setProcessUser(const UserInfo& user) const
   }
 }
 
-void suPHP::API_Linux::setProcessGroup(const GroupInfo& group) const
-    throw(SystemException) {
+void suPHP::API_Linux::setProcessGroup(const GroupInfo& group) const {
   if (::setgid(group.getGid()) == -1) {
     throw SystemException(std::string("setgid() failed: ") + ::strerror(errno),
                           __FILE__, __LINE__);
   }
 }
 
-std::string suPHP::API_Linux::UserInfo_getUsername(const UserInfo& uinfo) const
-    throw(LookupException) {
+std::string suPHP::API_Linux::UserInfo_getUsername(
+    const UserInfo& uinfo) const {
   struct passwd* tmpuser = ::getpwuid(uinfo.getUid());
   if (tmpuser == NULL) {
     throw LookupException(
@@ -183,8 +177,7 @@ std::string suPHP::API_Linux::UserInfo_getUsername(const UserInfo& uinfo) const
   return std::string(tmpuser->pw_name);
 }
 
-GroupInfo suPHP::API_Linux::UserInfo_getGroupInfo(const UserInfo& uinfo) const
-    throw(LookupException) {
+GroupInfo suPHP::API_Linux::UserInfo_getGroupInfo(const UserInfo& uinfo) const {
   struct passwd* tmpuser = NULL;
   tmpuser = getpwuid(uinfo.getUid());
   if (tmpuser == NULL) {
@@ -196,7 +189,7 @@ GroupInfo suPHP::API_Linux::UserInfo_getGroupInfo(const UserInfo& uinfo) const
 }
 
 std::string suPHP::API_Linux::UserInfo_getHomeDirectory(
-    const UserInfo& uinfo) const throw(LookupException) {
+    const UserInfo& uinfo) const {
   struct passwd* tmpuser = NULL;
   tmpuser = getpwuid(uinfo.getUid());
   if (tmpuser == NULL) {
@@ -215,7 +208,7 @@ bool suPHP::API_Linux::UserInfo_isSuperUser(const UserInfo& uinfo) const {
 }
 
 std::string suPHP::API_Linux::GroupInfo_getGroupname(
-    const GroupInfo& ginfo) const throw(LookupException) {
+    const GroupInfo& ginfo) const {
   struct group* tmpgroup = ::getgrgid(ginfo.getGid());
   if (tmpgroup == NULL) {
     throw LookupException(
@@ -233,8 +226,7 @@ bool suPHP::API_Linux::File_exists(const File& file) const {
     return false;
 }
 
-std::string suPHP::API_Linux::File_getRealPath(const File& file) const
-    throw(SystemException) {
+std::string suPHP::API_Linux::File_getRealPath(const File& file) const {
   std::string currentpath = file.getPath();
   std::string resolvedpath = "";
   bool failed = true;
@@ -297,8 +289,7 @@ std::string suPHP::API_Linux::File_getRealPath(const File& file) const
 }
 
 bool suPHP::API_Linux::File_hasPermissionBit(const File& file,
-                                             FileMode perm) const
-    throw(SystemException) {
+                                             FileMode perm) const {
   struct stat temp;
   if (lstat(file.getPath().c_str(), &temp) == -1) {
     throw SystemException(std::string("Could not stat \"") + file.getPath() +
@@ -346,8 +337,7 @@ bool suPHP::API_Linux::File_hasPermissionBit(const File& file,
   return false;
 }
 
-UserInfo suPHP::API_Linux::File_getUser(const File& file) const
-    throw(SystemException) {
+UserInfo suPHP::API_Linux::File_getUser(const File& file) const {
   struct stat temp;
   if (lstat(file.getPath().c_str(), &temp) == -1) {
     throw SystemException(std::string("Could not stat \"") + file.getPath() +
@@ -357,8 +347,7 @@ UserInfo suPHP::API_Linux::File_getUser(const File& file) const
   return UserInfo(temp.st_uid);
 }
 
-GroupInfo suPHP::API_Linux::File_getGroup(const File& file) const
-    throw(SystemException) {
+GroupInfo suPHP::API_Linux::File_getGroup(const File& file) const {
   struct stat temp;
   if (lstat(file.getPath().c_str(), &temp) == -1) {
     throw SystemException(std::string("Could not stat \"") + file.getPath() +
@@ -368,14 +357,12 @@ GroupInfo suPHP::API_Linux::File_getGroup(const File& file) const
   return GroupInfo(temp.st_gid);
 }
 
-bool suPHP::API_Linux::File_isSymlink(const File& file) const
-    throw(SystemException) {
+bool suPHP::API_Linux::File_isSymlink(const File& file) const {
   return this->isSymlink(file.getPath());
 }
 
 void suPHP::API_Linux::execute(std::string program, const CommandLine& cline,
-                               const Environment& env) const
-    throw(SystemException) {
+                               const Environment& env) const {
   char** sysCline = NULL;
   char** sysEnv = NULL;
   char** p = NULL;
@@ -421,7 +408,7 @@ void suPHP::API_Linux::execute(std::string program, const CommandLine& cline,
                         __FILE__, __LINE__);
 }
 
-std::string suPHP::API_Linux::getCwd() const throw(SystemException) {
+std::string suPHP::API_Linux::getCwd() const {
   char buf[4096] = {0};
   if (::getcwd(buf, 4095) == NULL)
     throw SystemException(std::string("getcwd() failed: ") + ::strerror(errno),
@@ -429,20 +416,16 @@ std::string suPHP::API_Linux::getCwd() const throw(SystemException) {
   return std::string(buf);
 }
 
-void suPHP::API_Linux::setCwd(const std::string& dir) const
-    throw(SystemException) {
+void suPHP::API_Linux::setCwd(const std::string& dir) const {
   if (::chdir(dir.c_str())) {
     throw SystemException(std::string("chdir() failed: ") + ::strerror(errno),
                           __FILE__, __LINE__);
   }
 }
 
-void suPHP::API_Linux::setUmask(int mode) const throw(SystemException) {
-  ::umask(mode);
-}
+void suPHP::API_Linux::setUmask(int mode) const { ::umask(mode); }
 
-void suPHP::API_Linux::chroot(const std::string& dir) const
-    throw(SystemException) {
+void suPHP::API_Linux::chroot(const std::string& dir) const {
   if (::chroot(dir.c_str())) {
     throw SystemException(std::string("chroot() failed: ") + ::strerror(errno),
                           __FILE__, __LINE__);

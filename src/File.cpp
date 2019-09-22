@@ -26,7 +26,7 @@
 using namespace suPHP;
 using namespace std;
 
-bool suPHP::File::hasPermissionBit(FileMode perm) const throw(SystemException) {
+bool suPHP::File::hasPermissionBit(FileMode perm) const {
   return API_Helper::getSystemAPI().File_hasPermissionBit(*this, perm);
 }
 
@@ -34,7 +34,7 @@ suPHP::File::File(string path) { this->path = path; }
 
 string suPHP::File::getPath() const { return this->path; }
 
-unique_ptr<ifstream> suPHP::File::getInputStream() const throw(IOException) {
+unique_ptr<ifstream> suPHP::File::getInputStream() const {
   unique_ptr<ifstream> infile(new ifstream(this->path.c_str()));
   if (infile->fail()) {
     throw IOException("Could not open file " + this->path + " for reading",
@@ -47,7 +47,7 @@ bool suPHP::File::exists() const {
   return API_Helper::getSystemAPI().File_exists(*this);
 }
 
-string suPHP::File::getRealPath() const throw(SystemException) {
+string suPHP::File::getRealPath() const {
   return API_Helper::getSystemAPI().File_getRealPath(*this);
 }
 
@@ -60,50 +60,50 @@ File suPHP::File::getParentDirectory() const {
   return File(path);
 }
 
-bool suPHP::File::hasUserReadBit() const throw(SystemException) {
+bool suPHP::File::hasUserReadBit() const {
   return this->hasPermissionBit(FILEMODE_USER_READ);
 }
 
-bool suPHP::File::hasUserWriteBit() const throw(SystemException) {
+bool suPHP::File::hasUserWriteBit() const {
   return this->hasPermissionBit(FILEMODE_USER_WRITE);
 }
 
-bool suPHP::File::hasUserExecuteBit() const throw(SystemException) {
+bool suPHP::File::hasUserExecuteBit() const {
   return this->hasPermissionBit(FILEMODE_USER_EXEC);
 }
 
-bool suPHP::File::hasGroupReadBit() const throw(SystemException) {
+bool suPHP::File::hasGroupReadBit() const {
   return this->hasPermissionBit(FILEMODE_GROUP_READ);
 }
 
-bool suPHP::File::hasGroupWriteBit() const throw(SystemException) {
+bool suPHP::File::hasGroupWriteBit() const {
   return this->hasPermissionBit(FILEMODE_GROUP_WRITE);
 }
 
-bool suPHP::File::hasGroupExecuteBit() const throw(SystemException) {
+bool suPHP::File::hasGroupExecuteBit() const {
   return this->hasPermissionBit(FILEMODE_GROUP_EXEC);
 }
 
-bool suPHP::File::hasOthersReadBit() const throw(SystemException) {
+bool suPHP::File::hasOthersReadBit() const {
   return this->hasPermissionBit(FILEMODE_OTHERS_READ);
 }
 
-bool suPHP::File::hasOthersWriteBit() const throw(SystemException) {
+bool suPHP::File::hasOthersWriteBit() const {
   return this->hasPermissionBit(FILEMODE_OTHERS_WRITE);
 }
 
-bool suPHP::File::hasOthersExecuteBit() const throw(SystemException) {
+bool suPHP::File::hasOthersExecuteBit() const {
   return this->hasPermissionBit(FILEMODE_OTHERS_EXEC);
 }
 
-UserInfo suPHP::File::getUser() const throw(SystemException) {
+UserInfo suPHP::File::getUser() const {
   return API_Helper::getSystemAPI().File_getUser(*this);
 }
 
-GroupInfo suPHP::File::getGroup() const throw(SystemException) {
+GroupInfo suPHP::File::getGroup() const {
   return API_Helper::getSystemAPI().File_getGroup(*this);
 }
 
-bool suPHP::File::isSymlink() const throw(SystemException) {
+bool suPHP::File::isSymlink() const {
   return API_Helper::getSystemAPI().File_isSymlink(*this);
 }

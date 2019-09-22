@@ -31,8 +31,7 @@
 using namespace suPHP;
 using namespace std;
 
-const IniSection& suPHP::IniFile::getSection(const string& name) const
-    throw(KeyNotFoundException) {
+const IniSection& suPHP::IniFile::getSection(const string& name) const {
   if (this->sections.find(name) != this->sections.end()) {
     return this->sections.find(name)->second;
   } else {
@@ -49,13 +48,11 @@ bool suPHP::IniFile::hasSection(const string& name) const {
   }
 }
 
-const IniSection& suPHP::IniFile::operator[](const string& name) const
-    throw(KeyNotFoundException) {
+const IniSection& suPHP::IniFile::operator[](const string& name) const {
   return this->getSection(name);
 }
 
-void suPHP::IniFile::parse(const File& file) throw(IOException,
-                                                   ParsingException) {
+void suPHP::IniFile::parse(const File& file) {
   auto is = file.getInputStream();
   IniSection* current_section = NULL;
   while (!is->eof() && !is->fail()) {
@@ -154,7 +151,7 @@ void suPHP::IniFile::parse(const File& file) throw(IOException,
             string token = tstr.substr(token_start, i - token_start);
             try {
               token = parseValue(token);
-            } catch (ParsingException e) {
+            } catch (ParsingException&) {
               throw ParsingException("Malformed line: " + tstr, __FILE__,
                                      __LINE__);
             }
@@ -178,7 +175,7 @@ void suPHP::IniFile::parse(const File& file) throw(IOException,
           string token = tstr.substr(token_start, i + 1 - token_start);
           try {
             token = parseValue(token);
-          } catch (ParsingException e) {
+          } catch (ParsingException&) {
             throw ParsingException("Malformed line: " + tstr, __FILE__,
                                    __LINE__);
           }
@@ -207,8 +204,7 @@ void suPHP::IniFile::parse(const File& file) throw(IOException,
   is->close();
 }
 
-string suPHP::IniFile::parseValue(const string& value) const
-    throw(ParsingException) {
+string suPHP::IniFile::parseValue(const string& value) const {
   bool in_quotes = false;
   bool last_was_backslash = false;
   string tempvalue;

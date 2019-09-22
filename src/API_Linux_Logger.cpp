@@ -60,15 +60,15 @@ void suPHP::API_Linux_Logger::log(const std::string& classification,
   if (!this->isInitialized() ||
       (write(this->logFd, logline.c_str(), logline.size()) == -1)) {
     // Print message to stderr
-    std::cerr << "Could not write to logfile:" << std::endl
+    std::cerr << "Could not write to logfile:"
+              << std::endl
               //		  << ::strerror(::errno) << std::endl
               << "Printing message to stderr:" << std::endl
               << logline << std::endl;
   }
 }
 
-void suPHP::API_Linux_Logger::init(const Configuration& config) throw(
-    IOException) {
+void suPHP::API_Linux_Logger::init(const Configuration& config) {
   // Open logfile in append mode, create if not existing.
   this->logFd =
       ::open(config.getLogfile().c_str(),

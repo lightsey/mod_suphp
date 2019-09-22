@@ -54,7 +54,7 @@ class CommandLine {
   /**
    * Returns (copy of) argument at at position
    */
-  std::string getArgument(size_type pos) const throw(OutOfRangeException);
+  std::string getArgument(size_type pos) const;
 
   /**
    * Set argument at position
@@ -69,13 +69,13 @@ class CommandLine {
   /**
    * Returns reference to string at index
    */
-  std::string& operator[](size_type index) throw(OutOfRangeException);
+  std::string& operator[](size_type index);
 
   /**
    * Returns number of elements
    */
   size_type size() const;
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_COMMANDLINE_H

@@ -35,14 +35,14 @@ enum FileMode {
   FILEMODE_OTHERS_WRITE,
   FILEMODE_OTHERS_EXEC
 };
-}
+}  // namespace suPHP
 
 #define SUPHP_FILE_H
 
 #include <fstream>
 #include <iostream>
-#include <string>
 #include <memory>
+#include <string>
 
 #include "GroupInfo.hpp"
 #include "IOException.hpp"
@@ -56,7 +56,7 @@ namespace suPHP {
 class File {
  private:
   std::string path;
-  bool hasPermissionBit(FileMode perm) const throw(SystemException);
+  bool hasPermissionBit(FileMode perm) const;
 
  public:
   /**
@@ -72,7 +72,7 @@ class File {
   /**
    * Returns input stream to read from file
    */
-  std::unique_ptr<std::ifstream> getInputStream() const throw(IOException);
+  std::unique_ptr<std::ifstream> getInputStream() const;
 
   /**
    * Does file exists?
@@ -82,7 +82,7 @@ class File {
   /**
    * Returns real path to file (without symlinks in path)
    */
-  std::string getRealPath() const throw(SystemException);
+  std::string getRealPath() const;
 
   /**
    * Returns File object representing parent directory
@@ -92,63 +92,63 @@ class File {
   /**
    * Returns permission bit
    */
-  bool hasUserReadBit() const throw(SystemException);
+  bool hasUserReadBit() const;
 
   /**
    * Returns permission bit
    */
-  bool hasUserWriteBit() const throw(SystemException);
+  bool hasUserWriteBit() const;
 
   /**
    * Returns permission bit
    */
-  bool hasUserExecuteBit() const throw(SystemException);
+  bool hasUserExecuteBit() const;
 
   /**
    * Returns permission bit
    */
-  bool hasGroupReadBit() const throw(SystemException);
+  bool hasGroupReadBit() const;
 
   /**
    * Returns permission bit
    */
-  bool hasGroupWriteBit() const throw(SystemException);
+  bool hasGroupWriteBit() const;
 
   /**
    * Returns permission bit
    */
-  bool hasGroupExecuteBit() const throw(SystemException);
+  bool hasGroupExecuteBit() const;
 
   /**
    * Returns permission bit
    */
-  bool hasOthersReadBit() const throw(SystemException);
+  bool hasOthersReadBit() const;
 
   /**
    * Returns permission bit
    */
-  bool hasOthersWriteBit() const throw(SystemException);
+  bool hasOthersWriteBit() const;
 
   /**
    * Returns permission bit
    */
-  bool hasOthersExecuteBit() const throw(SystemException);
+  bool hasOthersExecuteBit() const;
 
   /**
    * Returns owner (user) of file
    */
-  UserInfo getUser() const throw(SystemException);
+  UserInfo getUser() const;
 
   /**
    * Returns owning group of file
    */
-  GroupInfo getGroup() const throw(SystemException);
+  GroupInfo getGroup() const;
 
   /**
    * Checks whether this file is a symlink
    */
-  bool isSymlink() const throw(SystemException);
+  bool isSymlink() const;
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_FILE_H

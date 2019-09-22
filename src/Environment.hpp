@@ -39,13 +39,12 @@ class Environment {
   /**
    * Returns (copy of) variable content
    */
-  std::string getVar(const std::string& name) const throw(KeyNotFoundException);
+  std::string getVar(const std::string& name) const;
 
   /**
    * Sets variable content
    */
-  void setVar(const std::string name,
-              const std::string content) throw(KeyNotFoundException);
+  void setVar(const std::string name, const std::string content);
 
   /**
    * Adds variable to environment
@@ -65,13 +64,13 @@ class Environment {
   /**
    * Returns reference to variable with name
    */
-  std::string& operator[](const std::string& name) throw(KeyNotFoundException);
+  std::string& operator[](const std::string& name);
 
   /**
    * Returns const reference to the map which stores the variables
    */
   const std::map<std::string, std::string>& getBackendMap() const;
 };
-}
+}  // namespace suPHP
 
 #endif  // SUPHP_ENVIRONMENT_H

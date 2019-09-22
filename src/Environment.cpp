@@ -28,8 +28,7 @@
 
 using namespace suPHP;
 
-std::string suPHP::Environment::getVar(const std::string& name) const
-    throw(KeyNotFoundException) {
+std::string suPHP::Environment::getVar(const std::string& name) const {
   auto found = this->vars.find(name);
   if (found != this->vars.end()) {
     return found->second;
@@ -39,9 +38,8 @@ std::string suPHP::Environment::getVar(const std::string& name) const
   }
 }
 
-void suPHP::Environment::setVar(
-    const std::string name,
-    const std::string content) throw(KeyNotFoundException) {
+void suPHP::Environment::setVar(const std::string name,
+                                const std::string content) {
   auto found = this->vars.find(name);
   if (found != this->vars.end()) {
     found->second = content;
@@ -72,8 +70,7 @@ bool suPHP::Environment::hasVar(const std::string& name) const {
   }
 }
 
-std::string& suPHP::Environment::operator[](const std::string& name) throw(
-    KeyNotFoundException) {
+std::string& suPHP::Environment::operator[](const std::string& name) {
   auto found = this->vars.find(name);
   if (found != this->vars.end()) {
     return found->second;
