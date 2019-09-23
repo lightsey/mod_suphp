@@ -144,6 +144,11 @@ full_php_process_display:
   reveal the script path to local users.
   Defaults to false.
 
+mode:
+  Mode to use for setting UID/GID and verifying the integrity of the
+  target PHP script. The mode can be one of "owner", "config"
+  or "paranoid". The default is set based on the compile-time flags.
+
 paranoid_uid_check:
   While running in "paranoid" mode, confirm that the script being
   executed is owned by the same user ID that it will be executed as.

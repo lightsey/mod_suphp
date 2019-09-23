@@ -126,7 +126,7 @@ fi
 AC_MSG_CHECKING([for set-UID/set-GID mode])
 AC_ARG_WITH(setid-mode, 
             AC_HELP_STRING([--with-setid-mode=MODE], 
-                           [Mode to use for setting UID/GID.  MODE can be on of "owner", "config" or "paranoid"; defaults to "paranoid".]),
+                           [Mode to use for setting UID/GID.  MODE can be one of "owner", "config" or "paranoid"; defaults to "paranoid".]),
             [
             if test "$withval" = "yes"; then
               SETID_MODE="paranoid"

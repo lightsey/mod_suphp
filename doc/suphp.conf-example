@@ -6,7 +6,7 @@ logfile=/var/log/suphp.log
 loglevel=info
 
 ;User Apache is running as
-webserver_user=wwwrun
+;webserver_user=apache
 
 ;Path all scripts have to be in
 docroot=/var/www:${HOME}/public_html
@@ -19,6 +19,9 @@ allow_file_group_writeable=false
 allow_file_others_writeable=false
 allow_directory_group_writeable=false
 allow_directory_others_writeable=false
+
+; Security mode
+;mode=paranoid
 
 ; Paranoid mode modifiers
 paranoid_uid_check=true
