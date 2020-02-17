@@ -26,8 +26,8 @@
 namespace suPHP {
 
 template <class TUserInfo, class TGroupInfo>
-bool PathMatcher<TUserInfo, TGroupInfo>::matches(
-    std::string pattern, std::string path) {
+bool PathMatcher<TUserInfo, TGroupInfo>::matches(std::string pattern,
+                                                 std::string path) {
   std::string interpolatedPattern = resolveVariables(pattern, false);
   if (interpolatedPattern.length() == 0) {
     return true;
@@ -102,7 +102,7 @@ std::string PathMatcher<TUserInfo, TGroupInfo>::resolveVariables(
         }
         std::string varName = str.substr(i + 2, closingBrace - i - 2);
         out += lookupVariable(varName);
-        i = closingBrace + 1;
+        i = closingBrace;
       } else {
         out += c;
       }
@@ -112,4 +112,4 @@ std::string PathMatcher<TUserInfo, TGroupInfo>::resolveVariables(
 }
 
 template class PathMatcher<UserInfo, GroupInfo>;
-}
+}  // namespace suPHP
