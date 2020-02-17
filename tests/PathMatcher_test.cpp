@@ -118,6 +118,15 @@ TEST_F(PathMatcherTest, DoubleInterpolation) {
   ASSERT_TRUE(path_matcher.matches("/home/${USERNAME}/", "/home/${UID}/"));
 }
 
+TEST_F(PathMatcherTest, ClosingBracePosition) {
+  EXPECT_CALL(mock_userinfo, getHomeDirectory())
+      .Times(2)
+      .WillRepeatedly(Return("/home/foo"));
+  ASSERT_FALSE(
+      path_matcher.matches("${HOME}q/some/path", "/home/foo/some/path"));
+  ASSERT_TRUE(path_matcher.matches("${HOME}/DEF", "/home/foo/DEF"));
+}
+
 TEST_F(PathMatcherTest, WildCards) {
   EXPECT_CALL(mock_userinfo, getUsername())
       .Times(3)
@@ -141,4 +150,4 @@ TEST_F(PathMatcherTest, WildCards) {
   // PathMatcher can't handle simple path traversal
   // ASSERT_FALSE(path_matcher.matches("/home/*/", "/home/./"));
 }
-}
+}  // namespace
